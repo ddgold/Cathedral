@@ -8,11 +8,18 @@
 
 /* Begin PBXBuildFile section */
 		CAF56E1822014877002DF690 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAF56E1722014877002DF690 /* AppDelegate.swift */; };
-		CAF56E1A22014877002DF690 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAF56E1922014877002DF690 /* ViewController.swift */; };
-		CAF56E1D22014877002DF690 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CAF56E1B22014877002DF690 /* Main.storyboard */; };
+		CAF56E1A22014877002DF690 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAF56E1922014877002DF690 /* GameViewController.swift */; };
 		CAF56E1F22014878002DF690 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CAF56E1E22014878002DF690 /* Assets.xcassets */; };
 		CAF56E2222014878002DF690 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CAF56E2022014878002DF690 /* LaunchScreen.storyboard */; };
 		CAF56E2D22014878002DF690 /* CathedralTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAF56E2C22014878002DF690 /* CathedralTests.swift */; };
+		CAF56E4022014C72002DF690 /* Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAF56E3F22014C72002DF690 /* Address.swift */; };
+		CAF56E4222014CD9002DF690 /* Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAF56E4122014CD9002DF690 /* Direction.swift */; };
+		CAF56E4422014FC9002DF690 /* Building.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAF56E4322014FC9002DF690 /* Building.swift */; };
+		CAF56E462201500A002DF690 /* Owner.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAF56E452201500A002DF690 /* Owner.swift */; };
+		CAF56E48220150DB002DF690 /* Tile.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAF56E47220150DB002DF690 /* Tile.swift */; };
+		CAF56E4C22015163002DF690 /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAF56E4B22015163002DF690 /* Board.swift */; };
+		CAF56E4E22015266002DF690 /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAF56E4D22015265002DF690 /* Game.swift */; };
+		CAF56E5022015802002DF690 /* Piece.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAF56E4F22015802002DF690 /* Piece.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -28,14 +35,21 @@
 /* Begin PBXFileReference section */
 		CAF56E1422014877002DF690 /* Cathedral.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cathedral.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CAF56E1722014877002DF690 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		CAF56E1922014877002DF690 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		CAF56E1C22014877002DF690 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		CAF56E1922014877002DF690 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		CAF56E1E22014878002DF690 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CAF56E2122014878002DF690 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CAF56E2322014878002DF690 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CAF56E2822014878002DF690 /* CathedralTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CathedralTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CAF56E2C22014878002DF690 /* CathedralTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CathedralTests.swift; sourceTree = "<group>"; };
 		CAF56E2E22014878002DF690 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CAF56E3F22014C72002DF690 /* Address.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Address.swift; sourceTree = "<group>"; };
+		CAF56E4122014CD9002DF690 /* Direction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Direction.swift; sourceTree = "<group>"; };
+		CAF56E4322014FC9002DF690 /* Building.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Building.swift; sourceTree = "<group>"; };
+		CAF56E452201500A002DF690 /* Owner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Owner.swift; sourceTree = "<group>"; };
+		CAF56E47220150DB002DF690 /* Tile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tile.swift; sourceTree = "<group>"; };
+		CAF56E4B22015163002DF690 /* Board.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Board.swift; sourceTree = "<group>"; };
+		CAF56E4D22015265002DF690 /* Game.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Game.swift; sourceTree = "<group>"; };
+		CAF56E4F22015802002DF690 /* Piece.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Piece.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,8 +92,8 @@
 			isa = PBXGroup;
 			children = (
 				CAF56E1722014877002DF690 /* AppDelegate.swift */,
-				CAF56E1922014877002DF690 /* ViewController.swift */,
-				CAF56E1B22014877002DF690 /* Main.storyboard */,
+				CAF56E3822014A77002DF690 /* Model */,
+				CAF56E3722014A35002DF690 /* Controllers */,
 				CAF56E1E22014878002DF690 /* Assets.xcassets */,
 				CAF56E2022014878002DF690 /* LaunchScreen.storyboard */,
 				CAF56E2322014878002DF690 /* Info.plist */,
@@ -94,6 +108,29 @@
 				CAF56E2E22014878002DF690 /* Info.plist */,
 			);
 			path = CathedralTests;
+			sourceTree = "<group>";
+		};
+		CAF56E3722014A35002DF690 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				CAF56E1922014877002DF690 /* GameViewController.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		CAF56E3822014A77002DF690 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				CAF56E3F22014C72002DF690 /* Address.swift */,
+				CAF56E4B22015163002DF690 /* Board.swift */,
+				CAF56E4322014FC9002DF690 /* Building.swift */,
+				CAF56E4122014CD9002DF690 /* Direction.swift */,
+				CAF56E4D22015265002DF690 /* Game.swift */,
+				CAF56E452201500A002DF690 /* Owner.swift */,
+				CAF56E4F22015802002DF690 /* Piece.swift */,
+				CAF56E47220150DB002DF690 /* Tile.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -179,7 +216,6 @@
 			files = (
 				CAF56E2222014878002DF690 /* LaunchScreen.storyboard in Resources */,
 				CAF56E1F22014878002DF690 /* Assets.xcassets in Resources */,
-				CAF56E1D22014877002DF690 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -197,8 +233,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CAF56E1A22014877002DF690 /* ViewController.swift in Sources */,
+				CAF56E4022014C72002DF690 /* Address.swift in Sources */,
+				CAF56E4E22015266002DF690 /* Game.swift in Sources */,
+				CAF56E5022015802002DF690 /* Piece.swift in Sources */,
+				CAF56E462201500A002DF690 /* Owner.swift in Sources */,
+				CAF56E4422014FC9002DF690 /* Building.swift in Sources */,
+				CAF56E48220150DB002DF690 /* Tile.swift in Sources */,
+				CAF56E1A22014877002DF690 /* GameViewController.swift in Sources */,
 				CAF56E1822014877002DF690 /* AppDelegate.swift in Sources */,
+				CAF56E4222014CD9002DF690 /* Direction.swift in Sources */,
+				CAF56E4C22015163002DF690 /* Board.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -221,14 +265,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		CAF56E1B22014877002DF690 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CAF56E1C22014877002DF690 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		CAF56E2022014878002DF690 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
