@@ -1,0 +1,562 @@
+//
+//  Game.swift
+//  Cathedral
+//
+//  Created by Doug Goldstein on 1/29/19.
+//  Copyright © 2019 Doug Goldstein. All rights reserved.
+//
+
+import Foundation
+
+/// A game of cathedral.
+class Game: NSObject, NSCoding
+{
+    //MARK: - Properties
+    /// The game board.
+    private var board: Board
+    /// The set of light's unbuilt buildings.
+    private var lightUnbuiltBuildings: Set<Building>
+    /// The set of dark's unbuilt buildings.
+    private var darkUnbuiltBuildings: Set<Building>
+    /// The list of built pieces, in order from first to last built.
+    private var builtPieces: [Piece]
+    /// Whether or not the cathedral has been built.
+    private var cathedralBuilt: Bool
+    /// The set of light's claimed address.
+    private var lightClaimedAddresses: Set<Address>
+    /// The set of dark's claimed address.
+    private var darkClaimedAddresses: Set<Address>
+    /// The owner who's turn is next. If nil, game is over.
+    private var nextTurn: Owner?
+    
+    
+    //MARK: - Initialization
+    /// Initializes a new game.
+    override init()
+    {
+        board = Board()
+        lightUnbuiltBuildings = Building.playerBuildings
+        darkUnbuiltBuildings = Building.playerBuildings
+        builtPieces = []
+        cathedralBuilt = false
+        lightClaimedAddresses = []
+        darkClaimedAddresses = []
+        nextTurn = .Church
+    }
+    
+    
+    //MARK: - Functions
+    /// Calculates who won the game.
+    ///
+    /// - Returns: Light or dark if they won, or nil if game is a tie.
+    func calculateWinner() -> Owner?
+    {
+        let lightScore = playerScore(.Light)
+        let darkScore = playerScore(.Dark)
+        
+        if (lightScore < darkScore)
+        {
+            return Owner.Light
+        }
+        else if (lightScore > darkScore)
+        {
+            return Owner.Dark
+        }
+        else
+        {
+            return nil
+        }
+    }
+    
+    /// Gets a dictionary where the keys are buildings the player has yet to build, and the values are whether or not the player can still possible build the building.
+    ///
+    /// - Parameter player: The player for which to get unbuild buildings.
+    /// - Returns: The dictionary of unbuilt buildings.
+    func unbuiltBuildings(for player: Owner) -> Dictionary<Building, Bool>
+    {
+        assert(player.isPlayerOwner, "Only player Owners have unbuilt Buildings")
+        
+        var pieces = Dictionary<Building, Bool>()
+        
+        for building in ((player == .Light) ? lightUnbuiltBuildings : darkUnbuiltBuildings)
+        {
+            pieces[building] = canBuildBuilding(building, for: player)
+        }
+        
+        return pieces
+        
+    }
+    
+    /// Determines if an owner can build a specified building type anywhere on the board.
+    ///
+    /// - Parameters:
+    ///   - building: The building type.
+    ///   - owner:
+    /// - Returns: Whether or not the owner can build the building type.
+    func canBuildBuilding(_ building: Building, for owner: Owner) -> Bool
+    {
+        for row in 0..<10
+        {
+            for col in 0..<10
+            {
+                let targetAddress = Address(Int8(col), Int8(row))
+                for direction in Direction.cardinalDirections
+                {
+                    if (canBuildBuilding(building, for: owner, facing: direction, at: targetAddress))
+                    {
+                        return true
+                    }
+                }
+            }
+        }
+        
+        return false
+    }
+    
+    /// Determines if an owner can build a specified building type at a specified direction and address.
+    ///
+    /// - Parameters:
+    ///   - building: The building type.
+    ///   - owner: The owner.
+    ///   - direction: The direction.
+    ///   - address: The address.
+    /// - Returns: Whether or not the owner can build the building type.
+    func canBuildBuilding(_ building: Building, for owner: Owner, facing direction: Direction, at address : Address) -> Bool
+    {
+        // Check if the Piece has been built
+        switch owner
+        {
+        case .Church:
+            if (cathedralBuilt)
+            {
+                return false
+            }
+        case .Light:
+            if (!lightUnbuiltBuildings.contains(building))
+            {
+                return false
+            }
+        case .Dark:
+            if (!darkUnbuiltBuildings.contains(building))
+            {
+                return false
+            }
+        }
+        
+        // Go through blueprint and confirm tiles can be built on
+        for blueprint in building.blueprint(owner: owner, facing: direction, at: address)
+        {
+            // Can't build if not on Board
+            if (!onBoard(blueprint))
+            {
+                return false
+            }
+            
+            let tile = board[blueprint]
+            if let tileOwner = tile.owner
+            {
+                // Can't build if Piece and Tile aren't owned by the same Owner
+                if (owner != tileOwner)
+                {
+                    return false
+                }
+                else
+                {
+                    // Even if same Owner, can onlt build on free claimed land
+                    if (tile.isBuilt)
+                    {
+                        return false
+                    }
+                }
+            }
+        }
+        
+        return true
+    }
+    
+    /// Builds a specified building type at a specified direction and address, and finds any claimed addresses and pieces.
+    ///
+    /// - Parameters:
+    ///   - building: The building type.
+    ///   - building: The building type.
+    ///   - direction: The direction.
+    ///   - address: The address.
+    /// - Returns: Tuple where the first element is a set of claimed addresses, and the second element is the set of claimed pieces.
+    func buildPiece(_ building: Building, for owner: Owner, facing direction: Direction, at address: Address) -> (Set<Address>, Set<Piece>)
+    {
+        assert(canBuildBuilding(building, for: owner, facing: direction, at: address))
+        
+        var totalClaimed = Set<Address>()
+        var totalDestroyed = Set<Piece>()
+        
+        let builtPiece = Piece(owner: owner, building: building, direction: direction, address: address)
+        builtPieces.append(builtPiece)
+        
+        // Remove tiles from claimed sets
+        for address in builtPiece.addresses()
+        {
+            board[address] = Tile(owner: owner, piece: builtPiece)
+            
+            switch owner
+            {
+            case .Church:
+                break
+            case .Light:
+                lightClaimedAddresses.remove(address)
+            case .Dark:
+                darkClaimedAddresses.remove(address)
+            }
+        }
+        
+        if (owner == .Church)
+        {
+            // Set cathedral built and next turn
+            cathedralBuilt = true
+            nextTurn = .Dark
+        }
+        else
+        {
+            // Remove builing from unbuilt set
+            _ = (owner == .Light) ? lightUnbuiltBuildings.remove(building) : darkUnbuiltBuildings.remove(building)
+            
+            // Find claims if after the players first turns
+            if (builtPieces.count > 3)
+            {
+                for address in builtPiece.addresses()
+                {
+                    for neighbor in address.neighbors()
+                    {
+                        if (!onBoard(neighbor))
+                        {
+                            continue
+                        }
+                        
+                        let (claimed, destroyed) = claimClaimant(player: owner, at: neighbor)
+                        totalClaimed = totalClaimed.union(claimed)
+                        if let destroyed = destroyed
+                        {
+                            totalDestroyed.insert(destroyed)
+                        }
+                        
+                    }
+                }
+            }
+            
+            // Set next turn to opponent if they can make move
+            let opponent = owner.opponent
+            if (canMakeMove(opponent))
+            {
+                nextTurn = opponent
+            }
+            // Else this player if they can move
+            else if (canMakeMove(owner))
+            {
+                nextTurn = owner
+            }
+            // Else game over
+            else
+            {
+                nextTurn = nil
+            }
+        }
+        
+        print(board.description)
+        return (totalClaimed, totalDestroyed)
+    }
+    
+    /// Claim all possible titles, including destroying upto one piece, for a player at a specified address.
+    ///
+    /// - Parameters:
+    ///   - player: The player owner.
+    ///   - address: The address.
+    /// - Returns: Tuple where the first element is a set of claimed addresses, and the second element is a claimed pieces, if there is one.
+    private func claimClaimant(player: Owner, at address: Address) -> (Set<Address>, Piece?)
+    {
+        var claimed = Set<Address>()
+        var destroyed: Piece?
+        
+        if !findClaimant(player: player, at: address, with: &claimed, and: &destroyed)
+        {
+            return ([], nil)
+        }
+        else
+        {
+            // Destroy first so claiming is valid
+            if let foo = destroyed
+            {
+                destroyPiece(foo)
+            }
+            
+            for claimed in claimed
+            {
+                claim(player: player, at: claimed)
+            }
+        }
+        
+        return (claimed, destroyed)
+    }
+    
+    /// Find the addresses, and possibly piece, that make up a claiment for a player at a specified address.
+    ///
+    /// - Parameters:
+    ///   - player: The player owner.
+    ///   - address: The address.
+    ///   - currentClaim: The set of current addresses inside the claiment.
+    ///   - currentDestroy: The current piece inside the claiment.
+    /// - Returns: Whether the player has a valid claimant at the address.
+    private func findClaimant(player: Owner, at address: Address, with currentClaim: inout Set<Address>, and currentDestroy: inout Piece?) -> Bool
+    {
+        // Can claim target?
+        if canClaim(player: player, at: address, with: &currentDestroy)
+        {
+            currentClaim.insert(address)
+        }
+        else
+        {
+            return false
+        }
+        
+        // Check each neighbor
+        for neighborAddress in address.neighbors()
+        {
+            // Neighbor is already in currentClaim, check next
+            if currentClaim.contains(neighborAddress)
+            {
+                continue
+            }
+            
+            // Neighbor is off board, check next
+            if !onBoard(neighborAddress)
+            {
+                continue
+            }
+            
+            // Neighbor is this player's piece, check next
+            let neighborTile = board[neighborAddress]
+            if (neighborTile.owner == player) && (neighborTile.isBuilt)
+            {
+                continue
+            }
+            
+            // Else, try to expand claimant
+            if findClaimant(player: player, at: neighborAddress, with: &currentClaim, and: &currentDestroy)
+            {
+                continue
+            }
+            
+            return false
+        }
+        
+        return true
+    }
+    
+    /// Determines if a player can claim an address.
+    ///
+    /// - Parameters:
+    ///   - player: The player owner.
+    ///   - address: The address.
+    ///   - currentDestroy: The current piece inside the claiment.
+    /// - Returns: Whether or not the player can claim the address.
+    private func canClaim(player: Owner, at address: Address, with currentDestroy: inout Piece?) -> Bool
+    {
+        assert(player.isPlayerOwner, "Only player Owners can claim a Tile")
+        
+        let tile = board[address]
+        
+        // Free tile
+        if (tile.owner == nil) && (!tile.isBuilt)
+        {
+            return true
+        }
+        
+        // Check current destroy
+        if let piece = currentDestroy
+        {
+            return (tile.piece == piece)
+        }
+            // No current claim
+        else
+        {
+            if (tile.owner == player) || (!tile.isBuilt)
+            {
+                return false
+            }
+            else
+            {
+                currentDestroy = tile.piece
+                return true
+            }
+        }
+    }
+    
+    /// Claims an address for a player owner.
+    ///
+    /// - Parameters:
+    ///   - player: The player owner.
+    ///   - address: The address.
+    private func claim(player: Owner, at address: Address)
+    {
+        assert(player.isPlayerOwner, "Only player Owners can claim a Tile")
+        assert(board[address].owner == nil, "Can only claim unclaimed Tiles")
+        
+        board[address] = Tile(owner: player, piece: nil)
+        if (player == .Light)
+        {
+            lightClaimedAddresses.insert(address)
+        }
+        else
+        {
+            darkClaimedAddresses.insert(address)
+        }
+    }
+    
+    /// Removes a piece from the game board.
+    ///
+    /// - Parameter piece: The piece.
+    private func destroyPiece(_ piece: Piece)
+    {
+        for address in piece.addresses()
+        {
+            board[address].piece = nil
+            board[address].owner = nil
+        }
+        
+        switch piece.owner
+        {
+        case .Church:
+            break
+        case .Light:
+            lightUnbuiltBuildings.insert(piece.building)
+        case .Dark:
+            darkUnbuiltBuildings.insert(piece.building)
+        }
+        
+        builtPieces.removeAll(where: { (builtPiece) -> Bool in
+            builtPiece == piece
+        })
+    }
+    
+    /// Determines if a player can make any valid moves.
+    ///
+    /// - Parameter player: The player owner.
+    /// - Returns: Whether or not the player can make a move.
+    private func canMakeMove(_ player: Owner) -> Bool
+    {
+        assert(player.isPlayerOwner, "Only player Owners can make moves")
+        
+        for building in (player == .Light ? lightUnbuiltBuildings : darkUnbuiltBuildings)
+        {
+            if canBuildBuilding(building, for: player)
+            {
+                return true
+            }
+        }
+        return false
+    }
+    
+    /// Determines if an address is on this board.
+    ///
+    /// - Parameter address: The address.
+    /// - Returns: Whether or not the address is on this board.
+    private func onBoard(_ address: Address) -> Bool
+    {
+        return (address.col > -1) && (address.col < 10) && (address.row > -1) && (address.row < 10)
+    }
+    
+    /// Calculates a players current score, the total size of all their remaining unbuilt buildings.
+    ///
+    /// - Parameter player: The player owner.
+    /// - Returns: The total size of remaining buildings.
+    private func playerScore(_ player: Owner) -> UInt8
+    {
+        assert(player.isPlayerOwner, "Can only calculate score for player Owners")
+        
+        var score: UInt8 = 0
+        for building in (player == .Light ? lightUnbuiltBuildings : darkUnbuiltBuildings)
+        {
+            score += building.size
+        }
+        return score
+    }
+    
+    
+    //MARK: - Encoding
+    struct PropertyKey
+    {
+        static let board = "board"
+        static let lightUnbuiltBuildings = "lightUnbuiltBuildings"
+        static let darkUnbuiltBuildings = "darkUnbuiltBuildings"
+        static let builtPieces = "builtPieces"
+        static let cathedralBuilt = "cathedralBuilt"
+        static let lightClaimedAddresses = "lightClaimedAddresses"
+        static let darkClaimedAddresses = "darkClaimedAddresses"
+        static let nextTurn = "nextTurn"
+    }
+    
+    func encode(with aCoder: NSCoder)
+    {
+        aCoder.encode(board, forKey: PropertyKey.board)
+        aCoder.encode(lightUnbuiltBuildings, forKey: PropertyKey.lightUnbuiltBuildings)
+        aCoder.encode(darkUnbuiltBuildings, forKey: PropertyKey.darkUnbuiltBuildings)
+        aCoder.encode(builtPieces, forKey: PropertyKey.builtPieces)
+        aCoder.encode(cathedralBuilt, forKey: PropertyKey.cathedralBuilt)
+        aCoder.encode(lightClaimedAddresses, forKey: PropertyKey.lightClaimedAddresses)
+        aCoder.encode(darkClaimedAddresses, forKey: PropertyKey.darkClaimedAddresses)
+        aCoder.encode(nextTurn, forKey: PropertyKey.nextTurn)
+    }
+    
+    required init?(coder aDecoder: NSCoder)
+    {
+        // Board
+        guard let board = aDecoder.decodeObject(forKey: PropertyKey.board) as? Board else
+        {
+            return nil
+        }
+        self.board = board
+        
+        // Light Unbuilt Buildings
+        guard let lightUnbuiltBuildings = aDecoder.decodeObject(forKey: PropertyKey.lightUnbuiltBuildings) as? Set<Building> else
+        {
+            return nil
+        }
+        self.lightUnbuiltBuildings = lightUnbuiltBuildings
+        
+        // Dark Unbuilt Buildings
+        guard let darkUnbuiltBuildings = aDecoder.decodeObject(forKey: PropertyKey.darkUnbuiltBuildings) as? Set<Building> else
+        {
+            return nil
+        }
+        self.darkUnbuiltBuildings = darkUnbuiltBuildings
+        
+        // Built Pieces
+        guard let builtPieces = aDecoder.decodeObject(forKey: PropertyKey.builtPieces) as? [Piece] else
+        {
+            return nil
+        }
+        self.builtPieces = builtPieces
+        
+        // Cathedral Built
+        guard let cathedralBuilt = aDecoder.decodeObject(forKey: PropertyKey.cathedralBuilt) as? Bool else
+        {
+            return nil
+        }
+        self.cathedralBuilt = cathedralBuilt
+        
+        // Light Claimed Addresses
+        guard let lightClaimedAddresses = aDecoder.decodeObject(forKey: PropertyKey.lightClaimedAddresses) as? Set<Address> else
+        {
+            return nil
+        }
+        self.lightClaimedAddresses = lightClaimedAddresses
+        
+        // Dark Claimed Addresses
+        guard let darkClaimedAddresses = aDecoder.decodeObject(forKey: PropertyKey.darkClaimedAddresses) as? Set<Address> else
+        {
+            return nil
+        }
+        self.darkClaimedAddresses = darkClaimedAddresses
+        
+        // Next Turn
+        self.nextTurn = aDecoder.decodeObject(forKey: PropertyKey.nextTurn) as? Owner
+    }
+}
