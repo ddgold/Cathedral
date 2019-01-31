@@ -12,31 +12,31 @@ import Foundation
 enum Building: UInt8
 {
     //MARK: - Values
-    case Tavern
-    case Stable
-    case Inn
-    case Bridge
-    case Square
-    case Abbey
-    case Manor
-    case Tower
-    case Infirmary
-    case Castle
-    case Academy
-    case Cathedral
+    case tavern
+    case stable
+    case inn
+    case bridge
+    case square
+    case abbey
+    case manor
+    case tower
+    case infirmary
+    case castle
+    case academy
+    case cathedral
     
     
     //MARK: - Properties
     /// Set of all player buildings.
     static var playerBuildings: Set<Building>
     {
-        return [self.Tavern, self.Stable, self.Inn, self.Bridge, self.Square, self.Abbey, self.Manor, self.Tower, self.Infirmary, self.Castle, self.Academy]
+        return [self.tavern, self.stable, self.inn, self.bridge, self.square, self.abbey, self.manor, self.tower, self.infirmary, self.castle, self.academy]
     }
     
     /// Whether or not this building type is a player building, i.e. not the cathedral.
     var isPlayerBuilding: Bool
     {
-        return (self != Building.Cathedral)
+        return (self != Building.cathedral)
     }
     
     /// The number if tiles wide this building type covers.
@@ -44,29 +44,29 @@ enum Building: UInt8
     {
         switch self
         {
-        case .Tavern:
+        case .tavern:
             return 1
-        case .Stable:
+        case .stable:
             return 1
-        case .Inn:
+        case .inn:
             return 2
-        case .Bridge:
+        case .bridge:
             return 1
-        case .Square:
+        case .square:
             return 2
-        case .Abbey:
+        case .abbey:
             return 2
-        case .Manor:
+        case .manor:
             return 2
-        case .Tower:
+        case .tower:
             return 3
-        case .Infirmary:
+        case .infirmary:
             return 3
-        case .Castle:
+        case .castle:
             return 2
-        case .Academy:
+        case .academy:
             return 3
-        case .Cathedral:
+        case .cathedral:
             return 3
         }
     }
@@ -76,29 +76,29 @@ enum Building: UInt8
     {
         switch self
         {
-        case .Tavern:
+        case .tavern:
             return 1
-        case .Stable:
+        case .stable:
             return 2
-        case .Inn:
+        case .inn:
             return 2
-        case .Bridge:
+        case .bridge:
             return 3
-        case .Square:
+        case .square:
             return 2
-        case .Abbey:
+        case .abbey:
             return 3
-        case .Manor:
+        case .manor:
             return 3
-        case .Tower:
+        case .tower:
             return 3
-        case .Infirmary:
+        case .infirmary:
             return 3
-        case .Castle:
+        case .castle:
             return 3
-        case .Academy:
+        case .academy:
             return 3
-        case .Cathedral:
+        case .cathedral:
             return 4
         }
     }
@@ -108,29 +108,29 @@ enum Building: UInt8
     {
         switch self
         {
-        case .Tavern:
+        case .tavern:
             return 1
-        case .Stable:
+        case .stable:
             return 2
-        case .Inn:
+        case .inn:
             return 3
-        case .Bridge:
+        case .bridge:
             return 3
-        case .Square:
+        case .square:
             return 4
-        case .Abbey:
+        case .abbey:
             return 4
-        case .Manor:
+        case .manor:
             return 4
-        case .Tower:
+        case .tower:
             return 5
-        case .Infirmary:
+        case .infirmary:
             return 5
-        case .Castle:
+        case .castle:
             return 5
-        case .Academy:
+        case .academy:
             return 5
-        case .Cathedral:
+        case .cathedral:
             return 6
         }
     }
@@ -152,26 +152,26 @@ enum Building: UInt8
         let base: Set<Address>
         switch self
         {
-        case .Tavern:
+        case .tavern:
             base = [Address(0, 0)]
-        case .Stable:
+        case .stable:
             base = [Address(0, 0),
                     Address(0, 1)]
-        case .Inn:
+        case .inn:
             base = [Address(0, 0),
                     Address(0, 1),
                     Address(1, 0)]
-        case .Bridge:
+        case .bridge:
             base = [Address(0, 0),
                     Address(0, 1),
                     Address(0, 2)]
-        case .Square:
+        case .square:
             base = [Address(0, 0),
                     Address(0, 1),
                     Address(1, 0),
                     Address(1, 1)]
-        case .Abbey:
-            if (owner == .Light)
+        case .abbey:
+            if (owner == .light)
             {
                 base = [Address(0, 0),
                         Address(0, 1),
@@ -185,31 +185,31 @@ enum Building: UInt8
                         Address(1, 0),
                         Address(1, 1)]
             }
-        case .Manor:
+        case .manor:
             base = [Address(0, 0),
                     Address(0, 1),
                     Address(0, 2),
                     Address(1, 1)]
-        case .Tower:
+        case .tower:
             base = [Address(0, 0),
                     Address(0, 1),
                     Address(1, 1),
                     Address(1, 2),
                     Address(2, 2)]
-        case .Infirmary:
+        case .infirmary:
             base = [Address(0, 1),
                     Address(1, 0),
                     Address(1, 1),
                     Address(1, 2),
                     Address(2, 1)]
-        case .Castle:
+        case .castle:
             base = [Address(0, 0),
                     Address(0, 1),
                     Address(0, 2),
                     Address(1, 0),
                     Address(1, 2)]
-        case .Academy:
-            if (owner == .Light)
+        case .academy:
+            if (owner == .light)
             {
                 base = [Address(0, 1),
                         Address(1, 0),
@@ -225,7 +225,7 @@ enum Building: UInt8
                         Address(1, 2),
                         Address(2, 1)]
             }
-        case .Cathedral:
+        case .cathedral:
             base = [Address(0, 1),
                     Address(1, 0),
                     Address(1, 1),
@@ -257,29 +257,29 @@ enum Building: UInt8
     {
         switch self
         {
-        case .Tavern:
+        case .tavern:
             return "Tavern"
-        case .Stable:
+        case .stable:
             return "Stable"
-        case .Inn:
+        case .inn:
             return "Inn"
-        case .Bridge:
+        case .bridge:
             return "Bridge"
-        case .Square:
+        case .square:
             return "Square"
-        case .Abbey:
+        case .abbey:
             return "Abbey"
-        case .Manor:
+        case .manor:
             return "Manor"
-        case .Tower:
+        case .tower:
             return "Tower"
-        case .Infirmary:
+        case .infirmary:
             return "Infirmary"
-        case .Castle:
+        case .castle:
             return "Castle"
-        case .Academy:
+        case .academy:
             return "Academy"
-        case .Cathedral:
+        case .cathedral:
             return "Cathedral"
         }
     }

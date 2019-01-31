@@ -12,16 +12,16 @@ import Foundation
 enum Owner: UInt8
 {
     //MARK: - Values
-    case Light
-    case Dark
-    case Church
+    case light
+    case dark
+    case church
     
     
     //MARK: - Properties
     /// Whether or not tbis owner is a player owner, i.e. light or dark.
     var isPlayerOwner: Bool
     {
-        return (self != Owner.Church)
+        return (self != Owner.church)
     }
     
     /// The oppenent of this owner. Note, only player owners have oppenents.
@@ -29,11 +29,11 @@ enum Owner: UInt8
     {
         switch self
         {
-        case .Light:
-            return Owner.Dark
-        case .Dark:
-            return Owner.Light
-        case .Church:
+        case .light:
+            return Owner.dark
+        case .dark:
+            return Owner.light
+        case .church:
             assert(false, "Only player Owners have opponents")
         }
     }
@@ -51,11 +51,11 @@ enum Owner: UInt8
     {
         switch self
         {
-        case .Light:
+        case .light:
             return "Light"
-        case .Dark:
+        case .dark:
             return "Dark"
-        case .Church:
+        case .church:
             return "Church"
         }
     }

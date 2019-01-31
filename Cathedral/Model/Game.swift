@@ -13,21 +13,21 @@ class Game: NSObject, NSCoding
 {
     //MARK: - Properties
     /// The game board.
-    private var board: Board
+    private(set) var board: Board
     /// The set of light's unbuilt buildings.
     private var lightUnbuiltBuildings: Set<Building>
     /// The set of dark's unbuilt buildings.
     private var darkUnbuiltBuildings: Set<Building>
     /// The list of built pieces, in order from first to last built.
-    private var builtPieces: [Piece]
+    private(set) var builtPieces: Set<Piece>
     /// Whether or not the cathedral has been built.
-    private var cathedralBuilt: Bool
+    private(set) var cathedralBuilt: Bool
     /// The set of light's claimed address.
-    private var lightClaimedAddresses: Set<Address>
+    private(set) var lightClaimedAddresses: Set<Address>
     /// The set of dark's claimed address.
-    private var darkClaimedAddresses: Set<Address>
+    private(set) var darkClaimedAddresses: Set<Address>
     /// The owner who's turn is next. If nil, game is over.
-    private var nextTurn: Owner?
+    private(set) var nextTurn: Owner?
     
     
     //MARK: - Initialization
@@ -41,30 +41,35 @@ class Game: NSObject, NSCoding
         cathedralBuilt = false
         lightClaimedAddresses = []
         darkClaimedAddresses = []
-        nextTurn = .Church
+        nextTurn = .church
     }
     
     
     //MARK: - Functions
     /// Calculates who won the game.
     ///
-    /// - Returns: Light or dark if they won, or nil if game is a tie.
-    func calculateWinner() -> Owner?
+    /// - Returns: A tuple, where the first element is the player, light or dark, if they won, or nil if game is a tie, and the second element is the winner's score.  Or nil, if no winner has been decided yet.
+    func calculateWinner() -> (Owner?, UInt8)?
     {
-        let lightScore = playerScore(.Light)
-        let darkScore = playerScore(.Dark)
+        if canMakeMove(.dark) || canMakeMove(.light)
+        {
+            return nil
+        }
+        
+        let lightScore = playerScore(.light)
+        let darkScore = playerScore(.dark)
         
         if (lightScore < darkScore)
         {
-            return Owner.Light
+            return (.light, darkScore)
         }
         else if (lightScore > darkScore)
         {
-            return Owner.Dark
+            return (.dark, lightScore)
         }
         else
         {
-            return nil
+            return (nil, 0)
         }
     }
     
@@ -78,7 +83,7 @@ class Game: NSObject, NSCoding
         
         var pieces = Dictionary<Building, Bool>()
         
-        for building in ((player == .Light) ? lightUnbuiltBuildings : darkUnbuiltBuildings)
+        for building in ((player == .light) ? lightUnbuiltBuildings : darkUnbuiltBuildings)
         {
             pieces[building] = canBuildBuilding(building, for: player)
         }
@@ -126,17 +131,17 @@ class Game: NSObject, NSCoding
         // Check if the Piece has been built
         switch owner
         {
-        case .Church:
+        case .church:
             if (cathedralBuilt)
             {
                 return false
             }
-        case .Light:
+        case .light:
             if (!lightUnbuiltBuildings.contains(building))
             {
                 return false
             }
-        case .Dark:
+        case .dark:
             if (!darkUnbuiltBuildings.contains(building))
             {
                 return false
@@ -185,39 +190,40 @@ class Game: NSObject, NSCoding
     func buildPiece(_ building: Building, for owner: Owner, facing direction: Direction, at address: Address) -> (Set<Address>, Set<Piece>)
     {
         assert(canBuildBuilding(building, for: owner, facing: direction, at: address))
+        assert(nextTurn == owner)
         
         var totalClaimed = Set<Address>()
         var totalDestroyed = Set<Piece>()
         
         let builtPiece = Piece(owner: owner, building: building, direction: direction, address: address)
-        builtPieces.append(builtPiece)
+        builtPieces.insert(builtPiece)
         
         // Remove tiles from claimed sets
         for address in builtPiece.addresses()
         {
-            board[address] = Tile(owner: owner, piece: builtPiece)
+            board[address].piece = builtPiece
             
             switch owner
             {
-            case .Church:
+            case .church:
                 break
-            case .Light:
+            case .light:
                 lightClaimedAddresses.remove(address)
-            case .Dark:
+            case .dark:
                 darkClaimedAddresses.remove(address)
             }
         }
         
-        if (owner == .Church)
+        if (owner == .church)
         {
             // Set cathedral built and next turn
             cathedralBuilt = true
-            nextTurn = .Dark
+            nextTurn = .dark
         }
         else
         {
             // Remove builing from unbuilt set
-            _ = (owner == .Light) ? lightUnbuiltBuildings.remove(building) : darkUnbuiltBuildings.remove(building)
+            _ = (owner == .light) ? lightUnbuiltBuildings.remove(building) : darkUnbuiltBuildings.remove(building)
             
             // Find claims if after the players first turns
             if (builtPieces.count > 3)
@@ -260,7 +266,6 @@ class Game: NSObject, NSCoding
             }
         }
         
-        print(board.description)
         return (totalClaimed, totalDestroyed)
     }
     
@@ -400,7 +405,7 @@ class Game: NSObject, NSCoding
         assert(board[address].owner == nil, "Can only claim unclaimed Tiles")
         
         board[address] = Tile(owner: player, piece: nil)
-        if (player == .Light)
+        if (player == .light)
         {
             lightClaimedAddresses.insert(address)
         }
@@ -423,17 +428,15 @@ class Game: NSObject, NSCoding
         
         switch piece.owner
         {
-        case .Church:
+        case .church:
             break
-        case .Light:
+        case .light:
             lightUnbuiltBuildings.insert(piece.building)
-        case .Dark:
+        case .dark:
             darkUnbuiltBuildings.insert(piece.building)
         }
         
-        builtPieces.removeAll(where: { (builtPiece) -> Bool in
-            builtPiece == piece
-        })
+        builtPieces.remove(piece)
     }
     
     /// Determines if a player can make any valid moves.
@@ -444,7 +447,7 @@ class Game: NSObject, NSCoding
     {
         assert(player.isPlayerOwner, "Only player Owners can make moves")
         
-        for building in (player == .Light ? lightUnbuiltBuildings : darkUnbuiltBuildings)
+        for building in (player == .light ? lightUnbuiltBuildings : darkUnbuiltBuildings)
         {
             if canBuildBuilding(building, for: player)
             {
@@ -472,7 +475,7 @@ class Game: NSObject, NSCoding
         assert(player.isPlayerOwner, "Can only calculate score for player Owners")
         
         var score: UInt8 = 0
-        for building in (player == .Light ? lightUnbuiltBuildings : darkUnbuiltBuildings)
+        for building in (player == .light ? lightUnbuiltBuildings : darkUnbuiltBuildings)
         {
             score += building.size
         }
@@ -529,7 +532,7 @@ class Game: NSObject, NSCoding
         self.darkUnbuiltBuildings = darkUnbuiltBuildings
         
         // Built Pieces
-        guard let builtPieces = aDecoder.decodeObject(forKey: PropertyKey.builtPieces) as? [Piece] else
+        guard let builtPieces = aDecoder.decodeObject(forKey: PropertyKey.builtPieces) as? Set<Piece> else
         {
             return nil
         }
