@@ -187,10 +187,10 @@ class Game: NSObject, NSCoding
     ///   - direction: The direction.
     ///   - address: The address.
     /// - Returns: Tuple where the first element is a set of claimed addresses, and the second element is the set of claimed pieces.
-    func buildPiece(_ building: Building, for owner: Owner, facing direction: Direction, at address: Address) -> (Set<Address>, Set<Piece>)
+    func buildBuilding(_ building: Building, for owner: Owner, facing direction: Direction, at address: Address) -> (Set<Address>, Set<Piece>)
     {
-        assert(canBuildBuilding(building, for: owner, facing: direction, at: address))
-        assert(nextTurn == owner)
+        assert(nextTurn == owner, "Not \(owner)'s turn to build piece")
+        assert(canBuildBuilding(building, for: owner, facing: direction, at: address), "Can't build \(owner) \(building) facing \(direction) at \(address)")
         
         var totalClaimed = Set<Address>()
         var totalDestroyed = Set<Piece>()
