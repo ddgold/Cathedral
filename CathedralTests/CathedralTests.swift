@@ -14,9 +14,9 @@ class CathedralTests: XCTestCase
     func sampleGame() -> Game
     {
         let game = Game()
-        _ = game.buildPiece(.cathedral, for: .church, facing: .north, at: Address(1, 3))
-        _ = game.buildPiece(.manor, for: .dark, facing: .west, at: Address(0, 7))
-        _ = game.buildPiece(.tower, for: .light, facing: .south, at: Address(8, 3))
+        _ = game.buildBuilding(.cathedral, for: .church, facing: .north, at: Address(1, 3))
+        _ = game.buildBuilding(.manor, for: .dark, facing: .west, at: Address(0, 7))
+        _ = game.buildBuilding(.tower, for: .light, facing: .south, at: Address(8, 3))
         let expectedResult = """
                                0 1 2 3 4 5 6 7 8 9
                              0 . . . . . . . . . .
@@ -67,7 +67,7 @@ class CathedralTests: XCTestCase
     func testGame1()
     {
         let game = Game()
-        let (claimedAddresses1, claimedPiece1) = game.buildPiece(.cathedral, for: .church, facing: .east, at: Address(3, 0))
+        let (claimedAddresses1, claimedPiece1) = game.buildBuilding(.cathedral, for: .church, facing: .east, at: Address(3, 0))
         let expectedResult1 = """
                                0 1 2 3 4 5 6 7 8 9
                              0 . . C . . . . . . .
@@ -89,7 +89,7 @@ class CathedralTests: XCTestCase
         XCTAssert(game.calculateWinner() == nil)
         
         
-        let (claimedAddresses2, claimedPiece2) = game.buildPiece(.tower, for: .dark, facing: .west, at: Address(3, 2))
+        let (claimedAddresses2, claimedPiece2) = game.buildBuilding(.tower, for: .dark, facing: .west, at: Address(3, 2))
         let expectedResult2 = """
                                0 1 2 3 4 5 6 7 8 9
                              0 . . C . . D . . . .
@@ -111,7 +111,7 @@ class CathedralTests: XCTestCase
         XCTAssert(game.calculateWinner() == nil)
         
         
-        let (claimedAddresses3, claimedPiece3) = game.buildPiece(.academy, for: .light, facing: .north, at: Address(5, 7))
+        let (claimedAddresses3, claimedPiece3) = game.buildBuilding(.academy, for: .light, facing: .north, at: Address(5, 7))
         let expectedResult3 = """
                                0 1 2 3 4 5 6 7 8 9
                              0 . . C . . D . . . .
@@ -133,7 +133,7 @@ class CathedralTests: XCTestCase
         XCTAssert(game.calculateWinner() == nil)
         
         
-        let (claimedAddresses4, claimedPiece4) = game.buildPiece(.infirmary, for: .dark, facing: .north, at: Address(0, 2))
+        let (claimedAddresses4, claimedPiece4) = game.buildBuilding(.infirmary, for: .dark, facing: .north, at: Address(0, 2))
         let expectedResult4 = """
                                0 1 2 3 4 5 6 7 8 9
                              0 . . C . . D . . . .
@@ -155,7 +155,7 @@ class CathedralTests: XCTestCase
         XCTAssert(game.calculateWinner() == nil)
         
         
-        let (claimedAddresses5, claimedPiece5) = game.buildPiece(.castle, for: .light, facing: .east, at: Address(9, 6))
+        let (claimedAddresses5, claimedPiece5) = game.buildBuilding(.castle, for: .light, facing: .east, at: Address(9, 6))
         let expectedResult5 = """
                                0 1 2 3 4 5 6 7 8 9
                              0 . . C . . D . . . .
@@ -177,7 +177,7 @@ class CathedralTests: XCTestCase
         XCTAssert(game.calculateWinner() == nil)
         
         
-        let (claimedAddresses6, claimedPiece6) = game.buildPiece(.inn, for: .dark, facing: .south, at: Address(3, 4))
+        let (claimedAddresses6, claimedPiece6) = game.buildBuilding(.inn, for: .dark, facing: .south, at: Address(3, 4))
         let expectedResult6 = """
                                0 1 2 3 4 5 6 7 8 9
                              0 d d d d d D . . . .
@@ -199,7 +199,7 @@ class CathedralTests: XCTestCase
         XCTAssert(game.calculateWinner() == nil)
         
         
-        let (claimedAddresses7, claimedPiece7) = game.buildPiece(.stable, for: .light, facing: .north, at: Address(0, 4))
+        let (claimedAddresses7, claimedPiece7) = game.buildBuilding(.stable, for: .light, facing: .north, at: Address(0, 4))
         let expectedResult7 = """
                                0 1 2 3 4 5 6 7 8 9
                              0 d d d d d D . . . .
@@ -221,7 +221,7 @@ class CathedralTests: XCTestCase
         XCTAssert(game.calculateWinner() == nil)
         
         
-        let (claimedAddresses8, claimedPiece8) = game.buildPiece(.square, for: .dark, facing: .east, at: Address(2, 8))
+        let (claimedAddresses8, claimedPiece8) = game.buildBuilding(.square, for: .dark, facing: .east, at: Address(2, 8))
         let expectedResult8 = """
                                0 1 2 3 4 5 6 7 8 9
                              0 d d d d d D . . . .
@@ -243,7 +243,7 @@ class CathedralTests: XCTestCase
         XCTAssert(game.calculateWinner() == nil)
         
         
-        let (claimedAddresses9, claimedPiece9) = game.buildPiece(.bridge, for: .light, facing: .south, at: Address(0, 9))
+        let (claimedAddresses9, claimedPiece9) = game.buildBuilding(.bridge, for: .light, facing: .south, at: Address(0, 9))
         let expectedResult9 = """
                                0 1 2 3 4 5 6 7 8 9
                              0 d d d d d D . . . .
@@ -265,7 +265,7 @@ class CathedralTests: XCTestCase
         XCTAssert(game.calculateWinner() == nil)
         
         
-        let (claimedAddresses10, claimedPiece10) = game.buildPiece(.manor, for: .dark, facing: .south, at: Address(1, 7))
+        let (claimedAddresses10, claimedPiece10) = game.buildBuilding(.manor, for: .dark, facing: .south, at: Address(1, 7))
         let expectedResult10 = """
                                0 1 2 3 4 5 6 7 8 9
                              0 d d d d d D . . . .
@@ -288,7 +288,7 @@ class CathedralTests: XCTestCase
         XCTAssert(game.calculateWinner() == nil)
         
         
-        let (claimedAddresses11, claimedPiece11) = game.buildPiece(.tavern, for: .light, facing: .north, at: Address(8, 8))
+        let (claimedAddresses11, claimedPiece11) = game.buildBuilding(.tavern, for: .light, facing: .north, at: Address(8, 8))
         let expectedResult11 = """
                                0 1 2 3 4 5 6 7 8 9
                              0 d d d d d D . . . .
@@ -310,7 +310,7 @@ class CathedralTests: XCTestCase
         XCTAssert(game.calculateWinner() == nil)
         
         
-        let (claimedAddresses12, claimedPiece12) = game.buildPiece(.academy, for: .dark, facing: .north, at: Address(3, 6))
+        let (claimedAddresses12, claimedPiece12) = game.buildBuilding(.academy, for: .dark, facing: .north, at: Address(3, 6))
         let expectedResult12 = """
                                0 1 2 3 4 5 6 7 8 9
                              0 d d d d d D . . . .
@@ -332,7 +332,7 @@ class CathedralTests: XCTestCase
         XCTAssert(game.calculateWinner() == nil)
         
         
-        let (claimedAddresses13, claimedPiece13) = game.buildPiece(.bridge, for: .light, facing: .east, at: Address(5, 9))
+        let (claimedAddresses13, claimedPiece13) = game.buildBuilding(.bridge, for: .light, facing: .east, at: Address(5, 9))
         let expectedResult13 = """
                                0 1 2 3 4 5 6 7 8 9
                              0 d d d d d D . . . .
@@ -354,7 +354,7 @@ class CathedralTests: XCTestCase
         XCTAssert(game.calculateWinner() == nil)
         
         
-        let (claimedAddresses14, claimedPiece14) = game.buildPiece(.castle, for: .dark, facing: .south, at: Address(6, 6))
+        let (claimedAddresses14, claimedPiece14) = game.buildBuilding(.castle, for: .dark, facing: .south, at: Address(6, 6))
         let expectedResult14 = """
                                0 1 2 3 4 5 6 7 8 9
                              0 d d d d d D . . . .
@@ -376,7 +376,7 @@ class CathedralTests: XCTestCase
         XCTAssert(game.calculateWinner() == nil)
         
         
-        let (claimedAddresses15, claimedPiece15) = game.buildPiece(.stable, for: .light, facing: .north, at: Address(9, 8))
+        let (claimedAddresses15, claimedPiece15) = game.buildBuilding(.stable, for: .light, facing: .north, at: Address(9, 8))
         let expectedResult15 = """
                                0 1 2 3 4 5 6 7 8 9
                              0 d d d d d D . . . .
@@ -398,7 +398,7 @@ class CathedralTests: XCTestCase
         XCTAssert(game.calculateWinner() == nil)
         
         
-        let (claimedAddresses16, claimedPiece16) = game.buildPiece(.bridge, for: .dark, facing: .west, at: Address(7, 5))
+        let (claimedAddresses16, claimedPiece16) = game.buildBuilding(.bridge, for: .dark, facing: .west, at: Address(7, 5))
         let expectedResult16 = """
                                0 1 2 3 4 5 6 7 8 9
                              0 d d d d d D d d d d
@@ -423,7 +423,7 @@ class CathedralTests: XCTestCase
         XCTAssert(game.nextTurn == .dark)
         
         
-        let (claimedAddresses17, claimedPiece17) = game.buildPiece(.stable, for: .dark, facing: .north, at: Address(9, 0))
+        let (claimedAddresses17, claimedPiece17) = game.buildBuilding(.stable, for: .dark, facing: .north, at: Address(9, 0))
         let expectedResult17 = """
                                0 1 2 3 4 5 6 7 8 9
                              0 d d d d d D d d d D
@@ -445,7 +445,7 @@ class CathedralTests: XCTestCase
         XCTAssert(game.calculateWinner() == nil)
         
         
-        let (claimedAddresses18, claimedPiece18) = game.buildPiece(.abbey, for: .dark, facing: .north, at: Address(7, 0))
+        let (claimedAddresses18, claimedPiece18) = game.buildBuilding(.abbey, for: .dark, facing: .north, at: Address(7, 0))
         let expectedResult18 = """
                                0 1 2 3 4 5 6 7 8 9
                              0 d d d d d D d d D D
@@ -467,7 +467,7 @@ class CathedralTests: XCTestCase
         XCTAssert(game.calculateWinner() == nil)
         
         
-        let (claimedAddresses19, claimedPiece19) = game.buildPiece(.tavern, for: .dark, facing: .north, at: Address(0, 0))
+        let (claimedAddresses19, claimedPiece19) = game.buildBuilding(.tavern, for: .dark, facing: .north, at: Address(0, 0))
         let expectedResult19 = """
                                0 1 2 3 4 5 6 7 8 9
                              0 D d d d d D d d D D

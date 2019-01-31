@@ -146,7 +146,7 @@ enum Building: UInt8
     /// - Returns: A set of addresses that make up the blueprint.
     func blueprint(owner: Owner, facing direction: Direction, at address: Address) -> Set<Address>
     {
-        assert(owner.isPlayerOwner == self.isPlayerBuilding, "Can't get blueprint for invalid Piece " + owner.description + " " + self.description)
+        assert(owner.isPlayerOwner == self.isPlayerBuilding, "Can't get blueprint for \(owner) \(self)")
         
         // Get the base blueprint base on owner and building type
         let base: Set<Address>
