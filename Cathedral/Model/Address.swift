@@ -55,13 +55,13 @@ struct Address: Hashable
     {
         switch direction
         {
-        case .North:
+        case .north:
             return Address(col,row)
-        case .East:
+        case .east:
             return Address(-row,col)
-        case .South:
+        case .south:
             return Address(-col,-row)
-        case .West:
+        case .west:
             return Address(row,-col)
         }
     }

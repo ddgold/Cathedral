@@ -63,16 +63,14 @@ struct Board
         {
             description += " " + col.description
         }
-        description += "\n"
         
         for row in 0..<10
         {
-            description += row.description
+            description += "\n" + row.description
             for col in 0..<10
             {
                 description += " " + tiles[col][row].description
             }
-            description += "\n"
         }
         return description
     }

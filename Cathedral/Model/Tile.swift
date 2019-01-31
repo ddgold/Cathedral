@@ -46,7 +46,7 @@ struct Tile: Equatable
         {
             switch owner
             {
-            case .Church:
+            case .church:
                 if isBuilt
                 {
                     return "C"
@@ -55,7 +55,7 @@ struct Tile: Equatable
                 {
                     return "c"
                 }
-            case .Light:
+            case .light:
                 if isBuilt
                 {
                     return "L"
@@ -64,7 +64,7 @@ struct Tile: Equatable
                 {
                     return "l"
                 }
-            case .Dark:
+            case .dark:
                 if isBuilt
                 {
                     return "D"

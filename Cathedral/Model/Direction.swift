@@ -12,17 +12,17 @@ import Foundation
 enum Direction: UInt8
 {
     //MARK: - Values
-    case North
-    case East
-    case South
-    case West
+    case north
+    case east
+    case south
+    case west
     
     
     //MARK: - Properties
     /// The set of all cardinal directions.
     static var cardinalDirections: Set<Direction>
     {
-        return [self.North, self.East, self.South, self.West]
+        return [self.north, self.east, self.south, self.west]
     }
     
     
@@ -38,13 +38,13 @@ enum Direction: UInt8
     {
         switch self
         {
-        case .North:
+        case .north:
             return "North"
-        case .East:
+        case .east:
             return "East"
-        case .South:
+        case .south:
             return "South"
-        case .West:
+        case .west:
             return "West"
         }
     }
