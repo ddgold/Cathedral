@@ -142,9 +142,9 @@ enum Building: UInt8
     /// - Parameters:
     ///   - owner: The owner of the building.
     ///   - direction: The direction of the building.
-    ///   - address: The origin of the building.
+    ///   - address: The origin of the building. Defaults to (0, 0).
     /// - Returns: A set of addresses that make up the blueprint.
-    func blueprint(owner: Owner, facing direction: Direction, at address: Address) -> Set<Address>
+    func blueprint(owner: Owner, facing direction: Direction, at address: Address = Address(0, 0)) -> Set<Address>
     {
         assert(owner.isPlayerOwner == self.isPlayerBuilding, "Can't get blueprint for \(owner) \(self)")
         

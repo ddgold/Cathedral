@@ -13,9 +13,15 @@ struct Address: Hashable
 {
     //MARK: - Properties
     /// The column position.
-    let col: Int8
+    var col: Int8
     /// The row position.
-    let row: Int8
+    var row: Int8
+    
+    /// Whether or not the address is on the game board.
+    var isOnBoard: Bool
+    {
+        return (col >= 0) && (col <= 9) && (row >= 0) && (row <= 9)
+    }
     
     
     //MARK: - Initialization

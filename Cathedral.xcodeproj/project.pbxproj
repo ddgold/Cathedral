@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CA8C1AB62202942C005EA5FD /* BoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA8C1AB52202942C005EA5FD /* BoardView.swift */; };
+		CA8C1ABD2202A960005EA5FD /* PieceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA8C1ABC2202A960005EA5FD /* PieceView.swift */; };
 		CAF56E1822014877002DF690 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAF56E1722014877002DF690 /* AppDelegate.swift */; };
 		CAF56E1A22014877002DF690 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAF56E1922014877002DF690 /* GameViewController.swift */; };
 		CAF56E1F22014878002DF690 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CAF56E1E22014878002DF690 /* Assets.xcassets */; };
@@ -33,6 +35,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		CA8C1AB52202942C005EA5FD /* BoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardView.swift; sourceTree = "<group>"; };
+		CA8C1ABC2202A960005EA5FD /* PieceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieceView.swift; sourceTree = "<group>"; };
 		CAF56E1422014877002DF690 /* Cathedral.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cathedral.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CAF56E1722014877002DF690 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CAF56E1922014877002DF690 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
@@ -70,6 +74,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CA8C1AB722029431005EA5FD /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				CA8C1AB52202942C005EA5FD /* BoardView.swift */,
+				CA8C1ABC2202A960005EA5FD /* PieceView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		CAF56E0B22014877002DF690 = {
 			isa = PBXGroup;
 			children = (
@@ -94,6 +107,7 @@
 				CAF56E1722014877002DF690 /* AppDelegate.swift */,
 				CAF56E3822014A77002DF690 /* Model */,
 				CAF56E3722014A35002DF690 /* Controllers */,
+				CA8C1AB722029431005EA5FD /* Views */,
 				CAF56E1E22014878002DF690 /* Assets.xcassets */,
 				CAF56E2022014878002DF690 /* LaunchScreen.storyboard */,
 				CAF56E2322014878002DF690 /* Info.plist */,
@@ -233,6 +247,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CA8C1AB62202942C005EA5FD /* BoardView.swift in Sources */,
 				CAF56E4022014C72002DF690 /* Address.swift in Sources */,
 				CAF56E4E22015266002DF690 /* Game.swift in Sources */,
 				CAF56E5022015802002DF690 /* Piece.swift in Sources */,
@@ -242,6 +257,7 @@
 				CAF56E1A22014877002DF690 /* GameViewController.swift in Sources */,
 				CAF56E1822014877002DF690 /* AppDelegate.swift in Sources */,
 				CAF56E4222014CD9002DF690 /* Direction.swift in Sources */,
+				CA8C1ABD2202A960005EA5FD /* PieceView.swift in Sources */,
 				CAF56E4C22015163002DF690 /* Board.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
