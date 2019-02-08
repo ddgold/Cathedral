@@ -11,6 +11,16 @@ import UIKit
 class PieceView: UIImageView
 {
     //MARK: - Properties
+    
+    /// The owner of the piece.
+    let owner: Owner
+    /// The building type of the piece.
+    let building: Building
+    
+    
+    /// The current rotation of the piece.
+    private(set) var angle: CGFloat = 0
+    
     /// The size of a tile set by controller.
     private var tileSize: CGFloat
     {
@@ -19,40 +29,6 @@ class PieceView: UIImageView
             resetTileSize(newValue)
         }
     }
-    
-    /// The owner of the piece.
-    let owner: Owner
-    /// The building type of the piece.
-    let building: Building
-    /// The direction the piece is facting.
-    let direction: Direction
-    
-    /// The piece's width in count of tiles.
-    var width: UInt8
-    {
-        if (direction == .east) || (direction == .west)
-        {
-            return building.height
-        }
-        else
-        {
-            return building.width
-        }
-    }
-    
-    /// The piece's height in count of tiles.
-    var height: UInt8
-    {
-        if (direction == .north) || (direction == .south)
-        {
-            return building.height
-        }
-        else
-        {
-            return building.width
-        }
-    }
-    
     
     //MARK: - Initialization
     /// Initialize a new piece view.
@@ -68,7 +44,6 @@ class PieceView: UIImageView
         
         self.owner = owner
         self.building = building
-        self.direction = direction
         
         let imageName = "\(owner.description)_\(building.description)"
         guard let imageObject = UIImage(named: imageName) else
@@ -78,6 +53,18 @@ class PieceView: UIImageView
         
         super.init(image: imageObject)
         self.isUserInteractionEnabled = true
+        
+        switch direction
+        {
+        case .north:
+            break
+        case .east:
+            rotate(to: CGFloat.pi / 2)
+        case .south:
+            rotate(to: CGFloat.pi)
+        case .west:
+            rotate(to: 3 * CGFloat.pi / 2)
+        }
         
         resetTileSize(tileSize)
     }
@@ -104,6 +91,57 @@ class PieceView: UIImageView
         return building.blueprint(owner: owner, facing: .north).contains(where: { address in
             return (address.col == col) && (address.row == row)
         })
+    }
+    
+    /// Move the piece to a new position.
+    ///
+    /// - Parameter newPosition: The new position.
+    func move(to newPosition: CGPoint)
+    {
+        self.frame.origin = newPosition
+    }
+    
+    /// Rotate the piece to a new angle.
+    ///
+    /// - Parameter newAngle: The new angle.
+    func rotate(to newAngle: CGFloat)
+    {
+        angle = newAngle
+        transform = CGAffineTransform(rotationAngle: newAngle)
+    }
+    
+    /// Snap the piece to a cardinal direction.
+    ///
+    /// - Returns: The snapped direction of the piece.
+    func snapToDirection() -> Direction
+    {
+        // Calculate the distance to nearest half-pi
+        let halfPi = CGFloat.pi / 2
+        let remainder = angle.truncatingRemainder(dividingBy: halfPi)
+        
+        // Remove the remainder to get to nearest half-pi
+        if remainder < -(halfPi / 2)
+        {
+            rotate(to: angle - remainder - halfPi)
+        }
+        else if remainder > (halfPi / 2)
+        {
+            rotate(to: angle - remainder + halfPi)
+        }
+        else
+        {
+            rotate(to: angle - remainder)
+        }
+        
+        // Count the number of half-pis and add 4 until its positive
+        var halfPis = Int8((angle / halfPi).rounded())
+        while halfPis < 0
+        {
+            halfPis += 4
+        }
+        
+        // Mod 4 to get the direction
+        return Direction(rawValue: UInt8(halfPis % 4))!
     }
     
     /// Reset the tile size to a new value.
