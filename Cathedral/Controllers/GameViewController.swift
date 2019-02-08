@@ -202,10 +202,7 @@ class GameViewController: UIViewController
             fatalError("There is no active piece")
         }
         
-        let point = boardView.snapToBoard(activePiece.frame.origin)
-        var address = boardView.pointToAddress(point)
-        
-        // Calculate tile width and height of the piece
+        // Snap to a direction, then calculate tile width and height of the piece
         let width: Int8
         let height: Int8
         let direction = activePiece.snapToDirection()
@@ -219,6 +216,9 @@ class GameViewController: UIViewController
             width = Int8(activePiece.building.height)
             height = Int8(activePiece.building.width)
         }
+        
+        // Snap to grid in general, then onto the board
+        var address = activePiece.snapToGrid()
         
         // Left
         if address.col < 0
@@ -244,7 +244,7 @@ class GameViewController: UIViewController
             address.row = 10 - height
         }
         
-        activePiece.move(to: boardView.addressToPoint(address))
+        activePiece.move(to: CGPoint(address, tileSize: tileSize))
     }
 }
 
