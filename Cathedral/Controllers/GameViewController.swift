@@ -23,6 +23,10 @@ class GameViewController: UIViewController
     /// The offset of a pan gesture into the active piece.
     private var panOffset: CGPoint?
     
+    
+    /// The rotation of the active piece before the rotation gesture.
+    private var rotateStart: CGFloat?
+    
     /// The calculate size of a tile based on controller's safe space.
     var tileSize: CGFloat
     {
@@ -48,7 +52,13 @@ class GameViewController: UIViewController
         boardView = BoardView(tileSize: tileSize)
         view.addSubview(boardView)
         boardView.center = center
-        boardView.addGestureRecognizer(UIPanGestureRecognizer(target: self, action:(#selector(handleBoardPanGesture))))
+        let boardPanRecognizer = UIPanGestureRecognizer(target: self, action: #selector(handleBoardPanGesture))
+        boardView.addGestureRecognizer(boardPanRecognizer)
+        let boardDoubleTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleBoardDoubleTap))
+        boardDoubleTapRecognizer.numberOfTapsRequired = 2
+        boardView.addGestureRecognizer(boardDoubleTapRecognizer)
+        let boardRotationRecognizer = UIRotationGestureRecognizer(target: self, action: #selector(handleBoardRotation))
+        boardView.addGestureRecognizer(boardRotationRecognizer)
         
         
         // Add cathedral as active piece for testing
@@ -82,7 +92,7 @@ class GameViewController: UIViewController
                 if let panOffset = self.panOffset
                 {
                     let offsetLocation = CGPoint(x: touchLocation.x - panOffset.x, y: touchLocation.y - panOffset.y)
-                    activePiece.frame.origin = offsetLocation
+                    activePiece.move(to: offsetLocation)
                 }
                 
             // Stopped dragging piece
@@ -90,8 +100,7 @@ class GameViewController: UIViewController
                 if let panOffset = self.panOffset
                 {
                     let offsetLocation = CGPoint(x: touchLocation.x - panOffset.x, y: touchLocation.y - panOffset.y)
-                    activePiece.frame.origin = offsetLocation
-                    
+                    activePiece.move(to: offsetLocation)
                     snapActivePiece()
                     
                     self.panStart = nil
@@ -102,8 +111,7 @@ class GameViewController: UIViewController
             case .cancelled:
                 if let panStart = self.panStart
                 {
-                    activePiece.frame.origin = panStart
-                    
+                    activePiece.move(to: panStart)
                     snapActivePiece()
                     
                     self.panStart = nil
@@ -113,6 +121,73 @@ class GameViewController: UIViewController
             // Other unapplicable states
             default:
                 break
+            }
+        }
+    }
+    
+    /// Handle a rotation gesture on the game board view.
+    ///
+    /// - Parameter sender: The rotation gesture recognizer.
+    @objc func handleBoardRotation(_ sender: UIRotationGestureRecognizer)
+    {
+        if let activePiece = self.activePiece
+        {
+            switch sender.state
+            {
+            // Begin Spinning Piece
+            case .began:
+                // Record starting angle
+                self.rotateStart = activePiece.angle
+                
+            // Spin Piece
+            case .changed:
+                if let rotateStart = self.rotateStart
+                {
+                    // Spin active piece
+                    activePiece.rotate(to: rotateStart + sender.rotation)
+                }
+                
+            // End Spinning Piece
+            case .ended:
+                if let rotateStart = self.rotateStart
+                {
+                    // Set active piece direction then snap to 90º angle and board grid
+                    activePiece.rotate(to: rotateStart + sender.rotation)
+                    snapActivePiece()
+                    
+                    self.rotateStart = nil
+                }
+                
+            // Cancel Spinning Piece
+            case .cancelled:
+                if let rotateStart = self.rotateStart
+                {
+                    // Reset active piece rotation
+                    activePiece.rotate(to: rotateStart)
+                    snapActivePiece()
+                    
+                    self.rotateStart = nil
+                }
+                
+            default:
+                // Do nothing
+                break
+            }
+        }
+    }
+    
+    /// Handle a double tap gesture on the game board view.
+    ///
+    /// - Parameter sender: The dougle tap gesture recognizer.
+    @objc func handleBoardDoubleTap(_ sender: UITapGestureRecognizer)
+    {
+        if let activePiece = self.activePiece
+        {
+            let touchLocation = sender.location(in: activePiece)
+            if activePiece.contains(point: touchLocation)
+            {
+                activePiece.rotate(to: activePiece.angle + (CGFloat.pi / 2))
+                snapActivePiece()
             }
         }
     }
@@ -130,6 +205,21 @@ class GameViewController: UIViewController
         let point = boardView.snapToBoard(activePiece.frame.origin)
         var address = boardView.pointToAddress(point)
         
+        // Calculate tile width and height of the piece
+        let width: Int8
+        let height: Int8
+        let direction = activePiece.snapToDirection()
+        if (direction == .north) || (direction == .south)
+        {
+            width = Int8(activePiece.building.width)
+            height = Int8(activePiece.building.height)
+        }
+        else
+        {
+            width = Int8(activePiece.building.height)
+            height = Int8(activePiece.building.width)
+        }
+        
         // Left
         if address.col < 0
         {
@@ -143,20 +233,18 @@ class GameViewController: UIViewController
         }
         
         // Right
-        let width = Int8(activePiece.width)
         if (address.col + width) > 10
         {
             address.col = 10 - width
         }
         
         // Bottom
-        let height = Int8(activePiece.height)
         if (address.row + height) > 10
         {
             address.row = 10 - height
         }
         
-        activePiece.frame.origin = boardView.addressToPoint(address)
+        activePiece.move(to: boardView.addressToPoint(address))
     }
 }
 
