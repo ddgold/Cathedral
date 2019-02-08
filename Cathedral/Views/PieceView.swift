@@ -101,12 +101,26 @@ class PieceView: UIImageView
         self.frame.origin = newPosition
     }
     
+    
+    /// Snap the piece to a point along the grid.
+    ///
+    /// - Returns: The snapped address of the piece.
+    func snapToGrid() -> Address
+    {
+        var point = self.frame.origin
+        point.x = point.x.snap(to: tileSize)
+        point.y = point.y.snap(to: tileSize)
+        move(to: point)
+        
+        return point.toAddress(tileSize: tileSize)
+    }
+    
     /// Rotate the piece to a new angle.
     ///
     /// - Parameter newAngle: The new angle.
     func rotate(to newAngle: CGFloat)
     {
-        angle = newAngle
+        self.angle = newAngle
         transform = CGAffineTransform(rotationAngle: newAngle)
     }
     
@@ -115,23 +129,10 @@ class PieceView: UIImageView
     /// - Returns: The snapped direction of the piece.
     func snapToDirection() -> Direction
     {
-        // Calculate the distance to nearest half-pi
+        // Snap to the nearest half-pi
         let halfPi = CGFloat.pi / 2
-        let remainder = angle.truncatingRemainder(dividingBy: halfPi)
-        
-        // Remove the remainder to get to nearest half-pi
-        if remainder < -(halfPi / 2)
-        {
-            rotate(to: angle - remainder - halfPi)
-        }
-        else if remainder > (halfPi / 2)
-        {
-            rotate(to: angle - remainder + halfPi)
-        }
-        else
-        {
-            rotate(to: angle - remainder)
-        }
+        let angle = self.angle.snap(to: halfPi)
+        rotate(to: angle)
         
         // Count the number of half-pis and add 4 until its positive
         var halfPis = Int8((angle / halfPi).rounded())

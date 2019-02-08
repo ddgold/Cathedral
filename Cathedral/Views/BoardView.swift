@@ -60,61 +60,8 @@ class BoardView: UIImageView
     ///   - address: The address.
     func buildPiece(_ piece: PieceView, at address: Address)
     {
-        piece.frame.origin = addressToPoint(address)
+        piece.frame.origin = CGPoint(address, tileSize: tileSize)
         addSubview(piece)
-    }
-    
-    /// Convert a given address ot the applicable point on the board.
-    ///
-    /// - Parameter address: The address.
-    /// - Returns: The point equivalent to the address.
-    func addressToPoint(_ address: Address) -> CGPoint
-    {
-        let x = CGFloat(address.col + 1) * tileSize
-        let y = CGFloat(address.row + 1) * tileSize
-        return CGPoint(x: x, y: y)
-    }
-    
-    /// Convert a given point to the applicable address on the board.  Make sure the point is already snapped to the grid before calling.
-    ///
-    /// - Parameter point: The point.
-    /// - Returns: The address equivalent to the point.
-    func pointToAddress(_ point: CGPoint) -> Address
-    {
-        let col = Int8(point.x / tileSize) - 1
-        let row = Int8(point.y / tileSize) - 1
-        return Address(col, row)
-    }
-    
-    /// Snap a given point to this board's grid.
-    ///
-    /// - Parameter point: The point
-    /// - Returns: The point with both x and y rounded to the nearest whole tile size multiple.
-    func snapToBoard(_ point: CGPoint) -> CGPoint
-    {
-        return CGPoint(x: snapToGrid(point.x), y: snapToGrid(point.y))
-    }
-    
-    /// Snap a given float to this board's grid.
-    ///
-    /// - Parameter float: The float.
-    /// - Returns: The float rounded to the nearest whole tile size multiple.
-    func snapToGrid(_ float: CGFloat) -> CGFloat
-    {
-        let remainder = float.truncatingRemainder(dividingBy: tileSize)
-        
-        if remainder < -(tileSize / 2)
-        {
-            return float - remainder - tileSize
-        }
-        else if remainder > (tileSize / 2)
-        {
-            return float - remainder + tileSize
-        }
-        else
-        {
-            return float - remainder
-        }
     }
     
     /// Reset the tile size to a new value
