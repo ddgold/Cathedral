@@ -19,7 +19,7 @@ enum Owner: UInt8
     
     //MARK: - Properties
     /// Whether or not tbis owner is a player owner, i.e. light or dark.
-    var isPlayerOwner: Bool
+    var isPlayer: Bool
     {
         return (self != Owner.church)
     }

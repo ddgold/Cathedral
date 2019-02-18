@@ -79,7 +79,7 @@ class Game: NSObject, NSCoding
     /// - Returns: The dictionary of unbuilt buildings.
     func unbuiltBuildings(for player: Owner) -> Dictionary<Building, Bool>
     {
-        assert(player.isPlayerOwner, "Only player Owners have unbuilt Buildings")
+        assert(player.isPlayer, "Only player Owners have unbuilt Buildings")
         
         var pieces = Dictionary<Building, Bool>()
         
@@ -364,7 +364,7 @@ class Game: NSObject, NSCoding
     /// - Returns: Whether or not the player can claim the address.
     private func canClaim(player: Owner, at address: Address, with currentDestroy: inout Piece?) -> Bool
     {
-        assert(player.isPlayerOwner, "Only player Owners can claim a Tile")
+        assert(player.isPlayer, "Only player Owners can claim a Tile")
         
         let tile = board[address]
         
@@ -401,7 +401,7 @@ class Game: NSObject, NSCoding
     ///   - address: The address.
     private func claim(player: Owner, at address: Address)
     {
-        assert(player.isPlayerOwner, "Only player Owners can claim a Tile")
+        assert(player.isPlayer, "Only player Owners can claim a Tile")
         assert(board[address].owner == nil, "Can only claim unclaimed Tiles")
         
         board[address] = Tile(owner: player, piece: nil)
@@ -445,7 +445,7 @@ class Game: NSObject, NSCoding
     /// - Returns: Whether or not the player can make a move.
     private func canMakeMove(_ player: Owner) -> Bool
     {
-        assert(player.isPlayerOwner, "Only player Owners can make moves")
+        assert(player.isPlayer, "Only player Owners can make moves")
         
         for building in (player == .light ? lightUnbuiltBuildings : darkUnbuiltBuildings)
         {
@@ -472,7 +472,7 @@ class Game: NSObject, NSCoding
     /// - Returns: The total size of remaining buildings.
     private func playerScore(_ player: Owner) -> UInt8
     {
-        assert(player.isPlayerOwner, "Can only calculate score for player Owners")
+        assert(player.isPlayer, "Can only calculate score for player Owners")
         
         var score: UInt8 = 0
         for building in (player == .light ? lightUnbuiltBuildings : darkUnbuiltBuildings)
