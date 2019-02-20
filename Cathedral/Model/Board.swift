@@ -13,13 +13,15 @@ struct Board
 {
     //MARK: - Properties
     /// The 2d-array of tiles that make up this board.
-    private var tiles = [[Tile]]()
+    private var tiles: [[Tile]]
     
     
     //MARK: - Initialization
     /// Initializes a new empty board.
     init()
     {
+        tiles = [[Tile]]()
+        
         for col in 0..<10
         {
             tiles.append([Tile]())
