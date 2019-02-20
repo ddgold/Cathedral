@@ -15,9 +15,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool
     {
+        let gameViewController = GameViewController()
+        gameViewController.game = Game()
+        
         // Make and present window with tab bar controller
         window = UIWindow(frame: UIScreen.main.bounds)
-        window!.rootViewController = GameViewController()
+        window!.rootViewController = gameViewController
         window!.makeKeyAndVisible()
         
         return true
