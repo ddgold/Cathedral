@@ -8,15 +8,38 @@
 
 import UIKit
 
+
+/// A building piece view.
 class PieceView: UIImageView
 {
     //MARK: - Properties
-    
     /// The owner of the piece.
     let owner: Owner
+    
     /// The building type of the piece.
     let building: Building
     
+    /// The state of the piece.
+    var state: State
+    {
+        didSet
+        {
+            switch state
+            {
+            case .Standard:
+                colorFilter.isHidden = true
+            case .Success:
+                colorFilter.backgroundColor =  UIColor(displayP3Red: 0, green: 1, blue: 0, alpha: 0.3)
+                colorFilter.isHidden = false
+            case .Failure:
+                colorFilter.backgroundColor =  UIColor(displayP3Red: 1, green: 0, blue: 0, alpha: 0.3)
+                colorFilter.isHidden = false
+            }
+        }
+    }
+    
+    /// The color filter for highlighting the piece.
+    private var colorFilter: UIView
     
     /// The current rotation of the piece.
     private(set) var angle: CGFloat = 0
@@ -29,6 +52,7 @@ class PieceView: UIImageView
             resetTileSize(newValue)
         }
     }
+    
     
     //MARK: - Initialization
     /// Initialize a new piece view.
@@ -44,6 +68,7 @@ class PieceView: UIImageView
         
         self.owner = owner
         self.building = building
+        self.state = .Standard
         
         let imageName = "\(owner.description)_\(building.description)"
         guard let imageObject = UIImage(named: imageName) else
@@ -51,9 +76,23 @@ class PieceView: UIImageView
             fatalError("Failed to find image: '\(imageName)'")
         }
         
+        colorFilter = UIView()
+        
         super.init(image: imageObject)
         self.isUserInteractionEnabled = true
         
+        // Set size
+        resetTileSize(tileSize)
+        
+        // Add color filter
+        colorFilter.frame = CGRect(x: 0, y: 0, width: frame.width, height: frame.height)
+        colorFilter.isHidden = true
+        let maskView = UIImageView(image: imageObject)
+        maskView.frame = colorFilter.frame
+        colorFilter.mask = maskView
+        addSubview(colorFilter)
+        
+        // Set rotation based on direction
         switch direction
         {
         case .north:
@@ -65,8 +104,6 @@ class PieceView: UIImageView
         case .west:
             rotate(to: 3 * CGFloat.pi / 2)
         }
-        
-        resetTileSize(tileSize)
     }
     
     /// Unsupported decoder initilizer.
@@ -152,5 +189,17 @@ class PieceView: UIImageView
     {
         let size = CGSize(width: tileSize * CGFloat(building.width), height: tileSize * CGFloat(building.height))
         self.frame = CGRect(origin: self.frame.origin, size: size)
+    }
+    
+    
+    //MARK: - State Enum
+    enum State: UInt8
+    {
+        /// Standard, unhighlighted.
+        case Standard
+        /// Highlighted in green.
+        case Success
+        /// Highlighted in red.
+        case Failure
     }
 }
