@@ -19,6 +19,12 @@ class PieceView: UIImageView
     /// The building type of the piece.
     let building: Building
     
+    /// The direction the piece is facing.
+    private(set) var direction: Direction?
+    
+    /// The address of the piece.
+    private(set) var address: Address?
+    
     /// The state of the piece.
     var state: State
     {
@@ -60,9 +66,8 @@ class PieceView: UIImageView
     /// - Parameters:
     ///   - owner: The owner.
     ///   - building: The building type.
-    ///   - direction: The direction the piece is face.
     ///   - tileSize: The tile size.
-    init(owner: Owner, building: Building, direction: Direction = .north, tileSize: CGFloat)
+    init(owner: Owner, building: Building, tileSize: CGFloat)
     {
         self.tileSize = tileSize
         
@@ -91,19 +96,6 @@ class PieceView: UIImageView
         maskView.frame = colorFilter.frame
         colorFilter.mask = maskView
         addSubview(colorFilter)
-        
-        // Set rotation based on direction
-        switch direction
-        {
-        case .north:
-            break
-        case .east:
-            rotate(to: CGFloat.pi / 2)
-        case .south:
-            rotate(to: CGFloat.pi)
-        case .west:
-            rotate(to: 3 * CGFloat.pi / 2)
-        }
     }
     
     /// Unsupported decoder initilizer.
@@ -113,7 +105,6 @@ class PieceView: UIImageView
     {
         fatalError("init(coder:) has not been implemented")
     }
-    
     
     //MARK: - Functions
     /// Determines if a point is within the bounds of this piece.
@@ -136,20 +127,8 @@ class PieceView: UIImageView
     func move(to newPosition: CGPoint)
     {
         self.frame.origin = newPosition
-    }
-    
-    
-    /// Snap the piece to a point along the grid.
-    ///
-    /// - Returns: The snapped address of the piece.
-    func snapToGrid() -> Address
-    {
-        var point = self.frame.origin
-        point.x = point.x.snap(to: tileSize)
-        point.y = point.y.snap(to: tileSize)
-        move(to: point)
-        
-        return point.toAddress(tileSize: tileSize)
+        self.direction = nil
+        self.address = nil
     }
     
     /// Rotate the piece to a new angle.
@@ -158,15 +137,17 @@ class PieceView: UIImageView
     func rotate(to newAngle: CGFloat)
     {
         self.angle = newAngle
+        self.direction = nil
+        self.address = nil
         transform = CGAffineTransform(rotationAngle: newAngle)
     }
     
-    /// Snap the piece to a cardinal direction.
+    /// Snap the piece to a point along the grid.
     ///
-    /// - Returns: The snapped direction of the piece.
-    func snapToDirection() -> Direction
+    /// - Returns: The snapped address of the piece.
+    func snapToBoard()
     {
-        // Snap to the nearest half-pi
+        // (1) Snap to the nearest half-pi
         let halfPi = CGFloat.pi / 2
         let angle = self.angle.snap(to: halfPi)
         rotate(to: angle)
@@ -178,8 +159,80 @@ class PieceView: UIImageView
             halfPis += 4
         }
         
-        // Mod 4 to get the direction
-        return Direction(rawValue: UInt8(halfPis % 4))!
+        // Mod 4 to get the direction raw value
+        let direction = Direction(rawValue: UInt8(halfPis % 4))!
+        
+        
+        // (2) Snap to the nearest point
+        var point = self.frame.origin
+        point.x = point.x.snap(to: tileSize)
+        point.y = point.y.snap(to: tileSize)
+        var address = point.toAddress(tileSize: tileSize)
+        
+        // Calculate tile width and height of the piece
+        let width: Int8
+        let height: Int8
+        if (direction == .north) || (direction == .south)
+        {
+            width = Int8(building.width)
+            height = Int8(building.height)
+        }
+        else
+        {
+            width = Int8(building.height)
+            height = Int8(building.width)
+        }
+        
+        
+        // (3) Snap onto board
+        // Left
+        if address.col < 0
+        {
+            address.col = 0
+        }
+        
+        // Top
+        if address.row < 0
+        {
+            address.row = 0
+        }
+        
+        // Right
+        if (address.col + width) > 10
+        {
+            address.col = 10 - width
+        }
+        
+        // Bottom
+        if (address.row + height) > 10
+        {
+            address.row = 10 - height
+        }
+        
+        // Move frame to position
+        move(to: CGPoint(address, tileSize: tileSize))
+        
+        
+        // (4) Adjust address based on direction
+        switch direction
+        {
+        case .north:
+            // Top-left corner (no need to change address)
+            break;
+        case .east:
+            // Top-right corner
+            address.col += width - 1
+        case .south:
+            // Bottom-right corner
+            address.col += width - 1
+            address.row += height - 1
+        case .west:
+            // Bottom-left corner
+            address.row += height - 1
+        }
+        
+        self.direction = direction
+        self.address = address
     }
     
     /// Reset the tile size to a new value.

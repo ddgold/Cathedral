@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		CA225920220D2CAD00656CC9 /* CGExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA22591F220D2CAD00656CC9 /* CGExtensions.swift */; };
 		CA225922221A57DB00656CC9 /* PoolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA225921221A57DB00656CC9 /* PoolView.swift */; };
+		CA225924221E4D9300656CC9 /* ClaimedTileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA225923221E4D9300656CC9 /* ClaimedTileView.swift */; };
 		CA8C1AB62202942C005EA5FD /* BoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA8C1AB52202942C005EA5FD /* BoardView.swift */; };
 		CA8C1ABD2202A960005EA5FD /* PieceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA8C1ABC2202A960005EA5FD /* PieceView.swift */; };
 		CAF56E1822014877002DF690 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAF56E1722014877002DF690 /* AppDelegate.swift */; };
@@ -39,6 +40,7 @@
 /* Begin PBXFileReference section */
 		CA22591F220D2CAD00656CC9 /* CGExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGExtensions.swift; sourceTree = "<group>"; };
 		CA225921221A57DB00656CC9 /* PoolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PoolView.swift; sourceTree = "<group>"; };
+		CA225923221E4D9300656CC9 /* ClaimedTileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaimedTileView.swift; sourceTree = "<group>"; };
 		CA8C1AB52202942C005EA5FD /* BoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardView.swift; sourceTree = "<group>"; };
 		CA8C1ABC2202A960005EA5FD /* PieceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieceView.swift; sourceTree = "<group>"; };
 		CAF56E1422014877002DF690 /* Cathedral.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cathedral.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -82,6 +84,7 @@
 			isa = PBXGroup;
 			children = (
 				CA8C1AB52202942C005EA5FD /* BoardView.swift */,
+				CA225923221E4D9300656CC9 /* ClaimedTileView.swift */,
 				CA8C1ABC2202A960005EA5FD /* PieceView.swift */,
 				CA225921221A57DB00656CC9 /* PoolView.swift */,
 			);
@@ -255,6 +258,7 @@
 			files = (
 				CA8C1AB62202942C005EA5FD /* BoardView.swift in Sources */,
 				CAF56E4022014C72002DF690 /* Address.swift in Sources */,
+				CA225924221E4D9300656CC9 /* ClaimedTileView.swift in Sources */,
 				CA225920220D2CAD00656CC9 /* CGExtensions.swift in Sources */,
 				CAF56E4E22015266002DF690 /* Game.swift in Sources */,
 				CAF56E5022015802002DF690 /* Piece.swift in Sources */,

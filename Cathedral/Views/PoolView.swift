@@ -16,7 +16,6 @@ class PoolView: UIScrollView
     /// List of pieces in the pool.
     private var pieces: [PieceView]
     
-    
     //MARK: - Initialization
     /// Initialize a new piece view.
     ///
@@ -44,7 +43,7 @@ class PoolView: UIScrollView
         refresh()
         
         
-        self.backgroundColor = .white
+        self.backgroundColor = .gray
     }
     
     /// Unsupported decoder initilizer.
@@ -61,10 +60,9 @@ class PoolView: UIScrollView
     ///
     /// - Parameters:
     ///   - piece: The new piece.
-    ///   - at: The touch location.
-    public func addPiece(_ piece: PieceView, at: CGPoint)
+    public func addPiece(_ piece: PieceView)
     {
-        addPiece(piece)
+        addPiecePrivate(piece)
         refresh()
     }
     
@@ -92,7 +90,7 @@ class PoolView: UIScrollView
     /// Add a piece to the pool. Private portion that doesn't include a call to refresh.
     ///
     /// - Parameter piece: The new piece.
-    private func addPiece(_ piece: PieceView)
+    private func addPiecePrivate(_ piece: PieceView)
     {
         self.addSubview(piece)
         pieces.append(piece)

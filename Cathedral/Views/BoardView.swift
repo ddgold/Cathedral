@@ -53,15 +53,35 @@ class BoardView: UIImageView
     
     
     //MARK: - Functions
-    /// Build a piece view on the board at a given address.
+    /// Put a piece view on the board.
     ///
     /// - Parameters:
     ///   - piece: The piece view.
-    ///   - address: The address.
-    func buildPiece(_ piece: PieceView, at address: Address)
+    func buildPiece(_ piece: PieceView)
     {
-        piece.frame.origin = CGPoint(address, tileSize: tileSize)
         addSubview(piece)
+    }
+    
+    /// Put a tile view on the board.
+    ///
+    /// - Parameters:
+    ///   - piece: The piece view.
+    func claimTile(_ claimedTile: ClaimedTileView)
+    {
+        addSubview(claimedTile)
+    }
+    
+    func destroyPiece(_ target: Piece) -> PieceView
+    {
+        for case let piece as PieceView in subviews
+        {
+            if piece.address == target.address
+            {
+                return piece
+            }
+        }
+        
+        fatalError("Piece is not on board")
     }
     
     /// Reset the tile size to a new value

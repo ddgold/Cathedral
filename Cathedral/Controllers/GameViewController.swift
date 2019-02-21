@@ -15,10 +15,12 @@ class GameViewController: UIViewController
     /// The game model
     var game: Game!
     
-    /// The game board and pool views.
+    /// The static sub views of the game.
     private var boardView: BoardView!
     private var topPoolView: PoolView!
     private var bottomPoolView: PoolView!
+    private var messageLabel: UILabel!
+    private var buildButton: UIButton!
     
     /// The active piece and pool.
     private var activePiece: PieceView?
@@ -101,12 +103,38 @@ class GameViewController: UIViewController
         bottomPoolView.addGestureRecognizer(bottomPoolTapRecognizer)
         
         
-        // Bring board view to front
+        // Initialize messageLabel
+        messageLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 500, height: 100))
+        view.addSubview(messageLabel)
+        messageLabel.text = "Place Holder"
+        messageLabel.textAlignment = .center
+        messageLabel.translatesAutoresizingMaskIntoConstraints = false
+        messageLabel.heightAnchor.constraint(equalToConstant: 60).isActive = true
+        messageLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0).isActive = true
+        messageLabel.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive = true
+        messageLabel.bottomAnchor.constraint(equalTo: topPoolView.topAnchor, constant: 0).isActive = true
+        
+        
+        // Initialize buildButton
+        buildButton = UIButton(type: .system)
+        view.addSubview(buildButton)
+        buildButton.setTitle("Build Building", for: .normal)
+        buildButton.translatesAutoresizingMaskIntoConstraints = false
+        buildButton.heightAnchor.constraint(equalToConstant: 60).isActive = true
+        buildButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0).isActive = true
+        buildButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive = true
+        buildButton.topAnchor.constraint(equalTo: bottomPoolView.bottomAnchor, constant: 0).isActive = true
+        
+        buildButton.addTarget(self, action: #selector(buildButtonPressed), for: .touchUpInside)
+        
+        
+        // Bring board view to front and set background color
         self.view.bringSubviewToFront(boardView)
+        self.view.backgroundColor = .white
         
         
-        // Set bottom active, for now
-        activePool = bottomPoolView
+        // Start / resume Game
+        nextTurn()
     }
     
     
@@ -128,6 +156,8 @@ class GameViewController: UIViewController
                     
                     panStart = activePiece.frame.origin
                     panOffset = CGPoint(x: touchLocation.x - panStart!.x, y: touchLocation.y - panStart!.y)
+                    
+                    pickupActivePiece()
                 }
             
             // Dragged piece
@@ -148,7 +178,7 @@ class GameViewController: UIViewController
                     let offsetLocation = CGPoint(x: touchLocation.x - panOffset.x, y: touchLocation.y - panOffset.y)
                     
                     activePiece.move(to: offsetLocation)
-                    snapActivePiece()
+                    putdownActivePiece()
                     
                     self.panStart = nil
                     self.panOffset = nil
@@ -159,7 +189,7 @@ class GameViewController: UIViewController
                 if let panStart = self.panStart
                 {
                     activePiece.move(to: panStart)
-                    snapActivePiece()
+                    putdownActivePiece()
                     
                     self.panStart = nil
                     self.panOffset = nil
@@ -185,6 +215,7 @@ class GameViewController: UIViewController
             case .began:
                 // Record starting angle
                 self.rotateStart = activePiece.angle
+                pickupActivePiece()
                 
             // Spin Piece
             case .changed:
@@ -200,7 +231,7 @@ class GameViewController: UIViewController
                 {
                     // Set active piece direction then snap to 90º angle and board grid
                     activePiece.rotate(to: rotateStart + sender.rotation)
-                    snapActivePiece()
+                    putdownActivePiece()
                     
                     self.rotateStart = nil
                 }
@@ -211,7 +242,7 @@ class GameViewController: UIViewController
                 {
                     // Reset active piece rotation
                     activePiece.rotate(to: rotateStart)
-                    snapActivePiece()
+                    putdownActivePiece()
                     
                     self.rotateStart = nil
                 }
@@ -230,11 +261,10 @@ class GameViewController: UIViewController
     {
         if let activePiece = self.activePiece
         {
-            let touchLocation = sender.location(in: activePiece)
-            if activePiece.contains(point: touchLocation)
+            if activePiece.contains(point: sender.location(in: activePiece))
             {
                 activePiece.rotate(to: activePiece.angle + (CGFloat.pi / 2))
-                snapActivePiece()
+                putdownActivePiece()
             }
         }
     }
@@ -287,10 +317,10 @@ class GameViewController: UIViewController
                     let boardTouchLocation = sender.location(in: boardView)
                     let offsetLocation = CGPoint(x: boardTouchLocation.x - pressOffset.x, y: boardTouchLocation.y - pressOffset.y)
                         
-                    boardView.buildPiece(pressedPiece, at: Address(0,0))
+                    boardView.buildPiece(pressedPiece)
                     activePiece = pressedPiece
                     activePiece!.move(to: offsetLocation)
-                    snapActivePiece()
+                    putdownActivePiece()
                     
                     self.pressStart = nil
                     self.pressOffset = nil
@@ -299,9 +329,9 @@ class GameViewController: UIViewController
             
             // Cancel dragging piece
             case .cancelled:
-                if let pressedPiece = self.pressedPiece, let pressStart = self.pressStart
+                if let pressedPiece = self.pressedPiece
                 {
-                    activePool.addPiece(pressedPiece, at: pressStart)
+                    activePool.addPiece(pressedPiece)
                     
                     self.pressStart = nil
                     self.pressOffset = nil
@@ -315,59 +345,186 @@ class GameViewController: UIViewController
         }
     }
     
+    /// <#Description#>
+    ///
+    /// - Parameter sender: <#sender description#>
+    @objc func buildButtonPressed(_ sender: UIButton)
+    {
+        assert(activePiece != nil, "There isn't an active Piece")
+        
+        // Build Piece in modal
+        buildPiece(activePiece!)
+        
+        // Update view
+        activePiece!.state = .Standard
+        activePiece = nil
+        
+        nextTurn()
+    }
+    
     
     //MARK: - Functions
-    /// Snap the active piece onto the board's grid.  There must be an active piece.
-    private func snapActivePiece()
+    /// Start moving the active piece.
+    /// - Note: There must be an active piece.
+    private func pickupActivePiece()
+    {
+        guard let activePiece = self.activePiece else
+        {
+            fatalError("There is no active Piece")
+        }
+        
+        buildButton.isEnabled = false
+        activePiece.state = .Standard
+    }
+    
+    
+    /// Stop moving the active piece, snapping it to the board, or putting back into the active pool.
+    /// - Note: There must be an active piece.
+    private func putdownActivePiece()
     {
         guard let activePiece = self.activePiece else
         {
             fatalError("There is no active piece")
         }
         
-        // Snap to a direction, then calculate tile width and height of the piece
-        let width: Int8
-        let height: Int8
-        let direction = activePiece.snapToDirection()
-        if (direction == .north) || (direction == .south)
+        activePiece.snapToBoard()
+        
+        // Update state
+        if canBuildPiece(activePiece)
         {
-            width = Int8(activePiece.building.width)
-            height = Int8(activePiece.building.height)
+            buildButton.isEnabled = true
+            activePiece.state = .Success
         }
         else
         {
-            width = Int8(activePiece.building.height)
-            height = Int8(activePiece.building.width)
+            buildButton.isEnabled = false
+            activePiece.state = .Failure
         }
-        
-        // Snap to grid in general, then onto the board
-        var address = activePiece.snapToGrid()
-        
-        // Left
-        if address.col < 0
+    }
+    
+    /// Determines if a given piece view can be built.
+    /// - Note: If the piece's address or direction is not set, checks if the piece can be built anywhere.
+    ///
+    /// - Parameter piece: The piece view.
+    /// - Returns: Whether the given piece can be built.
+    private func canBuildPiece(_ piece: PieceView) -> Bool
+    {
+        if (piece.address == nil) || (piece.direction == nil)
         {
-            address.col = 0
+            return game!.canBuildBuilding(piece.building, for: piece.owner)
         }
-        
-        // Top
-        if address.row < 0
+        else
         {
-            address.row = 0
+            return game!.canBuildBuilding(piece.building, for: piece.owner, facing: piece.direction!, at: piece.address!)
         }
+    }
+    
+    /// Build a given piece view at its current position.
+    /// - Note: Piece must have address and direction set, and be in a valid position.
+    ///
+    /// - Parameter piece: The piece view.
+    private func buildPiece(_ piece: PieceView)
+    {
+        assert((piece.address != nil) && (piece.direction != nil), "Must set piece's address and direciton before building it")
+        assert(canBuildPiece(piece), "Piece at an invalid position")
         
-        // Right
-        if (address.col + width) > 10
+        let (claimant, destroyed) = game!.buildBuilding(piece.building, for: piece.owner, facing: piece.direction!, at: piece.address!)
+        
+        for address in claimant
         {
-            address.col = 10 - width
+            let claimedTile = ClaimedTileView(owner: piece.owner, address: address, tileSize: tileSize)
+            boardView.claimTile(claimedTile)
         }
         
-        // Bottom
-        if (address.row + height) > 10
+        for piece in destroyed
         {
-            address.row = 10 - height
+            let pieceView = boardView.destroyPiece(piece)
+
+            // If Cathedral piece, remove from superviews, else return to pool
+            switch piece.owner
+            {
+            case .church:
+                pieceView.removeFromSuperview()
+
+            case .light:
+                poolForPlayer(.light).addPiece(pieceView)
+
+            case .dark:
+                poolForPlayer(.dark).addPiece(pieceView)
+            }
+        }
+    }
+    
+    /// Get the correct pool for a given player.
+    ///
+    /// - Parameter owner: The owner, must be a player.
+    /// - Returns: The pool for the given player.
+    private func poolForPlayer(_ owner: Owner) -> PoolView
+    {
+        assert(owner.isPlayer, "Church does not have Pool")
+        
+        if (owner == .dark)
+        {
+            return topPoolView
+        }
+        else
+        {
+            return bottomPoolView
+        }
+    }
+    
+    /// Move on to the next turn.
+    private func nextTurn()
+    {
+        // Turn off build button
+        buildButton.isEnabled = false
+        
+        // Update which building in pools can be built
+        for case let pieceView as PieceView in (topPoolView.subviews + bottomPoolView.subviews)
+        {
+            if (!canBuildPiece(pieceView))
+            {
+                pieceView.state = .Failure
+            }
         }
         
-        activePiece.move(to: CGPoint(address, tileSize: tileSize))
+        // Set message and potential active piece (for Cathedral turn) or pool (for player turn)
+        if let nextTurn = game!.nextTurn
+        {
+            switch nextTurn
+            {
+            case .church:
+                messageLabel.text = "Build the Cathedral"
+                activePiece = PieceView(owner: .church, building: .cathedral, tileSize: tileSize)
+                boardView.buildPiece(activePiece!)
+                activePool = nil
+                
+            case .dark:
+                messageLabel.text = "It's dark's turn to build."
+                activePool = poolForPlayer(.dark)
+                
+            case .light:
+                messageLabel.text = "It's light's turn to build."
+                activePool = poolForPlayer(.light)
+            }
+        }
+        else
+        {
+            let (winner, _) = game!.calculateWinner()!
+            
+            if let winner = winner
+            {
+                debugPrint(winner)
+                messageLabel.text = "Game is over, \(winner) is the winner!"
+            }
+            else
+            {
+                messageLabel.text = "Game is over, it was a tie."
+            }
+            
+            game = nil
+            activePool = nil
+        }
     }
 }
 
