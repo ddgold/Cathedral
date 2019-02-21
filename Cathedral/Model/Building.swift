@@ -40,7 +40,7 @@ enum Building: UInt8
     }
     
     /// The number if tiles wide this building type covers.
-    var width: UInt8
+    private var width: UInt8
     {
         switch self
         {
@@ -72,7 +72,7 @@ enum Building: UInt8
     }
     
     /// The number of tiles tall this building type covers.
-    var height: UInt8
+    private var height: UInt8
     {
         switch self
         {
@@ -242,6 +242,29 @@ enum Building: UInt8
         }
         
         return final
+    }
+    
+    /// Get the tile width and height for this building facing a given direction.
+    ///
+    /// - Parameter direction: The direction.
+    /// - Returns: A tuple, where the fist element is the width, and the second element is the height.
+    func dimensions(direction: Direction) -> (width: Int8, height: Int8)
+    {
+        let width: Int8
+        let height: Int8
+        
+        if (direction == .north) || (direction == .south)
+        {
+            width = Int8(self.width)
+            height = Int8(self.height)
+        }
+        else
+        {
+            width = Int8(self.height)
+            height = Int8(self.width)
+        }
+        
+        return (width: width, height: height)
     }
     
     
