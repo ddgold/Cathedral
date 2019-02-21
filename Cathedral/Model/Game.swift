@@ -49,7 +49,7 @@ class Game: NSObject, NSCoding
     /// Calculates who won the game.
     ///
     /// - Returns: A tuple, where the first element is the player, light or dark, if they won, or nil if game is a tie, and the second element is the winner's score.  Or nil, if no winner has been decided yet.
-    func calculateWinner() -> (Owner?, UInt8)?
+    func calculateWinner() -> (owner: Owner?, score: UInt8)?
     {
         if canMakeMove(.dark) || canMakeMove(.light)
         {
