@@ -52,6 +52,8 @@ class GameViewController: UIViewController
         return min(maxHeightSize, maxWidthSize)
     }
     
+    private let topPoolPlayer = Owner.dark
+    
     
     //MARK: - View Did Load
     /// Initialze the controller's sub views once the controller has loaded.
@@ -59,73 +61,12 @@ class GameViewController: UIViewController
     {
         super.viewDidLoad()
         
-        // Initialize boardView
-        boardView = BoardView(tileSize: tileSize)
-        view.addSubview(boardView)
-        boardView.translatesAutoresizingMaskIntoConstraints = false
-        boardView.heightAnchor.constraint(equalToConstant: tileSize * 12).isActive = true
-        boardView.widthAnchor.constraint(equalToConstant: tileSize * 12).isActive = true
-        boardView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        boardView.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-        
-        let boardPanRecognizer = UIPanGestureRecognizer(target: self, action: #selector(handleBoardPanGesture))
-        boardView.addGestureRecognizer(boardPanRecognizer)
-        let boardDoubleTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleBoardDoubleTap))
-        boardDoubleTapRecognizer.numberOfTapsRequired = 2
-        boardView.addGestureRecognizer(boardDoubleTapRecognizer)
-        let boardRotationRecognizer = UIRotationGestureRecognizer(target: self, action: #selector(handleBoardRotation))
-        boardView.addGestureRecognizer(boardRotationRecognizer)
-        
-        
-        // Initialize topPoolView
-        topPoolView = PoolView(owner: .dark, buildings: game.unbuiltBuildings(for: .dark), tileSize: tileSize)
-        view.addSubview(topPoolView)
-        topPoolView.translatesAutoresizingMaskIntoConstraints = false
-        topPoolView.heightAnchor.constraint(equalToConstant: (tileSize * 3) + 20).isActive = true
-        topPoolView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0).isActive = true
-        topPoolView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive = true
-        topPoolView.bottomAnchor.constraint(equalTo: boardView.topAnchor, constant: 0).isActive = true
-        
-        let topPoolTapRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handlePoolLongPress))
-        topPoolView.addGestureRecognizer(topPoolTapRecognizer)
-        
-        
-        // Initialize bottomPoolView
-        bottomPoolView = PoolView(owner: .light, buildings: game.unbuiltBuildings(for: .light), tileSize: tileSize)
-        view.addSubview(bottomPoolView)
-        bottomPoolView.translatesAutoresizingMaskIntoConstraints = false
-        bottomPoolView.heightAnchor.constraint(equalToConstant: (tileSize * 3) + 20).isActive = true
-        bottomPoolView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0).isActive = true
-        bottomPoolView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive = true
-        bottomPoolView.topAnchor.constraint(equalTo: boardView.bottomAnchor, constant: 0).isActive = true
-        
-        let bottomPoolTapRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handlePoolLongPress))
-        bottomPoolView.addGestureRecognizer(bottomPoolTapRecognizer)
-        
-        
-        // Initialize messageLabel
-        messageLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 500, height: 100))
-        view.addSubview(messageLabel)
-        messageLabel.text = "Place Holder"
-        messageLabel.textAlignment = .center
-        messageLabel.translatesAutoresizingMaskIntoConstraints = false
-        messageLabel.heightAnchor.constraint(equalToConstant: 60).isActive = true
-        messageLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0).isActive = true
-        messageLabel.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive = true
-        messageLabel.bottomAnchor.constraint(equalTo: topPoolView.topAnchor, constant: 0).isActive = true
-        
-        
-        // Initialize buildButton
-        buildButton = UIButton(type: .system)
-        view.addSubview(buildButton)
-        buildButton.setTitle("Build Building", for: .normal)
-        buildButton.translatesAutoresizingMaskIntoConstraints = false
-        buildButton.heightAnchor.constraint(equalToConstant: 60).isActive = true
-        buildButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0).isActive = true
-        buildButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive = true
-        buildButton.topAnchor.constraint(equalTo: bottomPoolView.bottomAnchor, constant: 0).isActive = true
-        
-        buildButton.addTarget(self, action: #selector(buildButtonPressed), for: .touchUpInside)
+        // Initialize subviews
+        boardView = buildBoard()
+        topPoolView = buildPool(top: true)
+        bottomPoolView = buildPool(top: false)
+        messageLabel = buildMessageLabel()
+        buildButton = buildBuildButton()
         
         
         // Bring board view to front and set background color
@@ -345,9 +286,9 @@ class GameViewController: UIViewController
         }
     }
     
-    /// <#Description#>
+    /// Handle the buildButton being pressed.
     ///
-    /// - Parameter sender: <#sender description#>
+    /// - Parameter sender: The button press sender.
     @objc func buildButtonPressed(_ sender: UIButton)
     {
         assert(activePiece != nil, "There isn't an active Piece")
@@ -364,6 +305,118 @@ class GameViewController: UIViewController
     
     
     //MARK: - Functions
+    /// Builds a new board.
+    ///
+    /// - Returns: The new board.
+    private func buildBoard() -> BoardView
+    {
+        let newBoard = BoardView(tileSize: tileSize)
+        
+        view.addSubview(newBoard)
+        newBoard.translatesAutoresizingMaskIntoConstraints = false
+        newBoard.heightAnchor.constraint(equalToConstant: tileSize * 12).isActive = true
+        newBoard.widthAnchor.constraint(equalToConstant: tileSize * 12).isActive = true
+        newBoard.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        newBoard.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        
+        let boardPanRecognizer = UIPanGestureRecognizer(target: self, action: #selector(handleBoardPanGesture))
+        newBoard.addGestureRecognizer(boardPanRecognizer)
+        let boardDoubleTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleBoardDoubleTap))
+        boardDoubleTapRecognizer.numberOfTapsRequired = 2
+        newBoard.addGestureRecognizer(boardDoubleTapRecognizer)
+        let boardRotationRecognizer = UIRotationGestureRecognizer(target: self, action: #selector(handleBoardRotation))
+        newBoard.addGestureRecognizer(boardRotationRecognizer)
+        
+        
+        // Build existing pieces
+        for piece in game.builtPieces
+        {
+            let pieceView = PieceView(piece, tileSize: tileSize)
+            newBoard.buildPiece(pieceView)
+        }
+        
+        // Build claimed tiles
+        for claimedAddress in game.lightClaimedAddresses
+        {
+            let claimedTile = ClaimedTileView(owner: .light, address: claimedAddress, tileSize: tileSize)
+            newBoard.claimTile(claimedTile)
+        }
+        
+        for claimedAddress in game.darkClaimedAddresses
+        {
+            let claimedTile = ClaimedTileView(owner: .dark, address: claimedAddress, tileSize: tileSize)
+            newBoard.claimTile(claimedTile)
+        }
+        
+        return newBoard
+    }
+    
+    /// Builds a new pool.
+    ///
+    /// - Parameter top: Whether to build a top pool or a bottom pool.
+    /// - Returns: The new pool.
+    private func buildPool(top: Bool) -> PoolView
+    {
+        let owner = top ? topPoolPlayer : topPoolPlayer.opponent
+        
+        let newPool = PoolView(owner: owner, buildings: game.unbuiltBuildings(for: owner), tileSize: tileSize)
+        view.addSubview(newPool)
+        newPool.translatesAutoresizingMaskIntoConstraints = false
+        newPool.heightAnchor.constraint(equalToConstant: (tileSize * 3) + 20).isActive = true
+        newPool.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0).isActive = true
+        newPool.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive = true
+        if top
+        {
+            newPool.bottomAnchor.constraint(equalTo: boardView.topAnchor, constant: 0).isActive = true
+        }
+        else
+        {
+            newPool.topAnchor.constraint(equalTo: boardView.bottomAnchor, constant: 0).isActive = true
+        }
+        
+        let poolTapRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handlePoolLongPress))
+        newPool.addGestureRecognizer(poolTapRecognizer)
+        
+        return newPool
+    }
+    
+    /// Builds a new messageLabel.
+    ///
+    /// - Returns: The new label.
+    private func buildMessageLabel() -> UILabel
+    {
+        let newLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 500, height: 100))
+        view.addSubview(newLabel)
+        newLabel.text = "Place Holder"
+        newLabel.textAlignment = .center
+        newLabel.translatesAutoresizingMaskIntoConstraints = false
+        newLabel.heightAnchor.constraint(equalToConstant: 60).isActive = true
+        newLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0).isActive = true
+        newLabel.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive = true
+        newLabel.bottomAnchor.constraint(equalTo: topPoolView.topAnchor, constant: 0).isActive = true
+        
+        return newLabel
+    }
+    
+    /// Builds a new buildButton.
+    ///
+    /// - Returns: The new button.
+    private func buildBuildButton() -> UIButton
+    {
+        let newButton = UIButton(type: .system)
+        view.addSubview(newButton)
+        newButton.setTitle("Build Building", for: .normal)
+        newButton.translatesAutoresizingMaskIntoConstraints = false
+        newButton.heightAnchor.constraint(equalToConstant: 60).isActive = true
+        newButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0).isActive = true
+        newButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive = true
+        newButton.topAnchor.constraint(equalTo: bottomPoolView.bottomAnchor, constant: 0).isActive = true
+        
+        newButton.addTarget(self, action: #selector(buildButtonPressed), for: .touchUpInside)
+        
+        return newButton
+    }
+    
     /// Start moving the active piece.
     /// - Note: There must be an active piece.
     private func pickupActivePiece()
@@ -463,7 +516,7 @@ class GameViewController: UIViewController
     {
         assert(owner.isPlayer, "Church does not have Pool")
         
-        if (owner == .dark)
+        if (owner == topPoolPlayer)
         {
             return topPoolView
         }

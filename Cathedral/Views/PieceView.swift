@@ -61,7 +61,49 @@ class PieceView: UIImageView
     
     
     //MARK: - Initialization
-    /// Initialize a new piece view.
+    /// Initialize a new piece view from a piece object with a direction and address.
+    ///
+    /// - Parameters:
+    ///   - piece: The piece object.
+    ///   - tileSize: The tile size.
+    convenience init(_ piece: Piece, tileSize: CGFloat)
+    {
+        self.init(owner: piece.owner, building: piece.building, tileSize: tileSize)
+        
+        // Rotate to direction
+        let angle = CGFloat(piece.direction.rawValue) * (CGFloat.pi / 2)
+        rotate(to: angle)
+        
+        
+        // Adjust address based on direction
+        var address = piece.address
+        let (width, height) = building.dimensions(direction: piece.direction)
+        switch piece.direction
+        {
+        case .north:
+            // Top-left corner (no need to change address)
+            break;
+        case .east:
+            // Top-right corner
+            address.col -= width - 1
+        case .south:
+            // Bottom-right corner
+            address.col -= width - 1
+            address.row -= height - 1
+        case .west:
+            // Bottom-left corner
+            address.row -= height - 1
+        }
+        
+        // Move to adjusted address
+        let point = CGPoint(address, tileSize: tileSize)
+        move(to: point)
+        
+        self.direction = piece.direction
+        self.address = piece.address
+    }
+    
+    /// Initialize a new piece view without a direction or address.
     ///
     /// - Parameters:
     ///   - owner: The owner.
@@ -169,22 +211,9 @@ class PieceView: UIImageView
         point.y = point.y.snap(to: tileSize)
         var address = point.toAddress(tileSize: tileSize)
         
-        // Calculate tile width and height of the piece
-        let width: Int8
-        let height: Int8
-        if (direction == .north) || (direction == .south)
-        {
-            width = Int8(building.width)
-            height = Int8(building.height)
-        }
-        else
-        {
-            width = Int8(building.height)
-            height = Int8(building.width)
-        }
-        
         
         // (3) Snap onto board
+        let (width, height) = building.dimensions(direction: direction)
         // Left
         if address.col < 0
         {
@@ -240,7 +269,8 @@ class PieceView: UIImageView
     /// - Parameter tileSize: The new tile size.
     private func resetTileSize(_ tileSize: CGFloat)
     {
-        let size = CGSize(width: tileSize * CGFloat(building.width), height: tileSize * CGFloat(building.height))
+        let (width, height) = building.dimensions(direction: .north)
+        let size = CGSize(width: tileSize * CGFloat(width), height: tileSize * CGFloat(height))
         self.frame = CGRect(origin: self.frame.origin, size: size)
     }
     
