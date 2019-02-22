@@ -526,11 +526,10 @@ class GameViewController: UIViewController
             case .church:
                 pieceView.removeFromSuperview()
 
-            case .light:
-                poolForPlayer(.light).addPiece(pieceView)
-
-            case .dark:
-                poolForPlayer(.dark).addPiece(pieceView)
+            default:
+                pieceView.rotate(to: 0)
+                pieceView.state = .Standard
+                poolForPlayer(piece.owner).addPiece(pieceView)
             }
         }
     }
