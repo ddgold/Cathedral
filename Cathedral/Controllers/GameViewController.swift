@@ -118,6 +118,21 @@ class GameViewController: UIViewController
                     let touchLocation = sender.location(in: boardView)
                     let offsetLocation = CGPoint(x: touchLocation.x - panOffset.x, y: touchLocation.y - panOffset.y)
                     
+                    if let activePool = self.activePool
+                    {
+                        if (activePool == topPoolView) && (touchLocation.y < 0) ||
+                            (activePool == bottomPoolView) && (touchLocation.y > boardView.frame.height)
+                        {
+                            activePool.addPiece(activePiece)
+                            self.activePiece = nil
+                            
+                            self.panStart = nil
+                            self.panOffset = nil
+                            
+                            return
+                        }
+                    }
+                    
                     activePiece.move(to: offsetLocation)
                     putdownActivePiece()
                     
@@ -257,7 +272,19 @@ class GameViewController: UIViewController
                 {
                     let boardTouchLocation = sender.location(in: boardView)
                     let offsetLocation = CGPoint(x: boardTouchLocation.x - pressOffset.x, y: boardTouchLocation.y - pressOffset.y)
+                    
+                    if (activePool == topPoolView) && (boardTouchLocation.y < 0) ||
+                        (activePool == bottomPoolView) && (boardTouchLocation.y > boardView.frame.height)
+                    {
+                        activePool.addPiece(pressedPiece)
                         
+                        self.pressStart = nil
+                        self.pressOffset = nil
+                        self.pressedPiece = nil
+                        
+                        return
+                    }
+                    
                     boardView.buildPiece(pressedPiece)
                     activePiece = pressedPiece
                     activePiece!.move(to: offsetLocation)
@@ -567,7 +594,6 @@ class GameViewController: UIViewController
             
             if let winner = winner
             {
-                debugPrint(winner)
                 messageLabel.text = "Game is over, \(winner) is the winner!"
             }
             else
