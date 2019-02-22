@@ -41,9 +41,6 @@ class PoolView: UIScrollView
         }
         
         refresh()
-        
-        
-        self.backgroundColor = .gray
     }
     
     /// Unsupported decoder initilizer.
