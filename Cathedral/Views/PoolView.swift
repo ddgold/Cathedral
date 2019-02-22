@@ -37,7 +37,7 @@ class PoolView: UIScrollView
         
         for building in keys
         {
-            addPiece(PieceView(owner: owner, building: building, tileSize: tileSize))
+            addPiece(PieceView(owner: owner, building: building, tileSize: tileSize), dontRefresh: true)
         }
         
         refresh()
@@ -57,10 +57,42 @@ class PoolView: UIScrollView
     ///
     /// - Parameters:
     ///   - piece: The new piece.
-    public func addPiece(_ piece: PieceView)
+    public func addPiece(_ piece: PieceView, at: CGPoint, dontRefresh: Bool = false)
     {
-        addPiecePrivate(piece)
-        refresh()
+        var insertAt = pieces.count
+        
+        let offsetX = at.x + contentOffset.x
+        var runningX: CGFloat = 10
+        
+        for (index, piece) in pieces.enumerated()
+        {
+            runningX += (piece.frame.width / 2)
+            if offsetX < runningX
+            {
+                insertAt = index
+                break;
+            }
+            runningX += (piece.frame.width / 2) + 10
+        }
+        
+        self.addSubview(piece)
+        pieces.insert(piece, at: insertAt)
+        
+        if !dontRefresh
+        {
+            refresh()
+        }
+    }
+    
+    public func addPiece(_ piece: PieceView, dontRefresh: Bool = false)
+    {
+        self.addSubview(piece)
+        pieces.append(piece)
+        
+        if !dontRefresh
+        {
+            refresh()
+        }
     }
     
     /// Remove a piece from the pool given the touch location.
@@ -82,15 +114,6 @@ class PoolView: UIScrollView
         }
         
         return nil
-    }
-    
-    /// Add a piece to the pool. Private portion that doesn't include a call to refresh.
-    ///
-    /// - Parameter piece: The new piece.
-    private func addPiecePrivate(_ piece: PieceView)
-    {
-        self.addSubview(piece)
-        pieces.append(piece)
     }
     
     /// Refresh the location of the pieces in the pool.
