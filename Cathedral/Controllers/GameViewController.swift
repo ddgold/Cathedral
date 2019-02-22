@@ -105,8 +105,8 @@ class GameViewController: UIViewController
             case .changed:
                 if let panOffset = self.panOffset
                 {
-                    let touchLocation = sender.location(in: boardView)
-                    let offsetLocation = CGPoint(x: touchLocation.x - panOffset.x, y: touchLocation.y - panOffset.y)
+                    let boardTouchLocation = sender.location(in: boardView)
+                    let offsetLocation = CGPoint(x: boardTouchLocation.x - panOffset.x, y: boardTouchLocation.y - panOffset.y)
                     
                     activePiece.move(to: offsetLocation)
                 }
@@ -115,15 +115,15 @@ class GameViewController: UIViewController
             case .ended:
                 if let panOffset = self.panOffset
                 {
-                    let touchLocation = sender.location(in: boardView)
-                    let offsetLocation = CGPoint(x: touchLocation.x - panOffset.x, y: touchLocation.y - panOffset.y)
+                    let boardTouchLocation = sender.location(in: boardView)
+                    let offsetLocation = CGPoint(x: boardTouchLocation.x - panOffset.x, y: boardTouchLocation.y - panOffset.y)
                     
                     if let activePool = self.activePool
                     {
-                        if (activePool == topPoolView) && (touchLocation.y < 0) ||
-                            (activePool == bottomPoolView) && (touchLocation.y > boardView.frame.height)
+                        if (activePool == topPoolView) && (boardTouchLocation.y < 0) ||
+                            (activePool == bottomPoolView) && (boardTouchLocation.y > boardView.frame.height)
                         {
-                            activePool.addPiece(activePiece)
+                            activePool.addPiece(activePiece, at: boardTouchLocation)
                             self.activePiece = nil
                             
                             self.panStart = nil
@@ -276,7 +276,7 @@ class GameViewController: UIViewController
                     if (activePool == topPoolView) && (boardTouchLocation.y < 0) ||
                         (activePool == bottomPoolView) && (boardTouchLocation.y > boardView.frame.height)
                     {
-                        activePool.addPiece(pressedPiece)
+                        activePool.addPiece(pressedPiece, at: boardTouchLocation)
                         
                         self.pressStart = nil
                         self.pressOffset = nil
