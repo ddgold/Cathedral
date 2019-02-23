@@ -254,12 +254,11 @@ class GameViewController: UIViewController
                     }
                     else
                     {
-                        activePool.removePiece(at: index)
-                        
                         pressStart = activePool.convert(selectedPiece.frame, to: boardView).origin
                         pressOffset = CGPoint(x: boardTouchLocation.x - pressStart!.x, y: boardTouchLocation.y - pressStart!.y)
                         pressedPiece = selectedPiece
                         
+                        activePool.removePiece(at: index)
                         boardView.addSubview(pressedPiece!)
                         
                         pressedPiece!.frame = CGRect(origin: pressStart!, size: pressedPiece!.frame.size)
