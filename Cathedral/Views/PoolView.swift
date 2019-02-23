@@ -160,5 +160,9 @@ class PoolView: UIScrollView
             let freeSpace = frame.width - contentSize.width
             contentInset.left = freeSpace / 2
         }
+        else
+        {
+            contentInset.left = 0
+        }
     }
 }
