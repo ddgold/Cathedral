@@ -220,7 +220,9 @@ class GameViewController: UIViewController
         {
             if activePiece.contains(point: sender.location(in: activePiece))
             {
+                let start = activePiece.frame.origin
                 activePiece.rotate(to: activePiece.angle + (CGFloat.pi / 2))
+                activePiece.move(to: start)
                 putdownActivePiece()
             }
         }
