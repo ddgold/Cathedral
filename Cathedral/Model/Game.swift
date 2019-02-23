@@ -18,8 +18,10 @@ class Game: NSObject, NSCoding
     private var lightUnbuiltBuildings: Set<Building>
     /// The set of dark's unbuilt buildings.
     private var darkUnbuiltBuildings: Set<Building>
-    /// The list of built pieces, in order from first to last built.
+    /// THe set of currently built pieces.
     private(set) var builtPieces: Set<Piece>
+    /// The list of built pieces, in order from first to last built.
+    private(set) var buildHistory: [Piece]
     /// Whether or not the cathedral has been built.
     private(set) var cathedralBuilt: Bool
     /// The set of light's claimed address.
@@ -28,7 +30,23 @@ class Game: NSObject, NSCoding
     private(set) var darkClaimedAddresses: Set<Address>
     /// The owner who's turn is next. If nil, game is over.
     private(set) var nextTurn: Owner?
-    
+    /// The history log for this game.
+    var log: String
+    {
+        var string = ""
+        for piece in buildHistory
+        {
+            if string.count == 0
+            {
+                string += piece.log
+            }
+            else
+            {
+                string += "\n" + piece.log
+            }
+        }
+        return string
+    }
     
     //MARK: - Initialization
     /// Initializes a new game.
@@ -38,10 +56,30 @@ class Game: NSObject, NSCoding
         lightUnbuiltBuildings = Building.playerBuildings
         darkUnbuiltBuildings = Building.playerBuildings
         builtPieces = []
+        buildHistory = []
         cathedralBuilt = false
         lightClaimedAddresses = []
         darkClaimedAddresses = []
         nextTurn = .church
+    }
+    
+    /// Initializes a game from a histroy log.
+    ///
+    /// - Parameter log: The log entry.
+    convenience init?(log: String)
+    {
+        self.init()
+        
+        let turns = log.components(separatedBy: "\n")
+        for turn in turns
+        {
+            let owner = nextTurn!
+            let building = Building(String(turn.prefix(2)))!
+            let address = Address(String(turn.suffix(2)))!
+            let direction = Direction(String(turn[turn.prefix(2).endIndex..<turn.suffix(2).startIndex]))!
+            
+            _ = buildBuilding(building, for: owner, facing: direction, at: address)
+        }
     }
     
     
@@ -197,6 +235,7 @@ class Game: NSObject, NSCoding
         
         let builtPiece = Piece(owner: owner, building: building, direction: direction, address: address)
         builtPieces.insert(builtPiece)
+        buildHistory.append(builtPiece)
         
         // Remove tiles from claimed sets
         for address in builtPiece.addresses()
@@ -490,6 +529,7 @@ class Game: NSObject, NSCoding
         static let lightUnbuiltBuildings = "lightUnbuiltBuildings"
         static let darkUnbuiltBuildings = "darkUnbuiltBuildings"
         static let builtPieces = "builtPieces"
+        static let buildHistory = "buildHistory"
         static let cathedralBuilt = "cathedralBuilt"
         static let lightClaimedAddresses = "lightClaimedAddresses"
         static let darkClaimedAddresses = "darkClaimedAddresses"
@@ -502,6 +542,7 @@ class Game: NSObject, NSCoding
         aCoder.encode(lightUnbuiltBuildings, forKey: PropertyKey.lightUnbuiltBuildings)
         aCoder.encode(darkUnbuiltBuildings, forKey: PropertyKey.darkUnbuiltBuildings)
         aCoder.encode(builtPieces, forKey: PropertyKey.builtPieces)
+        aCoder.encode(buildHistory, forKey: PropertyKey.buildHistory)
         aCoder.encode(cathedralBuilt, forKey: PropertyKey.cathedralBuilt)
         aCoder.encode(lightClaimedAddresses, forKey: PropertyKey.lightClaimedAddresses)
         aCoder.encode(darkClaimedAddresses, forKey: PropertyKey.darkClaimedAddresses)
@@ -537,6 +578,13 @@ class Game: NSObject, NSCoding
             return nil
         }
         self.builtPieces = builtPieces
+        
+        // Build History
+        guard let buildHistory = aDecoder.decodeObject(forKey: PropertyKey.buildHistory) as? [Piece] else
+        {
+            return nil
+        }
+        self.buildHistory = buildHistory
         
         // Cathedral Built
         guard let cathedralBuilt = aDecoder.decodeObject(forKey: PropertyKey.cathedralBuilt) as? Bool else
