@@ -23,8 +23,9 @@ class GameViewController: UIViewController
     private var messageLabel: UILabel!
     private var buildButton: UIButton!
     
-    /// The active piece and pool.
+    /// The active piece.
     private var activePiece: PieceView?
+    /// The actice poo.
     private var activePool: PoolView?
     
     /// The point of a pan gesture's start.
@@ -36,10 +37,18 @@ class GameViewController: UIViewController
     /// The rotation of the active piece before the rotation gesture.
     private var rotateStart: CGFloat?
     
-    // Pool Long Press Gesture Inital State
+    /// The piece that the long press gestures is touching.
     private var pressedPiece: PieceView?
+    /// The point of a long press gesture's start.
     private var pressStart: CGPoint?
+    /// The offset of a long press gesture into the pressed piece.
     private var pressOffset: CGPoint?
+    
+    /// The player assigned to the top pool.
+    private let topPoolPlayer = Owner.dark
+    
+    /// The completion handler that return the game to calling controller when this controller disappears.
+    var completionHandler: ((Game?) -> Void)?
     
     /// The calculate size of a tile based on controller's safe space.
     var tileSize: CGFloat
@@ -53,14 +62,14 @@ class GameViewController: UIViewController
         return min(maxHeightSize, maxWidthSize)
     }
     
-    private let topPoolPlayer = Owner.dark
     
-    
-    //MARK: - View Did Load
+    //MARK: - ViewController Lifecycle
     /// Initialze the controller's sub views once the controller has loaded.
     override func viewDidLoad()
     {
         super.viewDidLoad()
+        
+        navigationItem.title  = "Cathedral"
         
         // Initialize subviews
         boardView = buildBoard()
@@ -79,8 +88,16 @@ class GameViewController: UIViewController
         nextTurn()
     }
     
+    /// This game controller is disappearing, return the game via the completion handler.
+    ///
+    /// - Parameter animated: Whether or not the disappearing is animated.
+    override func viewWillDisappear(_ animated: Bool)
+    {
+        completionHandler?(game)
+    }
     
-    //MARK: - Gesture Recognizer Actions
+    
+    //MARK: - Button and Gesture Recognizer Actions
     /// Handle a pan gesture accross the game board view.
     ///
     /// - Parameter sender: The pan gesture recognizer.
@@ -355,7 +372,7 @@ class GameViewController: UIViewController
         newBoard.heightAnchor.constraint(equalToConstant: tileSize * 12).isActive = true
         newBoard.widthAnchor.constraint(equalToConstant: tileSize * 12).isActive = true
         newBoard.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        newBoard.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        newBoard.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 30).isActive = true
         
         let boardPanRecognizer = UIPanGestureRecognizer(target: self, action: #selector(handleBoardPanGesture))
         newBoard.addGestureRecognizer(boardPanRecognizer)
