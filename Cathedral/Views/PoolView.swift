@@ -53,10 +53,23 @@ class PoolView: UIScrollView
     
     
     //MARK: - Functions
-    /// Add a piece to the pool given the touch location.
+    /// Add a piece to the pool at the end
     ///
     /// - Parameters:
     ///   - piece: The new piece.
+    ///   - dontRefresh: Whether or not refeshing the pool should be skipped.  Defaults to false.
+    public func addPiece(_ piece: PieceView, dontRefresh: Bool = false)
+    {
+        let insertAt = pieces.count
+        addPiece(piece, at: insertAt, dontRefresh: dontRefresh)
+    }
+    
+    /// Add a piece to the pool at a given the touch location.
+    ///
+    /// - Parameters:
+    ///   - piece: The new piece.
+    ///   - at: The touch location.
+    ///   - dontRefresh: Whether or not refeshing the pool should be skipped.  Defaults to false.
     public func addPiece(_ piece: PieceView, at: CGPoint, dontRefresh: Bool = false)
     {
         var insertAt = pieces.count
@@ -75,19 +88,23 @@ class PoolView: UIScrollView
             runningX += (piece.frame.width / 2) + 10
         }
         
-        self.addSubview(piece)
-        pieces.insert(piece, at: insertAt)
         
-        if !dontRefresh
-        {
-            refresh()
-        }
+        addPiece(piece, at: insertAt, dontRefresh: dontRefresh)
     }
     
-    public func addPiece(_ piece: PieceView, dontRefresh: Bool = false)
+    /// Add a piece to the pool at a given index.
+    ///
+    /// - Parameters:
+    ///   - piece: The new piece.
+    ///   - at: The touch location.
+    ///   - dontRefresh: Whether or not refeshing the pool should be skipped.  Defaults to false.
+    public func addPiece(_ piece: PieceView, at: Int, dontRefresh: Bool = false)
     {
+        piece.rotate(to: 0)
+        piece.state = .Standard
+        
         self.addSubview(piece)
-        pieces.append(piece)
+        pieces.insert(piece, at: at)
         
         if !dontRefresh
         {

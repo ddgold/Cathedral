@@ -527,8 +527,6 @@ class GameViewController: UIViewController
                 pieceView.removeFromSuperview()
 
             default:
-                pieceView.rotate(to: 0)
-                pieceView.state = .Standard
                 poolForPlayer(piece.owner).addPiece(pieceView)
             }
         }
