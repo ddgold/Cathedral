@@ -96,7 +96,7 @@ class PoolView: UIScrollView
     ///
     /// - Parameters:
     ///   - piece: The new piece.
-    ///   - at: The touch location.
+    ///   - at: The index.
     ///   - dontRefresh: Whether or not refeshing the pool should be skipped.  Defaults to false.
     public func addPiece(_ piece: PieceView, at: Int, dontRefresh: Bool = false)
     {
@@ -112,25 +112,30 @@ class PoolView: UIScrollView
         }
     }
     
-    /// Remove a piece from the pool given the touch location.
+    /// Select the piece from the pool given the touch location.
     ///
     /// - Parameter at: The touch location.
-    /// - Returns: The piece, removed from the pool, at the location, if there is one.
-    public func removePiece(at: CGPoint) -> PieceView?
+    /// - Returns: A tuple, where the fist element is the index, and the second element is the piece. Or, null if touch is not inside a piece.
+    public func selectPiece(at: CGPoint) -> (Int, PieceView)?
     {
         for (index, piece) in pieces.enumerated()
         {
             if piece.contains(point: self.convert(at, to: piece))
             {
-                pieces.remove(at: index)
-                piece.removeFromSuperview()
-                
-                refresh()
-                return piece
+                return (index, piece)
             }
         }
         
         return nil
+    }
+    
+    /// Remove the piece from the pool at a given index.
+    ///
+    /// - Parameter at: The index.
+    public func removePiece(at: Int)
+    {
+        pieces.remove(at: at).removeFromSuperview()
+        refresh()
     }
     
     /// Refresh the location of the pieces in the pool.

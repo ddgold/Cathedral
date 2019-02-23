@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import AVFoundation
 
 /// A cathedral game controller.
 class GameViewController: UIViewController
@@ -243,17 +244,26 @@ class GameViewController: UIViewController
             // Began dragging piece
             case .began:
                 let poolTouchLocation = sender.location(in: activePool)
-                if let selectedPiece = activePool.removePiece(at: poolTouchLocation)
+                if let (index, selectedPiece) = activePool.selectPiece(at: poolTouchLocation)
                 {
                     let boardTouchLocation = sender.location(in: boardView)
                     
-                    pressStart = activePool.convert(selectedPiece.frame, to: boardView).origin
-                    pressOffset = CGPoint(x: boardTouchLocation.x - pressStart!.x, y: boardTouchLocation.y - pressStart!.y)
-                    pressedPiece = selectedPiece
-                    
-                    boardView.addSubview(pressedPiece!)
-                    
-                    pressedPiece!.frame = CGRect(origin: pressStart!, size: pressedPiece!.frame.size)
+                    if (!canBuildPiece(selectedPiece))
+                    {
+                        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
+                    }
+                    else
+                    {
+                        activePool.removePiece(at: index)
+                        
+                        pressStart = activePool.convert(selectedPiece.frame, to: boardView).origin
+                        pressOffset = CGPoint(x: boardTouchLocation.x - pressStart!.x, y: boardTouchLocation.y - pressStart!.y)
+                        pressedPiece = selectedPiece
+                        
+                        boardView.addSubview(pressedPiece!)
+                        
+                        pressedPiece!.frame = CGRect(origin: pressStart!, size: pressedPiece!.frame.size)
+                    }
                 }
             
             // Dragged piece
