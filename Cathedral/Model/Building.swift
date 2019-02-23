@@ -135,6 +135,76 @@ enum Building: UInt8
         }
     }
     
+    /// The log entry for this building.
+    var log: String
+    {
+        switch self
+        {
+        case .tavern:
+            return "TA"
+        case .stable:
+            return "ST"
+        case .inn:
+            return "IN"
+        case .bridge:
+            return "BR"
+        case .square:
+            return "SQ"
+        case .abbey:
+            return "AB"
+        case .manor:
+            return "MA"
+        case .tower:
+            return "TO"
+        case .infirmary:
+            return "IF"
+        case .castle:
+            return "CS"
+        case .academy:
+            return "AC"
+        case .cathedral:
+            return "CA"
+        }
+    }
+    
+    
+    //MARK: - Initialization
+    /// Initializes a building from a log entry.
+    ///
+    /// - Parameter log: The log entry.
+    init?(_ log: String)
+    {
+        switch log
+        {
+        case "TA":
+            self = .tavern
+        case "ST":
+            self = .stable
+        case "IN":
+            self = .inn
+        case "BR":
+            self = .bridge
+        case "SQ":
+            self = .square
+        case "AB":
+            self = .abbey
+        case "MA":
+            self = .manor
+        case "TO":
+            self = .tower
+        case "IF":
+            self = .infirmary
+        case "CS":
+            self = .castle
+        case "AC":
+            self = .academy
+        case "CA":
+            self = .cathedral
+        default:
+            return nil
+        }
+    }
+    
     
     //MARK: - Functions
     /// Builds the blueprints for this building type based on owner, direction, and address.

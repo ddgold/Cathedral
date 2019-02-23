@@ -25,6 +25,44 @@ enum Direction: UInt8
         return [self.north, self.east, self.south, self.west]
     }
     
+    /// The log entry for this direction.
+    var log: String
+    {
+        switch self
+        {
+        case .north:
+            return "n"
+        case .east:
+            return "e"
+        case .south:
+            return "s"
+        case .west:
+            return "w"
+        }
+    }
+    
+    
+    //MARK: - Initialization
+    /// Initializes a direction from a log entry.
+    ///
+    /// - Parameter log: The log entry.
+    init?(_ log: String)
+    {
+        switch log
+        {
+        case "n":
+            self = .north
+        case "e":
+            self = .east
+        case "s":
+            self = .south
+        case "w":
+            self = .west
+        default:
+            return nil
+        }
+    }
+    
     
     //MARK: - Descriptions
     /// Description of the direction enum.

@@ -20,7 +20,11 @@ struct Piece: Hashable
     let direction: Direction
     /// The address the piece's origin.
     let address: Address
-    
+    /// The log entry for this piece.
+    var log: String
+    {
+        return "\(building.log)\(direction.log)\(address.log)"
+    }
     
     //MARK: - Functions
     /// Gets the set of address that this building covers.

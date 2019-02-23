@@ -23,6 +23,12 @@ struct Address: Hashable
         return (col >= 0) && (col <= 9) && (row >= 0) && (row <= 9)
     }
     
+    /// The log entry for this address.
+    var log: String
+    {
+        return "\(col)\(row)"
+    }
+    
     
     //MARK: - Initialization
     /// Initializes a specified address.
@@ -34,6 +40,22 @@ struct Address: Hashable
     {
         self.col = col
         self.row = row
+    }
+    
+    /// Initializes an address from a log entry.
+    ///
+    /// - Parameter log: The log entry.
+    init?(_ log: String)
+    {
+        if let col = Int8(log.prefix(1)), let row = Int8(log.suffix(1))
+        {
+            self.col = col
+            self.row = row
+        }
+        else
+        {
+            return nil
+        }
     }
     
     
