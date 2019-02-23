@@ -523,7 +523,7 @@ class Game: NSObject, NSCoding
     
     
     //MARK: - Encoding
-    struct PropertyKey
+    private struct PropertyKey
     {
         static let board = "board"
         static let lightUnbuiltBuildings = "lightUnbuiltBuildings"
