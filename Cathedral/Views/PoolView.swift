@@ -153,5 +153,12 @@ class PoolView: UIScrollView
         }
         
         self.contentSize = CGSize(width: totalWidth, height: totalHeight)
+        
+        // Set left contentInset if content narrower than frame
+        if contentSize.width < frame.width
+        {
+            let freeSpace = frame.width - contentSize.width
+            contentInset.left = freeSpace / 2
+        }
     }
 }
