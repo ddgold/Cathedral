@@ -8,6 +8,7 @@
 
 import UIKit
 
+/// A main menu controller.
 class MainMenuViewController: UIViewController
 {
     //MARK: - Properties
@@ -105,7 +106,8 @@ class MainMenuViewController: UIViewController
     /// - Parameter sender: The button press sender.
     @objc func settingsButtonPressed(_ sender: UIButton)
     {
-        debugPrint("Settings button pressed!")
+        let settingsViewController = SettingsViewController()
+        navigationController?.pushViewController(settingsViewController, animated: true)
     }
     
     
