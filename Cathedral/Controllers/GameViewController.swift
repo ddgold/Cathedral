@@ -94,7 +94,7 @@ class GameViewController: UIViewController
     /// This game controller is disappearing, return the game via the completion handler.
     ///
     /// - Parameter animated: Whether or not the disappearing is animated.
-    override func viewWillDisappear(_ animated: Bool)
+    override func viewDidDisappear(_ animated: Bool)
     {
         completionHandler?(game)
     }
@@ -627,26 +627,16 @@ class GameViewController: UIViewController
         
         
         // Update which building in pools can be built
-        if (topPoolView == activePool)
+        for targetPool in [topPoolView!, bottomPoolView!]
         {
-            debugPrint("TOP - ENABLE")
-            enablePool(topPoolView)
-        }
-        else
-        {
-            debugPrint("TOP - DISABLE")
-            disablePool(topPoolView)
-        }
-        
-        if (bottomPoolView == activePool)
-        {
-            debugPrint("BOTTOM - ENABLE")
-            enablePool(bottomPoolView)
-        }
-        else
-        {
-            debugPrint("BOTTOM - DISABLE")
-            disablePool(bottomPoolView)
+            if (targetPool == activePool)
+            {
+                enablePool(targetPool)
+            }
+            else
+            {
+                disablePool(targetPool)
+            }
         }
     }
     
