@@ -168,7 +168,7 @@ class MainMenuViewController: UIViewController
     ///     - notification: Unused.
     @objc func updateTheme(_: Notification?)
     {
-        let theme = Theme.current
+        let theme = Theme.activeTheme
         
         navigationController?.navigationBar.tintColor = theme.tintColor
         navigationController?.navigationBar.barStyle = theme.barStyle

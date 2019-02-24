@@ -675,7 +675,7 @@ class GameViewController: UIViewController
     ///     - notification: Unused.
     @objc private func updateTheme(_: Notification?)
     {
-        let theme = Theme.current
+        let theme = Theme.activeTheme
         
         messageLabel.textColor = theme.textColor
         buildButton.tintColor = theme.tintColor

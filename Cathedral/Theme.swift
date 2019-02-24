@@ -13,9 +13,27 @@ import UIKit
 struct Theme: Equatable
 {
     //MARK: - Properties
-    /// Current active theme.
-    private(set) static var current: Theme = Theme(.white)
     
+    /// Current active theme.
+    static private(set) var activeTheme = Theme(Theme.activeName)
+    
+    /// Name of the active theme's name
+    static var activeName: Theme.Name
+    {
+        get
+        {
+            return Theme.Name(rawValue: UserDefaults.standard.string(forKey: "activeTheme") ?? "Black")!
+        }
+        set
+        {
+            activeTheme = Theme(newValue)
+            UserDefaults.standard.set(newValue.rawValue, forKey: "activeTheme")
+            NotificationCenter.default.post(name: .themeChange, object: nil)
+        }
+    }
+    
+    /// Name of the theme
+    let name: Theme.Name
     /// Color for the tints.
     let tintColor: UIColor
     /// Style for all bars, navigator and tab.
@@ -30,8 +48,9 @@ struct Theme: Equatable
     /// Initializes a new theme object.
     ///
     /// - Parameter name: The theme's name.
-    init(_ name: Name)
+    private init(_ name: Name)
     {
+        self.name = name
         switch name
         {
         case .black:
@@ -50,18 +69,6 @@ struct Theme: Equatable
     
     
     //MARK: - Functions
-    /// Changes the current theme, and sends notification to all subscribers if the style has changed.
-    ///
-    /// - Parameter style: The theme style to change to
-    static func change(to theme: Theme)
-    {
-        if current != theme
-        {
-            current = theme
-            NotificationCenter.default.post(name: .themeChange, object: nil)
-        }
-    }
-    
     /// Subscribes an object to theme changes.
     ///
     /// - Parameters:

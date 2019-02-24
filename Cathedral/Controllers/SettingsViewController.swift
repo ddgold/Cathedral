@@ -41,13 +41,30 @@ class SettingsViewController: UITableViewController
         
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: Identifiers.settingViewCell)
         
-        let darkModeCell = SwitchSettingViewCell(title: "Dark mode", isOn: false, reuseIdentifier: Identifiers.settingViewCell)
+        
+        // Appearance
+        let darkModeCell = SwitchSettingViewCell(title: "Dark mode", isOn: (Theme.activeName == .black), reuseIdentifier: Identifiers.settingViewCell)
         darkModeCell.valueChangedHandler = { newState in
-            debugPrint(newState)
-            Theme.change(to: Theme(newState ? .black : .white))
+            let newTheme: Theme.Name = newState ? .black : .white
+            Theme.activeName = newTheme
         }
         
         sections.append((name: "Appearance", cells: [darkModeCell]))
+        
+        
+        // Game Settings
+        let delayedCathedralCell = SwitchSettingViewCell(title: "Deplayed cathedral placement", isOn: Settings.delayedCathedral, reuseIdentifier: Identifiers.settingViewCell)
+        delayedCathedralCell.valueChangedHandler = { newState in
+            Settings.delayedCathedral = newState
+        }
+        
+        let autoBuildCell = SwitchSettingViewCell(title: "Auto-build remaining pieces", isOn: Settings.autoBuild, reuseIdentifier: Identifiers.settingViewCell)
+        autoBuildCell.valueChangedHandler = { newState in
+            Settings.autoBuild = newState
+        }
+        
+        sections.append((name: "Game Settings", cells: [delayedCathedralCell, autoBuildCell]))
+        
         
         // Listen for theme changes
         Theme.subscribe(self, selector: #selector(updateTheme(_:)))
@@ -105,7 +122,7 @@ class SettingsViewController: UITableViewController
     ///     - notification: Unused.
     @objc func updateTheme(_: Notification?)
     {
-        let theme = Theme.current
+        let theme = Theme.activeTheme
         
         navigationController?.navigationBar.tintColor = theme.tintColor
         navigationController?.navigationBar.barStyle = theme.barStyle
