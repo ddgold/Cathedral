@@ -24,7 +24,8 @@ enum Owner: UInt8
         return (self != Owner.church)
     }
     
-    /// The oppenent of this owner. Note, only player owners have oppenents.
+    /// The oppenent of this owner.
+    /// - Note: Only player owners have oppenents.
     var opponent: Owner
     {
         switch self
