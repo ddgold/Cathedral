@@ -91,7 +91,7 @@ class SwitchSettingViewCell: UITableViewCell
     ///     - notification: Unused.
     @objc func updateTheme(_: Notification?)
     {
-        let theme = Theme.current
+        let theme = Theme.activeTheme
         
         self.switchLabel.textColor = theme.textColor
         self.switchView.onTintColor = theme.tintColor
