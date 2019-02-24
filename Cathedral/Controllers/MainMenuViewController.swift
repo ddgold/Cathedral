@@ -66,6 +66,10 @@ class MainMenuViewController: UIViewController
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        
+        // Listen for theme changes
+        Theme.subscribe(self, selector: #selector(updateTheme(_:)))
+        updateTheme(nil)
     }
     
     
@@ -154,5 +158,23 @@ class MainMenuViewController: UIViewController
                   ABe96
                   """
         pausedGame = Game(log: log)
+    }
+    
+    /// Updates the view to the current theme.
+    ///
+    /// - Parameters:
+    ///     - notification: Unused.
+    @objc func updateTheme(_: Notification?)
+    {
+        let theme = Theme.current
+        
+        navigationController?.navigationBar.tintColor = theme.tintColor
+        navigationController?.navigationBar.barStyle = theme.barStyle
+        
+        continueGameButton.tintColor = theme.tintColor
+        newGameButton.tintColor = theme.tintColor
+        settingsButton.tintColor = theme.tintColor
+        
+        view.backgroundColor = theme.backgroundColor
     }
 }
