@@ -56,6 +56,10 @@ class SwitchSettingViewCell: UITableViewCell
         switchView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -10).isActive = true
         
         switchView.addTarget(self, action: #selector(switchValueDidChange), for: .valueChanged)
+        
+        // Listen for theme changes
+        Theme.subscribe(self, selector: #selector(updateTheme(_:)))
+        updateTheme(nil)
     }
     
     /// Unsupported decoder initilizer.
@@ -77,5 +81,21 @@ class SwitchSettingViewCell: UITableViewCell
         {
             valueChangedHandler(sender.isOn)
         }
+    }
+    
+    
+    //MARK: - Functions
+    /// Updates the view to the current theme.
+    ///
+    /// - Parameters:
+    ///     - notification: Unused.
+    @objc func updateTheme(_: Notification?)
+    {
+        let theme = Theme.current
+        
+        self.switchLabel.textColor = theme.textColor
+        self.switchView.onTintColor = theme.tintColor
+        
+        self.backgroundColor = theme.backgroundColor
     }
 }

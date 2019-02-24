@@ -83,6 +83,9 @@ class GameViewController: UIViewController
         self.view.bringSubviewToFront(boardView)
         self.view.backgroundColor = .white
         
+        // Listen for theme changes
+        Theme.subscribe(self, selector: #selector(updateTheme(_:)))
+        updateTheme(nil)
         
         // Start / resume Game
         nextTurn()
@@ -630,6 +633,20 @@ class GameViewController: UIViewController
             game = nil
             activePool = nil
         }
+    }
+    
+    /// Updates the view to the current theme.
+    ///
+    /// - Parameters:
+    ///     - notification: Unused.
+    @objc func updateTheme(_: Notification?)
+    {
+        let theme = Theme.current
+        
+        messageLabel.textColor = theme.textColor
+        buildButton.tintColor = theme.tintColor
+        
+        view.backgroundColor = theme.backgroundColor
     }
 }
 
