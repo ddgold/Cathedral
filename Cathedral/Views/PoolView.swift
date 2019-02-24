@@ -16,6 +16,7 @@ class PoolView: UIScrollView
     /// List of pieces in the pool.
     private var pieces: [PieceView]
     
+    
     //MARK: - Initialization
     /// Initialize a new piece view.
     ///
@@ -101,7 +102,7 @@ class PoolView: UIScrollView
     public func addPiece(_ piece: PieceView, at: Int, dontRefresh: Bool = false)
     {
         piece.rotate(to: 0)
-        piece.state = .Standard
+        piece.state = .standard
         
         self.addSubview(piece)
         pieces.insert(piece, at: at)

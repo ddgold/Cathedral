@@ -355,7 +355,7 @@ class GameViewController: UIViewController
         buildPiece(activePiece!)
         
         // Update view
-        activePiece!.state = .Standard
+        activePiece!.state = .standard
         activePiece = nil
         
         nextTurn()
@@ -485,7 +485,7 @@ class GameViewController: UIViewController
         }
         
         buildButton.isEnabled = false
-        activePiece.state = .Standard
+        activePiece.state = .standard
     }
     
     
@@ -504,12 +504,12 @@ class GameViewController: UIViewController
         if canBuildPiece(activePiece)
         {
             buildButton.isEnabled = true
-            activePiece.state = .Success
+            activePiece.state = .success
         }
         else
         {
             buildButton.isEnabled = false
-            activePiece.state = .Failure
+            activePiece.state = .failure
         }
     }
     
@@ -587,15 +587,6 @@ class GameViewController: UIViewController
         // Turn off build button
         buildButton.isEnabled = false
         
-        // Update which building in pools can be built
-        for case let pieceView as PieceView in (topPoolView.subviews + bottomPoolView.subviews)
-        {
-            if (!canBuildPiece(pieceView))
-            {
-                pieceView.state = .Failure
-            }
-        }
-        
         // Set message and potential active piece (for Cathedral turn) or pool (for player turn)
         if let nextTurn = game!.nextTurn
         {
@@ -633,13 +624,66 @@ class GameViewController: UIViewController
             game = nil
             activePool = nil
         }
+        
+        
+        // Update which building in pools can be built
+        if (topPoolView == activePool)
+        {
+            debugPrint("TOP - ENABLE")
+            enablePool(topPoolView)
+        }
+        else
+        {
+            debugPrint("TOP - DISABLE")
+            disablePool(topPoolView)
+        }
+        
+        if (bottomPoolView == activePool)
+        {
+            debugPrint("BOTTOM - ENABLE")
+            enablePool(bottomPoolView)
+        }
+        else
+        {
+            debugPrint("BOTTOM - DISABLE")
+            disablePool(bottomPoolView)
+        }
+    }
+    
+    /// Enable a given pool, updating highlighting.
+    ///
+    /// - Parameter poolView: The pool view.
+    private func enablePool(_ poolView: PoolView)
+    {
+        for case let piece as PieceView in poolView.subviews
+        {
+            if (canBuildPiece(piece))
+            {
+                piece.state = .standard
+            }
+            else
+            {
+                piece.state = .failure
+            }
+        }
+    }
+    
+    /// Disable a given pool, darkening all pieces.
+    ///
+    /// - Parameter poolView: The pool view.
+    private func disablePool(_ poolView: PoolView)
+    {
+        for case let piece as PieceView in poolView.subviews
+        {
+            piece.state = .disabled
+        }
     }
     
     /// Updates the view to the current theme.
     ///
     /// - Parameters:
     ///     - notification: Unused.
-    @objc func updateTheme(_: Notification?)
+    @objc private func updateTheme(_: Notification?)
     {
         let theme = Theme.current
         

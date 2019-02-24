@@ -32,13 +32,16 @@ class PieceView: UIImageView
         {
             switch state
             {
-            case .Standard:
+            case .standard:
                 colorFilter.isHidden = true
-            case .Success:
+            case .success:
                 colorFilter.backgroundColor =  UIColor(displayP3Red: 0, green: 1, blue: 0, alpha: 0.3)
                 colorFilter.isHidden = false
-            case .Failure:
+            case .failure:
                 colorFilter.backgroundColor =  UIColor(displayP3Red: 1, green: 0, blue: 0, alpha: 0.3)
+                colorFilter.isHidden = false
+            case .disabled:
+                colorFilter.backgroundColor = UIColor(displayP3Red: 0, green: 0, blue: 0, alpha: 0.5)
                 colorFilter.isHidden = false
             }
         }
@@ -115,7 +118,7 @@ class PieceView: UIImageView
         
         self.owner = owner
         self.building = building
-        self.state = .Standard
+        self.state = .standard
         
         let imageName = "\(owner.description)_\(building.description)"
         guard let imageObject = UIImage(named: imageName) else
@@ -279,10 +282,12 @@ class PieceView: UIImageView
     enum State: UInt8
     {
         /// Standard, unhighlighted.
-        case Standard
+        case standard
         /// Highlighted in green.
-        case Success
+        case success
         /// Highlighted in red.
-        case Failure
+        case failure
+        /// Disabled, aka darkened
+        case disabled
     }
 }
