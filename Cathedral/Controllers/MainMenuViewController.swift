@@ -136,7 +136,9 @@ class MainMenuViewController: UIViewController
             }
             self.updateContinueGameButton()
         }
+        
         self.pausedGame = nil
+        self.updateContinueGameButton()
         
         navigationController?.pushViewController(gameViewController, animated: true)
     }
