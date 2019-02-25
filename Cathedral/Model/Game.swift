@@ -12,6 +12,8 @@ import Foundation
 class Game: NSObject, NSCoding
 {
     //MARK: - Properties
+    /// The setting used for this game.
+    private let settings: Settings
     /// The game board.
     private(set) var board: Board
     /// The set of light's unbuilt buildings.
@@ -53,6 +55,8 @@ class Game: NSObject, NSCoding
     override init()
     {
         board = Board()
+        settings = Settings()
+        
         lightUnbuiltBuildings = Building.playerBuildings
         darkUnbuiltBuildings = Building.playerBuildings
         builtPieces = []
@@ -60,7 +64,15 @@ class Game: NSObject, NSCoding
         cathedralBuilt = false
         lightClaimedAddresses = []
         darkClaimedAddresses = []
-        nextTurn = .church
+        
+        if settings.delayedCathedral
+        {
+            nextTurn = .dark
+        }
+        else
+        {
+            nextTurn = .church
+        }
     }
     
     /// Initializes a game from a histroy log.
@@ -265,7 +277,7 @@ class Game: NSObject, NSCoding
             _ = (owner == .light) ? lightUnbuiltBuildings.remove(building) : darkUnbuiltBuildings.remove(building)
             
             // Find claims if after the players first turns
-            if (builtPieces.count > 3)
+            if (buildHistory.count > 3)
             {
                 for address in builtPiece.addresses()
                 {
@@ -287,9 +299,14 @@ class Game: NSObject, NSCoding
                 }
             }
             
-            // Set next turn to opponent if they can make move
             let opponent = owner.opponent
-            if (canMakeMove(opponent))
+            // Check if delayed cathedral time
+            if settings.delayedCathedral && (buildHistory.count == 2)
+            {
+                nextTurn = .church
+            }
+            // Set next turn to opponent if they can make move
+            else if (canMakeMove(opponent))
             {
                 nextTurn = opponent
             }
@@ -525,6 +542,7 @@ class Game: NSObject, NSCoding
     //MARK: - Encoding
     private struct PropertyKey
     {
+        static let settings = "settings"
         static let board = "board"
         static let lightUnbuiltBuildings = "lightUnbuiltBuildings"
         static let darkUnbuiltBuildings = "darkUnbuiltBuildings"
@@ -538,6 +556,7 @@ class Game: NSObject, NSCoding
     
     func encode(with aCoder: NSCoder)
     {
+        aCoder.encode(settings, forKey: PropertyKey.settings)
         aCoder.encode(board, forKey: PropertyKey.board)
         aCoder.encode(lightUnbuiltBuildings, forKey: PropertyKey.lightUnbuiltBuildings)
         aCoder.encode(darkUnbuiltBuildings, forKey: PropertyKey.darkUnbuiltBuildings)
@@ -551,6 +570,13 @@ class Game: NSObject, NSCoding
     
     required init?(coder aDecoder: NSCoder)
     {
+        // Settings
+        guard let settings = aDecoder.decodeObject(forKey: PropertyKey.settings) as? Settings else
+        {
+            return nil
+        }
+        self.settings = settings
+        
         // Board
         guard let board = aDecoder.decodeObject(forKey: PropertyKey.board) as? Board else
         {

@@ -12,12 +12,15 @@ import Foundation
 struct Settings
 {
     /// Initilizes a settings object, but there is no need to have an instance.
-    private init()
+    init()
     {
-        
+        self.delayedCathedral = Settings.delayedCathedral
+        self.autoBuild = Settings.autoBuild
     }
     
+    
     /// Whether or not the cathedral placement should be delayed until after the first dark piece has been placed.
+    /// - Note: System level setting.
     static var delayedCathedral: Bool
     {
         get
@@ -29,8 +32,13 @@ struct Settings
             UserDefaults.standard.set(newValue, forKey: "delayedCathedral")
         }
     }
+    /// Whether or not the cathedral placement should be delayed until after the first dark piece has been placed.
+    /// - Note: Game level setting.
+    let delayedCathedral: Bool
+    
     
     /// Whether or not to auto-build once one player can no longer build, and there are enough tiles to build all remaining pieces.
+    /// - Note: System level setting.
     static var autoBuild: Bool
     {
         get
@@ -42,4 +50,7 @@ struct Settings
             UserDefaults.standard.set(newValue, forKey: "autoBuild")
         }
     }
+    /// Whether or not to auto-build once one player can no longer build, and there are enough tiles to build all remaining pieces.
+    /// - Note: Game level setting.
+    let autoBuild: Bool
 }
