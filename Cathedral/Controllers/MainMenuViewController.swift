@@ -31,8 +31,6 @@ class MainMenuViewController: UIViewController
     /// Initialze the controller's sub views once the controller has loaded.
     override func viewDidLoad()
     {
-        
-        testContinue()
         super.viewDidLoad()
         
         navigationItem.title  = "Cathedral"
@@ -141,25 +139,6 @@ class MainMenuViewController: UIViewController
         self.updateContinueGameButton()
         
         navigationController?.pushViewController(gameViewController, animated: true)
-    }
-    
-    /// Build a most complete game to test the continue button.
-    private func testContinue()
-    {
-        let log = """
-                  CAe66
-                  SQn00
-                  BRs22
-                  CSw09
-                  TOw05
-                  SQn78
-                  CSw26
-                  BRe59
-                  ACn54
-                  IFn06
-                  ABe96
-                  """
-        pausedGame = Game(log: log)
     }
     
     /// Updates the view to the current theme.
