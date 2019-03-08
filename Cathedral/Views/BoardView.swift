@@ -71,6 +71,10 @@ class BoardView: UIImageView
         addSubview(claimedTile)
     }
     
+    /// Remove a piece from the board
+    ///
+    /// - Parameter target: The target piece.
+    /// - Returns: The removed piece view.
     func destroyPiece(_ target: Piece) -> PieceView
     {
         for case let piece as PieceView in subviews
