@@ -53,7 +53,7 @@ class GameViewController: UIViewController
     /// The calculate size of a tile based on controller's safe space.
     var tileSize: CGFloat
     {
-        let totalSafeHeight = view.frame.height - 40
+        let totalSafeHeight = view.frame.height - 180
         let maxHeightSize = (totalSafeHeight - 40) / 18
         
         let totalSafeWidth = view.frame.width
