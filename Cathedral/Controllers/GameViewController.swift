@@ -594,6 +594,8 @@ class GameViewController: UIViewController
             {
             case .church:
                 messageLabel.text = "Build the Cathedral"
+                activePool = nil
+                
                 activePiece = PieceView(owner: .church, building: .cathedral, tileSize: tileSize)
                 activePiece!.move(to: CGPoint(x: tileSize * 4, y: tileSize * 4))
                 putdownActivePiece()
