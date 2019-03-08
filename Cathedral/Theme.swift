@@ -40,6 +40,8 @@ struct Theme: Equatable
     let barStyle: UIBarStyle
     /// Color for the background.
     let backgroundColor: UIColor
+    /// Color for the foreground.
+    let foregroundColor: UIColor
     /// Color for the text.
     let textColor: UIColor
     
@@ -56,13 +58,15 @@ struct Theme: Equatable
         case .black:
             tintColor = .orange
             barStyle = .black
-            backgroundColor = UIColor(white: 0.1, alpha: 1)
+            backgroundColor = UIColor(white: 0.15, alpha: 1)
+            foregroundColor = UIColor(white: 0.1, alpha: 1)
             textColor = .white
             
         case .white:
             tintColor = .blue
             barStyle = .default
-            backgroundColor = .white
+            backgroundColor = UIColor(white: 0.95, alpha: 1)
+            foregroundColor = UIColor(white: 1, alpha: 1)
             textColor = .black
         }
     }

@@ -96,6 +96,6 @@ class SwitchSettingViewCell: UITableViewCell
         self.switchLabel.textColor = theme.textColor
         self.switchView.onTintColor = theme.tintColor
         
-        self.backgroundColor = theme.backgroundColor
+        self.backgroundColor = theme.foregroundColor
     }
 }
