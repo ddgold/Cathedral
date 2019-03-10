@@ -130,6 +130,22 @@ class PoolView: UIScrollView
         return nil
     }
     
+    /// Remove the piece from the pool given a piece object.
+    ///
+    /// - Parameter piece: The piece object.
+    public func removePiece(_ building: Building)
+    {
+        for (index, piece) in pieces.enumerated()
+        {
+            if (piece.building == building)
+            {
+                removePiece(at: index)
+                return
+            }
+        }
+        fatalError("Piece is not in pool")
+    }
+    
     /// Remove the piece from the pool at a given index.
     ///
     /// - Parameter at: The index.
