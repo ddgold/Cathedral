@@ -123,13 +123,31 @@ class Game: NSObject, NSCoding
         }
     }
     
+    /// Get the player type for a given owner.
+    ///
+    /// - Parameter owner: The owner.
+    /// - Returns: The player type.
+    func playerType(for owner: Owner) -> Player.Type
+    {
+        assert(owner.isPlayer, "Only player owners have a player type")
+        
+        if (owner == .light)
+        {
+            return settings.lightPlayerType
+        }
+        else
+        {
+            return settings.darkPlayerType
+        }
+    }
+    
     /// Gets a dictionary where the keys are buildings the player has yet to build, and the values are whether or not the player can still possible build the building.
     ///
     /// - Parameter player: The player for which to get unbuild buildings.
     /// - Returns: The dictionary of unbuilt buildings.
     func unbuiltBuildings(for player: Owner) -> Dictionary<Building, Bool>
     {
-        assert(player.isPlayer, "Only player Owners have unbuilt Buildings")
+        assert(player.isPlayer, "Only player owners have unbuilt Buildings")
         
         var pieces = Dictionary<Building, Bool>()
         
@@ -142,11 +160,29 @@ class Game: NSObject, NSCoding
         
     }
     
+    /// Determines if a player can make any valid moves.
+    ///
+    /// - Parameter player: The player owner.
+    /// - Returns: Whether or not the player can make a move.
+    func canMakeMove(_ player: Owner) -> Bool
+    {
+        assert(player.isPlayer, "Only player Owners can make moves")
+        
+        for building in (player == .light ? lightUnbuiltBuildings : darkUnbuiltBuildings)
+        {
+            if canBuildBuilding(building, for: player)
+            {
+                return true
+            }
+        }
+        return false
+    }
+    
     /// Determines if an owner can build a specified building type anywhere on the board.
     ///
     /// - Parameters:
     ///   - building: The building type.
-    ///   - owner:
+    ///   - owner: The owner.
     /// - Returns: Whether or not the owner can build the building type.
     func canBuildBuilding(_ building: Building, for owner: Owner) -> Bool
     {
@@ -493,24 +529,6 @@ class Game: NSObject, NSCoding
         }
         
         builtPieces.remove(piece)
-    }
-    
-    /// Determines if a player can make any valid moves.
-    ///
-    /// - Parameter player: The player owner.
-    /// - Returns: Whether or not the player can make a move.
-    private func canMakeMove(_ player: Owner) -> Bool
-    {
-        assert(player.isPlayer, "Only player Owners can make moves")
-        
-        for building in (player == .light ? lightUnbuiltBuildings : darkUnbuiltBuildings)
-        {
-            if canBuildBuilding(building, for: player)
-            {
-                return true
-            }
-        }
-        return false
     }
     
     /// Determines if an address is on this board.
