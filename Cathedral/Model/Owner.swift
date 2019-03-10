@@ -18,10 +18,10 @@ enum Owner: UInt8
     
     
     //MARK: - Properties
-    /// Whether or not tbis owner is a player owner, i.e. light or dark.
-    var isPlayer: Bool
+    /// Whether or not this owner is the church, rather then a player, i.e. light or dark.
+    var isChurch: Bool
     {
-        return (self != Owner.church)
+        return (self == Owner.church)
     }
     
     /// The oppenent of this owner.
@@ -35,7 +35,7 @@ enum Owner: UInt8
         case .dark:
             return Owner.light
         case .church:
-            assert(false, "Only player Owners have opponents")
+            assert(false, "Only player owners have opponents")
         }
     }
     

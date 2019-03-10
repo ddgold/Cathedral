@@ -15,6 +15,7 @@
 		CA328D812221C25F0029CE9A /* SwitchSettingViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA328D802221C25F0029CE9A /* SwitchSettingViewCell.swift */; };
 		CA328D832221FCDB0029CE9A /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA328D822221FCDB0029CE9A /* Theme.swift */; };
 		CA328D8522227BE10029CE9A /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA328D8422227BE10029CE9A /* Settings.swift */; };
+		CA561B5622338D1D004C3F5D /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA561B5522338D1D004C3F5D /* Player.swift */; };
 		CA8C1AB62202942C005EA5FD /* BoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA8C1AB52202942C005EA5FD /* BoardView.swift */; };
 		CA8C1ABD2202A960005EA5FD /* PieceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA8C1ABC2202A960005EA5FD /* PieceView.swift */; };
 		CAF56E1822014877002DF690 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAF56E1722014877002DF690 /* AppDelegate.swift */; };
@@ -51,6 +52,7 @@
 		CA328D802221C25F0029CE9A /* SwitchSettingViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchSettingViewCell.swift; sourceTree = "<group>"; };
 		CA328D822221FCDB0029CE9A /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		CA328D8422227BE10029CE9A /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
+		CA561B5522338D1D004C3F5D /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
 		CA8C1AB52202942C005EA5FD /* BoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardView.swift; sourceTree = "<group>"; };
 		CA8C1ABC2202A960005EA5FD /* PieceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieceView.swift; sourceTree = "<group>"; };
 		CAF56E1422014877002DF690 /* Cathedral.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cathedral.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -167,6 +169,7 @@
 				CAF56E452201500A002DF690 /* Owner.swift */,
 				CAF56E4F22015802002DF690 /* Piece.swift */,
 				CAF56E47220150DB002DF690 /* Tile.swift */,
+				CA561B5522338D1D004C3F5D /* Player.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -287,6 +290,7 @@
 				CA328D832221FCDB0029CE9A /* Theme.swift in Sources */,
 				CA328D8522227BE10029CE9A /* Settings.swift in Sources */,
 				CA328D7F222134760029CE9A /* SettingsViewController.swift in Sources */,
+				CA561B5622338D1D004C3F5D /* Player.swift in Sources */,
 				CAF56E1822014877002DF690 /* AppDelegate.swift in Sources */,
 				CAF56E4222014CD9002DF690 /* Direction.swift in Sources */,
 				CA8C1ABD2202A960005EA5FD /* PieceView.swift in Sources */,

@@ -23,6 +23,11 @@ class GameViewController: UIViewController
     private var messageLabel: UILabel!
     private var buildButton: UIButton!
     
+    /// The light player.
+    private var lightPlayer: Player!
+    /// The dark player.
+    private var darkPlayer: Player!
+    
     /// The active piece.
     private var activePiece: PieceView?
     /// The actice poo.
@@ -78,6 +83,9 @@ class GameViewController: UIViewController
         messageLabel = buildMessageLabel()
         buildButton = buildBuildButton()
         
+        // Initialize player
+        lightPlayer = game.playerType(for: .light).init(game: game, owner: .light)
+        darkPlayer = game.playerType(for: .dark).init(game: game, owner: .dark)
         
         // Bring board view to front and set background color
         self.view.bringSubviewToFront(boardView)
@@ -281,7 +289,7 @@ class GameViewController: UIViewController
                         pressedPiece = selectedPiece
                         
                         activePool.removePiece(at: index)
-                        boardView.addSubview(pressedPiece!)
+                        boardView.buildPiece(pressedPiece!)
                         
                         pressedPiece!.frame = CGRect(origin: pressStart!, size: pressedPiece!.frame.size)
                     }
@@ -349,7 +357,7 @@ class GameViewController: UIViewController
     /// - Parameter sender: The button press sender.
     @objc func buildButtonPressed(_ sender: UIButton)
     {
-        assert(activePiece != nil, "There isn't an active Piece")
+        assert(activePiece != nil, "There isn't an active piece")
         
         // Build Piece in modal
         buildPiece(activePiece!)
@@ -481,7 +489,7 @@ class GameViewController: UIViewController
     {
         guard let activePiece = self.activePiece else
         {
-            fatalError("There is no active Piece")
+            fatalError("There is no active piece")
         }
         
         buildButton.isEnabled = false
@@ -558,18 +566,18 @@ class GameViewController: UIViewController
                 pieceView.removeFromSuperview()
 
             default:
-                poolForPlayer(piece.owner).addPiece(pieceView)
+                poolForOwner(piece.owner).addPiece(pieceView)
             }
         }
     }
     
-    /// Get the correct pool for a given player.
+    /// Get the correct pool for a given player owner.
     ///
-    /// - Parameter owner: The owner, must be a player.
-    /// - Returns: The pool for the given player.
-    private func poolForPlayer(_ owner: Owner) -> PoolView
+    /// - Parameter owner: The player owner, must be light or dark.
+    /// - Returns: The pool for the given owner.
+    private func poolForOwner(_ owner: Owner) -> PoolView
     {
-        assert(owner.isPlayer, "Church does not have Pool")
+        assert(!owner.isChurch, "The church does not have pool")
         
         if (owner == topPoolPlayer)
         {
@@ -588,26 +596,54 @@ class GameViewController: UIViewController
         buildButton.isEnabled = false
         
         // Set message and potential active piece (for Cathedral turn) or pool (for player turn)
-        if let nextTurn = game!.nextTurn
+        if let nextOwner = game!.nextTurn
         {
-            switch nextTurn
+            if (nextOwner == .church)
             {
-            case .church:
-                messageLabel.text = "Build the Cathedral"
-                activePool = nil
+                let player = lightPlayer
                 
-                activePiece = PieceView(owner: .church, building: .cathedral, tileSize: tileSize)
-                activePiece!.move(to: CGPoint(x: tileSize * 4, y: tileSize * 4))
-                putdownActivePiece()
-                boardView.buildPiece(activePiece!)
+                if let computerPlayer = player as? Computer
+                {
+                    let piece = computerPlayer.nextMove()
+                    
+                    let pieceView = PieceView(piece, tileSize: tileSize)
+                    boardView.buildPiece(pieceView)
+                    
+                    buildPiece(pieceView)
+                    self.nextTurn()
+                }
+                else
+                {
+                    messageLabel.text = "Build the Cathedral"
+                    activePool = nil
+                    
+                    activePiece = PieceView(owner: .church, building: .cathedral, tileSize: tileSize)
+                    activePiece!.move(to: CGPoint(x: tileSize * 4, y: tileSize * 4))
+                    putdownActivePiece()
+                    boardView.buildPiece(activePiece!)
+                }
+            }
+            else
+            {
+                let pool = poolForOwner(nextOwner)
+                let player = (nextOwner == .light) ? lightPlayer! : darkPlayer!
                 
-            case .dark:
-                messageLabel.text = "It's dark's turn to build."
-                activePool = poolForPlayer(.dark)
-                
-            case .light:
-                messageLabel.text = "It's light's turn to build."
-                activePool = poolForPlayer(.light)
+                if let computerPlayer = player as? Computer
+                {
+                    let piece = computerPlayer.nextMove()
+                    pool.removePiece(piece.building)
+                    
+                    let pieceView = PieceView(piece, tileSize: tileSize)
+                    boardView.buildPiece(pieceView)
+                    
+                    buildPiece(pieceView)
+                    self.nextTurn()
+                }
+                else
+                {
+                    messageLabel.text = "It's \(player.name)'s turn to build."
+                    activePool = poolForOwner(nextOwner)
+                }
             }
         }
         else

@@ -98,7 +98,7 @@ class Game: NSObject, NSCoding
     //MARK: - Functions
     /// Calculates who won the game.
     ///
-    /// - Returns: A tuple, where the first element is the player, light or dark, if they won, or nil if game is a tie, and the second element is the winner's score.  Or nil, if no winner has been decided yet.
+    /// - Returns: A tuple, where the first element is the owner, light or dark, if they won, or nil if game is a tie, and the second element is the winner's score.  Or nil, if no winner has been decided yet.
     func calculateWinner() -> (owner: Owner?, score: UInt8)?
     {
         if canMakeMove(.dark) || canMakeMove(.light)
@@ -129,7 +129,7 @@ class Game: NSObject, NSCoding
     /// - Returns: The player type.
     func playerType(for owner: Owner) -> Player.Type
     {
-        assert(owner.isPlayer, "Only player owners have a player type")
+        assert(!owner.isChurch, "The church doesn't have a player type")
         
         if (owner == .light)
         {
@@ -143,34 +143,34 @@ class Game: NSObject, NSCoding
     
     /// Gets a dictionary where the keys are buildings the player has yet to build, and the values are whether or not the player can still possible build the building.
     ///
-    /// - Parameter player: The player for which to get unbuild buildings.
+    /// - Parameter owner: The player owner, must be light or dark.
     /// - Returns: The dictionary of unbuilt buildings.
-    func unbuiltBuildings(for player: Owner) -> Dictionary<Building, Bool>
+    func unbuiltBuildings(for owner: Owner) -> Dictionary<Building, Bool>
     {
-        assert(player.isPlayer, "Only player owners have unbuilt Buildings")
+        assert(!owner.isChurch, "The church doesn't have unbuilt buildings")
         
         var pieces = Dictionary<Building, Bool>()
         
-        for building in ((player == .light) ? lightUnbuiltBuildings : darkUnbuiltBuildings)
+        for building in ((owner == .light) ? lightUnbuiltBuildings : darkUnbuiltBuildings)
         {
-            pieces[building] = canBuildBuilding(building, for: player)
+            pieces[building] = canBuildBuilding(building, for: owner)
         }
         
         return pieces
         
     }
     
-    /// Determines if a player can make any valid moves.
+    /// Determines if a player owner can make any valid moves.
     ///
-    /// - Parameter player: The player owner.
-    /// - Returns: Whether or not the player can make a move.
-    func canMakeMove(_ player: Owner) -> Bool
+    /// - Parameter owner: The player owner, must be light or dark.
+    /// - Returns: Whether or not the owner can make a move.
+    func canMakeMove(_ owner: Owner) -> Bool
     {
-        assert(player.isPlayer, "Only player Owners can make moves")
+        assert(!owner.isChurch, "The church can't make moves")
         
-        for building in (player == .light ? lightUnbuiltBuildings : darkUnbuiltBuildings)
+        for (building, canBuild) in unbuiltBuildings(for: owner)
         {
-            if canBuildBuilding(building, for: player)
+            if canBuild && canBuildBuilding(building, for: owner)
             {
                 return true
             }
@@ -312,7 +312,7 @@ class Game: NSObject, NSCoding
             // Remove builing from unbuilt set
             _ = (owner == .light) ? lightUnbuiltBuildings.remove(building) : darkUnbuiltBuildings.remove(building)
             
-            // Find claims if after the players first turns
+            // Find claims if after the player's first turns
             if (buildHistory.count > 3)
             {
                 for address in builtPiece.addresses()
@@ -324,7 +324,7 @@ class Game: NSObject, NSCoding
                             continue
                         }
                         
-                        let (claimed, destroyed) = claimClaimant(player: owner, at: neighbor)
+                        let (claimed, destroyed) = claimClaimant(owner: owner, at: neighbor)
                         totalClaimed = totalClaimed.union(claimed)
                         if let destroyed = destroyed
                         {
@@ -361,18 +361,18 @@ class Game: NSObject, NSCoding
         return (totalClaimed, totalDestroyed)
     }
     
-    /// Claim all possible titles, including destroying upto one piece, for a player at a specified address.
+    /// Claim all possible titles, including destroying upto one piece, for a player owner at a specified address.
     ///
     /// - Parameters:
-    ///   - player: The player owner.
+    ///   - owner: The player owner, must be light or dark.
     ///   - address: The address.
     /// - Returns: Tuple where the first element is a set of claimed addresses, and the second element is a claimed pieces, if there is one.
-    private func claimClaimant(player: Owner, at address: Address) -> (Set<Address>, Piece?)
+    private func claimClaimant(owner: Owner, at address: Address) -> (Set<Address>, Piece?)
     {
         var claimed = Set<Address>()
         var destroyed: Piece?
         
-        if !findClaimant(player: player, at: address, with: &claimed, and: &destroyed)
+        if !findClaimant(owner: owner, at: address, with: &claimed, and: &destroyed)
         {
             return ([], nil)
         }
@@ -386,25 +386,25 @@ class Game: NSObject, NSCoding
             
             for claimed in claimed
             {
-                claim(player: player, at: claimed)
+                claim(owner: owner, at: claimed)
             }
         }
         
         return (claimed, destroyed)
     }
     
-    /// Find the addresses, and possibly piece, that make up a claiment for a player at a specified address.
+    /// Find the addresses, and possibly piece, that make up a claiment for a player owner at a specified address.
     ///
     /// - Parameters:
-    ///   - player: The player owner.
+    ///   - owner: The player owner, must be light or dark.
     ///   - address: The address.
     ///   - currentClaim: The set of current addresses inside the claiment.
     ///   - currentDestroy: The current piece inside the claiment.
-    /// - Returns: Whether the player has a valid claimant at the address.
-    private func findClaimant(player: Owner, at address: Address, with currentClaim: inout Set<Address>, and currentDestroy: inout Piece?) -> Bool
+    /// - Returns: Whether the owner has a valid claimant at the address.
+    private func findClaimant(owner: Owner, at address: Address, with currentClaim: inout Set<Address>, and currentDestroy: inout Piece?) -> Bool
     {
         // Can claim target?
-        if canClaim(player: player, at: address, with: &currentDestroy)
+        if canClaim(owner: owner, at: address, with: &currentDestroy)
         {
             currentClaim.insert(address)
         }
@@ -428,15 +428,15 @@ class Game: NSObject, NSCoding
                 continue
             }
             
-            // Neighbor is this player's piece, check next
+            // Neighbor is this owner's piece, check next
             let neighborTile = board[neighborAddress]
-            if (neighborTile.owner == player) && (neighborTile.isBuilt)
+            if (neighborTile.owner == owner) && (neighborTile.isBuilt)
             {
                 continue
             }
             
             // Else, try to expand claimant
-            if findClaimant(player: player, at: neighborAddress, with: &currentClaim, and: &currentDestroy)
+            if findClaimant(owner: owner, at: neighborAddress, with: &currentClaim, and: &currentDestroy)
             {
                 continue
             }
@@ -447,16 +447,16 @@ class Game: NSObject, NSCoding
         return true
     }
     
-    /// Determines if a player can claim an address.
+    /// Determines if a player owner can claim an address.
     ///
     /// - Parameters:
-    ///   - player: The player owner.
+    ///   - owner: The player owner, must be light or dark.
     ///   - address: The address.
     ///   - currentDestroy: The current piece inside the claiment.
-    /// - Returns: Whether or not the player can claim the address.
-    private func canClaim(player: Owner, at address: Address, with currentDestroy: inout Piece?) -> Bool
+    /// - Returns: Whether or not the owner can claim the address.
+    private func canClaim(owner: Owner, at address: Address, with currentDestroy: inout Piece?) -> Bool
     {
-        assert(player.isPlayer, "Only player Owners can claim a Tile")
+        assert(!owner.isChurch, "The church can't claim a tile")
         
         let tile = board[address]
         
@@ -474,7 +474,7 @@ class Game: NSObject, NSCoding
             // No current claim
         else
         {
-            if (tile.owner == player) || (!tile.isBuilt)
+            if (tile.owner == owner) || (!tile.isBuilt)
             {
                 return false
             }
@@ -489,15 +489,15 @@ class Game: NSObject, NSCoding
     /// Claims an address for a player owner.
     ///
     /// - Parameters:
-    ///   - player: The player owner.
+    ///   - owner: The player owner, must be light or dark.
     ///   - address: The address.
-    private func claim(player: Owner, at address: Address)
+    private func claim(owner: Owner, at address: Address)
     {
-        assert(player.isPlayer, "Only player Owners can claim a Tile")
-        assert(board[address].owner == nil, "Can only claim unclaimed Tiles")
+        assert(!owner.isChurch, "The church can't claim a tile")
+        assert(board[address].owner == nil, "Can only claim unclaimed tiles")
         
-        board[address] = Tile(owner: player, piece: nil)
-        if (player == .light)
+        board[address] = Tile(owner: owner, piece: nil)
+        if (owner == .light)
         {
             lightClaimedAddresses.insert(address)
         }
@@ -540,16 +540,16 @@ class Game: NSObject, NSCoding
         return (address.col > -1) && (address.col < 10) && (address.row > -1) && (address.row < 10)
     }
     
-    /// Calculates a players current score, the total size of all their remaining unbuilt buildings.
+    /// Calculates a player's current score, the total size of all their remaining unbuilt buildings.
     ///
-    /// - Parameter player: The player owner.
+    /// - Parameter player: The player owner, must be light or dark.
     /// - Returns: The total size of remaining buildings.
-    private func playerScore(_ player: Owner) -> UInt8
+    private func playerScore(_ owner: Owner) -> UInt8
     {
-        assert(player.isPlayer, "Can only calculate score for player Owners")
+        assert(!owner.isChurch, "Can't calculate score for the church")
         
         var score: UInt8 = 0
-        for building in (player == .light ? lightUnbuiltBuildings : darkUnbuiltBuildings)
+        for building in (owner == .light ? lightUnbuiltBuildings : darkUnbuiltBuildings)
         {
             score += building.size
         }
