@@ -26,7 +26,7 @@ class PoolView: UIScrollView
     ///   - tileSize: The initial tile size.
     init(owner: Owner, buildings: Dictionary<Building, Bool>, tileSize: CGFloat)
     {
-        assert(owner.isPlayer, "Can't populate Pool for Church")
+        assert(!owner.isChurch, "Can't populate pool for the church")
         
         pieces = [PieceView]()
         

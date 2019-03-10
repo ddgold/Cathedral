@@ -33,12 +33,6 @@ enum Building: UInt8
         return [self.tavern, self.stable, self.inn, self.bridge, self.square, self.abbey, self.manor, self.tower, self.infirmary, self.castle, self.academy]
     }
     
-    /// Whether or not this building type is a player building, i.e. not the cathedral.
-    var isPlayerBuilding: Bool
-    {
-        return (self != Building.cathedral)
-    }
-    
     /// The number if tiles wide this building type covers.
     private var width: UInt8
     {
@@ -216,7 +210,7 @@ enum Building: UInt8
     /// - Returns: A set of addresses that make up the blueprint.
     func blueprint(owner: Owner, facing direction: Direction, at address: Address = Address(0, 0)) -> Set<Address>
     {
-        assert(owner.isPlayer == self.isPlayerBuilding, "Can't get blueprint for \(owner) \(self)")
+        assert(owner.isChurch == (self == .cathedral), "Can't get blueprint for \(owner) \(self)")
         
         // Get the base blueprint base on owner and building type
         let base: Set<Address>

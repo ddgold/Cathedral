@@ -29,7 +29,7 @@ class ClaimedTileView: UIView
     ///   - tileSize: The initial tile size.
     init(owner: Owner, address: Address, tileSize: CGFloat)
     {
-        assert(owner.isPlayer, "Only player Owners can claim a Tile")
+        assert(!owner.isChurch, "The church can't claim a tile")
         
         self.owner = owner
         self.address = address
