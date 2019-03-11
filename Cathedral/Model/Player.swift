@@ -12,15 +12,38 @@ import Foundation
 /// The core player protocol.
 protocol Player
 {
+    /// The player type's ID.
+    static var id: String { get }
+    
+    /// The name of the player
+    var name: String { get }
+    
     /// Initializes a new player.
     ///
     /// - Parameters:
     ///   - game: The player's game.
     ///   - owner: The owner, must be light or dark.
     init (game: Game, owner: Owner)
-    
-    /// The name of the player
-    var name: String { get }
+}
+
+
+/// Gets a player type from an ID
+///
+/// - Parameter id: The player type ID.
+/// - Returns: The player type.
+func PlayerType(_ id: String) -> Player.Type
+{
+    switch id
+    {
+    case LocalHuman.id:
+        return LocalHuman.self
+        
+    case RandomComputer.id:
+        return RandomComputer.self
+        
+    default:
+        fatalError("Unknown player type id: \(id)")
+    }
 }
 
 
@@ -36,6 +59,12 @@ protocol Human: Player
 /// A local human player object.
 class LocalHuman: Human
 {
+    /// The player type's ID.
+    static var id: String
+    {
+        return "LocalHuman"
+    }
+    
     /// The owner.
     private let owner: Owner
     
@@ -72,6 +101,12 @@ protocol Computer: Player
 /// A computer player object that builds randomly.
 class RandomComputer: Computer
 {
+    /// The player type's ID.
+    static var id: String
+    {
+        return "RandomComputer"
+    }
+    
     /// The game.
     private let game: Game
     /// The owner.
@@ -125,7 +160,6 @@ class RandomComputer: Computer
             }
         }
     }
-    
     
     /// Finds a valid location, address and direction, to build the piece.
     ///
