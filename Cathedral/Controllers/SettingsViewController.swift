@@ -39,11 +39,12 @@ class SettingsViewController: UITableViewController
         
         navigationItem.title  = "Settings"
         
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: Identifiers.settingViewCell)
+        tableView.register(SwitchSettingCell.self, forCellReuseIdentifier: Identifiers.switchSettingCell)
+        tableView.alwaysBounceVertical = false
         
         
         // Appearance
-        let darkModeCell = SwitchSettingViewCell(title: "Dark mode", isOn: (Theme.activeName == .black), reuseIdentifier: Identifiers.settingViewCell)
+        let darkModeCell = SwitchSettingCell(title: "Dark mode", isOn: (Theme.activeName == .black), reuseIdentifier: Identifiers.switchSettingCell)
         darkModeCell.valueChangedHandler = { newState in
             let newTheme: Theme.Name = newState ? .black : .white
             Theme.activeName = newTheme
@@ -53,12 +54,12 @@ class SettingsViewController: UITableViewController
         
         
         // Game Settings
-        let delayedCathedralCell = SwitchSettingViewCell(title: "Deplayed cathedral placement", isOn: Settings.delayedCathedral, reuseIdentifier: Identifiers.settingViewCell)
+        let delayedCathedralCell = SwitchSettingCell(title: "Deplayed cathedral placement", isOn: Settings.delayedCathedral, reuseIdentifier: Identifiers.switchSettingCell)
         delayedCathedralCell.valueChangedHandler = { newState in
             Settings.delayedCathedral = newState
         }
         
-        let autoBuildCell = SwitchSettingViewCell(title: "Auto-build remaining pieces", isOn: Settings.autoBuild, reuseIdentifier: Identifiers.settingViewCell)
+        let autoBuildCell = SwitchSettingCell(title: "Auto-build remaining pieces", isOn: Settings.autoBuild, reuseIdentifier: Identifiers.switchSettingCell)
         autoBuildCell.valueChangedHandler = { newState in
             Settings.autoBuild = newState
         }
@@ -70,6 +71,7 @@ class SettingsViewController: UITableViewController
         Theme.subscribe(self, selector: #selector(updateTheme(_:)))
         updateTheme(nil)
     }
+    
     
     //MARK: - UITableViewController
     /// Determine the number of section in table view.
@@ -128,13 +130,5 @@ class SettingsViewController: UITableViewController
         navigationController?.navigationBar.barStyle = theme.barStyle
         
         view.backgroundColor = theme.backgroundColor
-    }
-    
-    
-    //MARK: - Name Enum
-    /// Table view cell identifiers.
-    private struct Identifiers
-    {
-        static let settingViewCell = "settingViewCell"
     }
 }

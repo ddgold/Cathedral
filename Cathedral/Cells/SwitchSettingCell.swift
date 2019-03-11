@@ -1,5 +1,5 @@
 //
-//  SwitchSettingViewCell.swift
+//  SwitchSettingCell.swift
 //  Cathedral
 //
 //  Created by Doug Goldstein on 2/23/19.
@@ -8,8 +8,8 @@
 
 import UIKit
 
-/// A switch setting view cell.
-class SwitchSettingViewCell: UITableViewCell
+/// A switch setting cell.
+class SwitchSettingCell: UITableViewCell
 {
     //MARK: - Properties
     /// The cell's label.
@@ -27,7 +27,7 @@ class SwitchSettingViewCell: UITableViewCell
     /// - Parameters:
     ///   - title: Title of the setting cell.
     ///   - isOn: Whether or not the swich is on to start.
-    ///   - isOn: Whether or not the swich is enabled to start. Defaults to true.
+    ///   - isEnabled: Whether or not the swich is enabled to start. Defaults to true.
     ///   - reuseIdentifier: The cell's reuse identifier.
     init(title: String, isOn: Bool, isEnabled: Bool = true, reuseIdentifier: String)
     {
