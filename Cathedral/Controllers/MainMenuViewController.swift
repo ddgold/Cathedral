@@ -91,7 +91,7 @@ class MainMenuViewController: UIViewController
             let alert = UIAlertController(title: "Start new game?", message: "Starting a new game will lose all progress in the game already unway.", preferredStyle: .alert)
             
             alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: {_ in
-                self.presentGameViewController(Game())
+                self.presentNewGameViewController()
             }))
             alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
             
@@ -100,7 +100,7 @@ class MainMenuViewController: UIViewController
             return
         }
         
-        presentGameViewController(Game())
+        presentNewGameViewController()
     }
     
     /// Settings button has been pressed.
@@ -118,6 +118,18 @@ class MainMenuViewController: UIViewController
     private func updateContinueGameButton()
     {
         continueGameButton.isEnabled = (pausedGame != nil)
+    }
+    
+    /// Present a new game view controller to select the player types.
+    private func presentNewGameViewController()
+    {
+        let newGameController = NewGameViewController()
+        newGameController.playHandler =  {()
+            self.navigationController?.viewControllers.remove(at: 1)
+            self.presentGameViewController(Game())
+        }
+        
+        self.navigationController?.pushViewController(newGameController, animated: true)
     }
     
     /// Present a game view controller with the give game.
