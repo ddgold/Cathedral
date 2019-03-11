@@ -28,9 +28,9 @@ struct Settings
     {
         get
         {
-            if let playerType = UserDefaults.standard.object(forKey: "lightPlayerType") as? Player.Type
+            if let playerType = UserDefaults.standard.string(forKey: "lightPlayerType")
             {
-                return playerType
+                return PlayerType(playerType)
             }
             else
             {
@@ -39,7 +39,7 @@ struct Settings
         }
         set
         {
-            UserDefaults.standard.set(newValue, forKey: "lightPlayerType")
+            UserDefaults.standard.set(newValue.id, forKey: "lightPlayerType")
         }
     }
     /// The light player type.
@@ -54,9 +54,9 @@ struct Settings
     {
         get
         {
-            if let playerType = UserDefaults.standard.object(forKey: "darkPlayerType") as? Player.Type
+            if let playerType = UserDefaults.standard.string(forKey: "darkPlayerType")
             {
-                return playerType
+                return PlayerType(playerType)
             }
             else
             {
@@ -65,7 +65,7 @@ struct Settings
         }
         set
         {
-            UserDefaults.standard.set(newValue, forKey: "darkPlayerType")
+            UserDefaults.standard.set(newValue.id, forKey: "darkPlayerType")
         }
     }
     /// The dark player type.
