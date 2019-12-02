@@ -77,7 +77,7 @@ class MainMenuViewController: UIViewController
     /// - Parameter sender: The button press sender.
     @objc func continueGameButtonPressed(_ sender: UIButton)
     {
-        presentGameViewController(pausedGame!)
+        presentGameViewController(pausedGame!, animated: true)
     }
     
     /// New game button has been pressed.
@@ -125,8 +125,8 @@ class MainMenuViewController: UIViewController
     {
         let newGameController = NewGameViewController()
         newGameController.playHandler =  {()
+            self.presentGameViewController(Game(), animated: true)
             self.navigationController?.viewControllers.remove(at: 1)
-            self.presentGameViewController(Game())
         }
         
         self.navigationController?.pushViewController(newGameController, animated: true)
@@ -134,12 +134,21 @@ class MainMenuViewController: UIViewController
     
     /// Present a game view controller with the give game.
     ///
-    /// - Parameter game: The game object.
-    private func presentGameViewController(_ game: Game)
+    /// - Parameters:
+    ///   - game: The game object.
+    ///   - animated: Whether the -resentation of the GameViewController should be animated.
+    private func presentGameViewController(_ game: Game, animated: Bool)
     {
         let gameViewController = GameViewController()
         gameViewController.game = game
-        gameViewController.completionHandler = { completionGame in
+        gameViewController.completionHandler = { (completionGame, rematch) in
+            
+            if rematch {
+                self.navigationController?.viewControllers.remove(at: 1)
+                self.presentGameViewController(Game(), animated: false)
+                return
+            }
+            
             if let game = completionGame, !game.builtPieces.isEmpty
             {
                 self.pausedGame = game
@@ -150,7 +159,7 @@ class MainMenuViewController: UIViewController
         self.pausedGame = nil
         self.updateContinueGameButton()
         
-        navigationController?.pushViewController(gameViewController, animated: true)
+        navigationController?.pushViewController(gameViewController, animated: animated)
     }
     
     /// Updates the view to the current theme.
@@ -163,6 +172,8 @@ class MainMenuViewController: UIViewController
         
         navigationController?.navigationBar.tintColor = theme.tintColor
         navigationController?.navigationBar.barStyle = theme.barStyle
+        let textAttributes = [NSAttributedString.Key.foregroundColor: theme.textColor]
+        navigationController?.navigationBar.titleTextAttributes = textAttributes
         
         continueGameButton.tintColor = theme.tintColor
         newGameButton.tintColor = theme.tintColor

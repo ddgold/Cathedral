@@ -30,7 +30,7 @@ class GameViewController: UIViewController
     
     /// The active piece.
     private var activePiece: PieceView?
-    /// The actice poo.
+    /// The actice pool.
     private var activePool: PoolView?
     
     /// The point of a pan gesture's start.
@@ -53,7 +53,7 @@ class GameViewController: UIViewController
     private let topPoolPlayer = Owner.dark
     
     /// The completion handler that return the game to calling controller when this controller disappears.
-    var completionHandler: ((Game?) -> Void)?
+    var completionHandler: ((Game?, Bool) -> Void)?
     
     /// The calculate size of a tile based on controller's safe space.
     var tileSize: CGFloat
@@ -104,7 +104,7 @@ class GameViewController: UIViewController
     /// - Parameter animated: Whether or not the disappearing is animated.
     override func viewDidDisappear(_ animated: Bool)
     {
-        completionHandler?(game)
+        completionHandler?(game, false)
     }
     
     
@@ -367,6 +367,14 @@ class GameViewController: UIViewController
         activePiece = nil
         
         nextTurn()
+    }
+    
+    /// Rematch button has been pressed.
+    ///
+    /// - Parameter sender: The button press sender.
+    @objc func rematchButtonPressed(_ sender: UIButton)
+    {
+        completionHandler?(game, true)
     }
     
     
@@ -658,6 +666,9 @@ class GameViewController: UIViewController
             {
                 messageLabel.text = "Game is over, it was a tie."
             }
+            
+            let rematchButton = UIBarButtonItem(title: "Rematch", style: .plain, target: self, action: #selector(rematchButtonPressed))
+            self.navigationItem.rightBarButtonItem = rematchButton
             
             game = nil
             activePool = nil
