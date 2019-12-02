@@ -241,9 +241,11 @@
 				TargetAttributes = {
 					CAF56E1322014877002DF690 = {
 						CreatedOnToolsVersion = 10.1;
+						LastSwiftMigration = 1120;
 					};
 					CAF56E2722014878002DF690 = {
 						CreatedOnToolsVersion = 10.1;
+						LastSwiftMigration = 1120;
 						TestTargetID = CAF56E1322014877002DF690;
 					};
 				};
@@ -477,7 +479,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ddgold.Cathedral;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -495,7 +497,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ddgold.Cathedral;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -515,7 +517,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ddgold.CathedralTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Cathedral.app/Cathedral";
 			};
@@ -536,7 +538,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ddgold.CathedralTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Cathedral.app/Cathedral";
 			};
