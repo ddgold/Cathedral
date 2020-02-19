@@ -161,7 +161,7 @@ class PieceView: UIImageView
         let col = Int8((point.x / tileSize).rounded(.down))
         let row = Int8((point.y / tileSize).rounded(.down))
         // Always get blueprint relateive to North because point is address inside view
-        return building.blueprint(owner: owner, facing: .north).contains(where: { address in
+        return building.blueprint(owner: owner).contains(where: { address in
             return (address.col == col) && (address.row == row)
         })
     }
