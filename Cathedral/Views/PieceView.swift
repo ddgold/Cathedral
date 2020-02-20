@@ -10,8 +10,7 @@ import UIKit
 
 
 /// A building piece view.
-class PieceView: UIImageView
-{
+class PieceView: UIImageView {
     //MARK: - Properties
     /// The owner of the piece.
     let owner: Owner
@@ -26,12 +25,9 @@ class PieceView: UIImageView
     private(set) var address: Address?
     
     /// The state of the piece.
-    var state: State
-    {
-        didSet
-        {
-            switch state
-            {
+    var state: State {
+        didSet {
+            switch state {
             case .standard:
                 colorFilter.isHidden = true
             case .success:
@@ -54,10 +50,8 @@ class PieceView: UIImageView
     private(set) var angle: CGFloat = 0
     
     /// The size of a tile set by controller.
-    private var tileSize: CGFloat
-    {
-        didSet(newValue)
-        {
+    private var tileSize: CGFloat {
+        didSet(newValue) {
             resetTileSize(newValue)
         }
     }
@@ -69,8 +63,7 @@ class PieceView: UIImageView
     /// - Parameters:
     ///   - piece: The piece object.
     ///   - tileSize: The tile size.
-    convenience init(_ piece: Piece, tileSize: CGFloat)
-    {
+    convenience init(_ piece: Piece, tileSize: CGFloat) {
         self.init(owner: piece.owner, building: piece.building, tileSize: tileSize)
         
         // Rotate to direction
@@ -81,8 +74,7 @@ class PieceView: UIImageView
         // Adjust address based on direction
         var address = piece.address
         let (width, height) = building.dimensions(direction: piece.direction)
-        switch piece.direction
-        {
+        switch piece.direction {
         case .north:
             // Top-left corner (no need to change address)
             break;
@@ -112,8 +104,7 @@ class PieceView: UIImageView
     ///   - owner: The owner.
     ///   - building: The building type.
     ///   - tileSize: The tile size.
-    init(owner: Owner, building: Building, tileSize: CGFloat)
-    {
+    init(owner: Owner, building: Building, tileSize: CGFloat) {
         self.tileSize = tileSize
         
         self.owner = owner
@@ -121,8 +112,7 @@ class PieceView: UIImageView
         self.state = .standard
         
         let imageName = "\(owner.description)_\(building.description)"
-        guard let imageObject = UIImage(named: imageName) else
-        {
+        guard let imageObject = UIImage(named: imageName) else {
             fatalError("Failed to find image: '\(imageName)'")
         }
         
@@ -146,8 +136,7 @@ class PieceView: UIImageView
     /// Unsupported decoder initilizer.
     ///
     /// - Parameter aDecoder: The decoder.
-    required init?(coder aDecoder: NSCoder)
-    {
+    required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
@@ -156,8 +145,7 @@ class PieceView: UIImageView
     ///
     /// - Parameter point: The point.
     /// - Returns: Whether or not the point is in the piece.
-    func contains(point: CGPoint) -> Bool
-    {
+    func contains(point: CGPoint) -> Bool {
         let col = Int8((point.x / tileSize).rounded(.down))
         let row = Int8((point.y / tileSize).rounded(.down))
         // Always get blueprint relateive to North because point is address inside view
@@ -169,8 +157,7 @@ class PieceView: UIImageView
     /// Move the piece to a new position.
     ///
     /// - Parameter newPosition: The new position.
-    func move(to newPosition: CGPoint)
-    {
+    func move(to newPosition: CGPoint) {
         self.frame.origin = newPosition
         self.direction = nil
         self.address = nil
@@ -179,8 +166,7 @@ class PieceView: UIImageView
     /// Rotate the piece to a new angle.
     ///
     /// - Parameter newAngle: The new angle.
-    func rotate(to newAngle: CGFloat)
-    {
+    func rotate(to newAngle: CGFloat) {
         self.angle = newAngle
         self.direction = nil
         self.address = nil
@@ -190,8 +176,7 @@ class PieceView: UIImageView
     /// Snap the piece to a point along the grid.
     ///
     /// - Returns: The snapped address of the piece.
-    func snapToBoard()
-    {
+    func snapToBoard() {
         // (1) Snap to the nearest half-pi
         let halfPi = CGFloat.pi / 2
         let angle = self.angle.snap(to: halfPi)
@@ -199,8 +184,7 @@ class PieceView: UIImageView
         
         // Count the number of half-pis and add 4 until its positive
         var halfPis = Int8((angle / halfPi).rounded())
-        while halfPis < 0
-        {
+        while halfPis < 0 {
             halfPis += 4
         }
         
@@ -218,26 +202,22 @@ class PieceView: UIImageView
         // (3) Snap onto board
         let (width, height) = building.dimensions(direction: direction)
         // Left
-        if address.col < 0
-        {
+        if address.col < 0 {
             address.col = 0
         }
         
         // Top
-        if address.row < 0
-        {
+        if address.row < 0 {
             address.row = 0
         }
         
         // Right
-        if (address.col + width) > 10
-        {
+        if (address.col + width) > 10 {
             address.col = 10 - width
         }
         
         // Bottom
-        if (address.row + height) > 10
-        {
+        if (address.row + height) > 10 {
             address.row = 10 - height
         }
         
@@ -246,8 +226,7 @@ class PieceView: UIImageView
         
         
         // (4) Adjust address based on direction
-        switch direction
-        {
+        switch direction {
         case .north:
             // Top-left corner (no need to change address)
             break;
@@ -270,8 +249,7 @@ class PieceView: UIImageView
     /// Reset the tile size to a new value.
     ///
     /// - Parameter tileSize: The new tile size.
-    private func resetTileSize(_ tileSize: CGFloat)
-    {
+    private func resetTileSize(_ tileSize: CGFloat) {
         let (width, height) = building.dimensions(direction: .north)
         let size = CGSize(width: tileSize * CGFloat(width), height: tileSize * CGFloat(height))
         self.frame = CGRect(origin: self.frame.origin, size: size)
@@ -279,8 +257,7 @@ class PieceView: UIImageView
     
     
     //MARK: - State Enum
-    enum State: UInt8
-    {
+    enum State: UInt8 {
         /// Standard, unhighlighted.
         case standard
         /// Highlighted in green.

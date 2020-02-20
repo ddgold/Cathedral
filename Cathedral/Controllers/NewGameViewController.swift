@@ -9,8 +9,7 @@
 import UIKit
 
 /// <#Description#>
-class NewGameViewController: UITableViewController
-{
+class NewGameViewController: UITableViewController {
     //MARK: - Properties
     /// List of player type options fot light owner.
     var lightPlayerOptions: [PlayerTypeOptionCell]!
@@ -26,24 +25,21 @@ class NewGameViewController: UITableViewController
     
     //MARK: - Initialization
     /// Initialize a new settings controller.
-    init()
-    {
+    init() {
         super.init(style: .grouped)
     }
     
     /// Unsupported decoder initilizer.
     ///
     /// - Parameter aDecoder: The decoder.
-    required init?(coder aDecoder: NSCoder)
-    {
+    required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     
     //MARK: - ViewController Lifecycle
     /// Initialze the controller's sub views once the controller has loaded.
-    override func viewDidLoad()
-    {
+    override func viewDidLoad() {
         super.viewDidLoad()
         
         navigationItem.title  = "New Game"
@@ -68,8 +64,7 @@ class NewGameViewController: UITableViewController
     ///
     /// - Parameter tableView: The table view.
     /// - Returns: The number of sections.
-    override func numberOfSections(in tableView: UITableView) -> Int
-    {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         return 2
     }
     
@@ -79,8 +74,7 @@ class NewGameViewController: UITableViewController
     ///   - tableView: The table view.
     ///   - section: The section.
     /// - Returns: The number of cells.
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
-    {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return playerOptions(for: owner(for: section)).count
     }
     
@@ -90,8 +84,7 @@ class NewGameViewController: UITableViewController
     ///   - tableView: The table view.
     ///   - indexPath: The index path to cell.
     /// - Returns: The tabel view cell.
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
-    {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         return playerOptions(for: owner(for: indexPath.section))[indexPath.row]
     }
     
@@ -101,8 +94,7 @@ class NewGameViewController: UITableViewController
     ///   - tableView: The table view.
     ///   - section: The section.
     /// - Returns: Tht header title.
-    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String?
-    {
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         assert((section == 0) || (section == 1), "There should only be 2 sections")
         
         return (section == 0) ? "Light Player" : "Dark Player"
@@ -113,18 +105,14 @@ class NewGameViewController: UITableViewController
     /// - Parameters:
     ///   - tableView: The table view.
     ///   - indexPath: The index path to cell.
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
-    {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let options = playerOptions(for: owner(for: indexPath.section))
         
-        for (index,cell) in options.enumerated()
-        {
-            if index == indexPath.row
-            {
+        for (index,cell) in options.enumerated() {
+            if index == indexPath.row {
                 cell.state = .selected
             }
-            else
-            {
+            else {
                 cell.state = .unselected
             }
         }
@@ -136,13 +124,11 @@ class NewGameViewController: UITableViewController
     /// Play button has been pressed.
     ///
     /// - Parameter sender: The button press sender.
-    @objc func playButtonPressed(_ sender: UIButton)
-    {
+    @objc func playButtonPressed(_ sender: UIButton) {
         Settings.lightPlayerType = selectedOption(for: .light)
         Settings.darkPlayerType = selectedOption(for: .dark)
         
-        if let playHandler = self.playHandler
-        {
+        if let playHandler = self.playHandler {
             playHandler()
         }
     }
@@ -153,8 +139,7 @@ class NewGameViewController: UITableViewController
     ///
     /// - Parameter section: The section.
     /// - Returns: The player owner.
-    private func owner(for section: Int) -> Owner
-    {
+    private func owner(for section: Int) -> Owner {
         assert((section == 0) || (section == 1), "There should only be 2 sections")
         
         return (section == 0) ? .light : .dark
@@ -164,22 +149,18 @@ class NewGameViewController: UITableViewController
     ///
     /// - Parameter owner: The player owner, must be light or dark.
     /// - Returns: The defaultlist of player type options, all unselected.
-    private func buildOptions(for owner: Owner) -> [PlayerTypeOptionCell]
-    {
+    private func buildOptions(for owner: Owner) -> [PlayerTypeOptionCell] {
         assert(!owner.isChurch, "The church does not have pool")
         
         var options: [PlayerTypeOptionCell] = []
         let defaultType = (owner == .light) ? Settings.lightPlayerType  : Settings.darkPlayerType
         
-        for type in PlayerTypes.options
-        {
+        for type in PlayerTypes.options {
             let state: PlayerTypeOptionCell.State
-            if type == defaultType
-            {
+            if type == defaultType {
                 state = .selected
             }
-            else
-            {
+            else {
                 state = .unselected
             }
             
@@ -193,8 +174,7 @@ class NewGameViewController: UITableViewController
     ///
     /// - Parameter owner: The player owner, must be light or dark.
     /// - Returns: A list of player type options.
-    private func playerOptions(for owner: Owner) -> [PlayerTypeOptionCell]
-    {
+    private func playerOptions(for owner: Owner) -> [PlayerTypeOptionCell] {
         assert(!owner.isChurch, "The church does not have pool")
         
         return (owner == .light) ? lightPlayerOptions : darkPlayerOptions
@@ -204,15 +184,11 @@ class NewGameViewController: UITableViewController
     ///
     /// - Parameter owner: The player owner, must be light or dark.
     /// - Returns: The currently selected player type.
-    private func selectedOption(for owner: Owner) -> Player.Type
-    {
+    private func selectedOption(for owner: Owner) -> Player.Type {
         let options = playerOptions(for: owner)
-        for option in options
-        {
-            if option.state == .selected
-            {
-                if let id = option.textLabel?.text
-                {
+        for option in options {
+            if option.state == .selected {
+                if let id = option.textLabel?.text {
                     return PlayerTypes[id]
                 }
             }
@@ -225,8 +201,7 @@ class NewGameViewController: UITableViewController
     ///
     /// - Parameters:
     ///     - notification: Unused.
-    @objc private func updateTheme(_: Notification?)
-    {
+    @objc private func updateTheme(_: Notification?) {
         let theme = Theme.activeTheme
         
         navigationController?.navigationBar.tintColor = theme.tintColor

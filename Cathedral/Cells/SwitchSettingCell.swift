@@ -9,8 +9,7 @@
 import UIKit
 
 /// A switch setting cell.
-class SwitchSettingCell: UITableViewCell
-{
+class SwitchSettingCell: UITableViewCell {
     //MARK: - Properties
     /// The cell's label.
     private var switchLabel: UILabel
@@ -29,8 +28,7 @@ class SwitchSettingCell: UITableViewCell
     ///   - isOn: Whether or not the swich is on to start.
     ///   - isEnabled: Whether or not the swich is enabled to start. Defaults to true.
     ///   - reuseIdentifier: The cell's reuse identifier.
-    init(title: String, isOn: Bool, isEnabled: Bool = true, reuseIdentifier: String)
-    {
+    init(title: String, isOn: Bool, isEnabled: Bool = true, reuseIdentifier: String) {
         switchLabel = UILabel(frame: CGRect())
         switchView = UISwitch(frame: CGRect())
         
@@ -65,8 +63,7 @@ class SwitchSettingCell: UITableViewCell
     /// Unsupported decoder initilizer.
     ///
     /// - Parameter aDecoder: The decoder.
-    required init?(coder aDecoder: NSCoder)
-    {
+    required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
@@ -75,10 +72,8 @@ class SwitchSettingCell: UITableViewCell
     /// Calls the value changed hander, if there is one.
     ///
     /// - Parameter sender: The button press sender.
-    @objc func switchValueDidChange(sender: UISwitch)
-    {
-        if let valueChangedHandler = self.valueChangedHandler
-        {
+    @objc func switchValueDidChange(sender: UISwitch) {
+        if let valueChangedHandler = self.valueChangedHandler {
             valueChangedHandler(sender.isOn)
         }
     }
@@ -89,8 +84,7 @@ class SwitchSettingCell: UITableViewCell
     ///
     /// - Parameters:
     ///     - notification: Unused.
-    @objc func updateTheme(_: Notification?)
-    {
+    @objc func updateTheme(_: Notification?) {
         let theme = Theme.activeTheme
         
         self.switchLabel.textColor = theme.textColor

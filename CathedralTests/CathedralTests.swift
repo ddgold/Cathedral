@@ -9,10 +9,8 @@
 import XCTest
 @testable import Cathedral
 
-class CathedralTests: XCTestCase
-{
-    func sampleGame() -> Game
-    {
+class CathedralTests: XCTestCase {
+    func sampleGame() -> Game {
         let game = Game()
         _ = game.buildBuilding(.cathedral, for: .church, facing: .north, at: Address(1, 3))
         _ = game.buildBuilding(.manor, for: .dark, facing: .west, at: Address(0, 7))
@@ -34,19 +32,13 @@ class CathedralTests: XCTestCase
         return game
     }
     
-    func testCanBuild()
-    {
+    func testCanBuild() {
         let game = sampleGame()
         
         XCTAssertFalse(game.canBuildBuilding(.square, for: .dark, facing: .north, at: Address(0, 5)))
-        
-        
     }
     
-    
-    
-    func testEmptyBoard()
-    {
+    func testEmptyBoard() {
         let game = Game()
         let expectedResult = """
                                0 1 2 3 4 5 6 7 8 9
@@ -64,8 +56,7 @@ class CathedralTests: XCTestCase
         XCTAssert(game.board.description == expectedResult)
     }
     
-    func testGame1()
-    {
+    func testGame1() {
         let game = Game()
         let (claimedAddresses1, claimedPiece1) = game.buildBuilding(.cathedral, for: .church, facing: .east, at: Address(3, 0))
         let expectedResult1 = """

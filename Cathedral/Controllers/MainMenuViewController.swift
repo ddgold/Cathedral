@@ -9,8 +9,7 @@
 import UIKit
 
 /// A main menu controller.
-class MainMenuViewController: UIViewController
-{
+class MainMenuViewController: UIViewController {
     //MARK: - Properties
     /// Stack view containing main menu buttons.
     private var stackView: UIStackView!
@@ -29,8 +28,7 @@ class MainMenuViewController: UIViewController
     
     //MARK: - ViewController Lifecycle
     /// Initialze the controller's sub views once the controller has loaded.
-    override func viewDidLoad()
-    {
+    override func viewDidLoad() {
         super.viewDidLoad()
         
         navigationItem.title  = "Cathedral"
@@ -75,18 +73,15 @@ class MainMenuViewController: UIViewController
     /// Continue game button has been pressed.
     ///
     /// - Parameter sender: The button press sender.
-    @objc func continueGameButtonPressed(_ sender: UIButton)
-    {
+    @objc func continueGameButtonPressed(_ sender: UIButton) {
         presentGameViewController(pausedGame!, animated: true)
     }
     
     /// New game button has been pressed.
     ///
     /// - Parameter sender: The button press sender.
-    @objc func newGameButtonPressed(_ sender: UIButton)
-    {
-        if (pausedGame != nil)
-        {
+    @objc func newGameButtonPressed(_ sender: UIButton) {
+        if (pausedGame != nil) {
             // Alert about lost of paused game
             let alert = UIAlertController(title: "Start new game?", message: "Starting a new game will lose all progress in the game already unway.", preferredStyle: .alert)
             
@@ -106,8 +101,7 @@ class MainMenuViewController: UIViewController
     /// Settings button has been pressed.
     ///
     /// - Parameter sender: The button press sender.
-    @objc func settingsButtonPressed(_ sender: UIButton)
-    {
+    @objc func settingsButtonPressed(_ sender: UIButton) {
         let settingsViewController = SettingsViewController()
         navigationController?.pushViewController(settingsViewController, animated: true)
     }
@@ -115,14 +109,12 @@ class MainMenuViewController: UIViewController
     
     //MARK: - Functions
     /// Update the enabled status of the continueGameButton
-    private func updateContinueGameButton()
-    {
+    private func updateContinueGameButton() {
         continueGameButton.isEnabled = (pausedGame != nil)
     }
     
     /// Present a new game view controller to select the player types.
-    private func presentNewGameViewController()
-    {
+    private func presentNewGameViewController() {
         let newGameController = NewGameViewController()
         newGameController.playHandler =  {()
             self.presentGameViewController(Game(), animated: true)
@@ -137,8 +129,7 @@ class MainMenuViewController: UIViewController
     /// - Parameters:
     ///   - game: The game object.
     ///   - animated: Whether the -resentation of the GameViewController should be animated.
-    private func presentGameViewController(_ game: Game, animated: Bool)
-    {
+    private func presentGameViewController(_ game: Game, animated: Bool) {
         let gameViewController = GameViewController()
         gameViewController.game = game
         gameViewController.completionHandler = { (completionGame, rematch) in
@@ -149,8 +140,7 @@ class MainMenuViewController: UIViewController
                 return
             }
             
-            if let game = completionGame, !game.builtPieces.isEmpty
-            {
+            if let game = completionGame, !game.builtPieces.isEmpty {
                 self.pausedGame = game
             }
             self.updateContinueGameButton()
@@ -166,8 +156,7 @@ class MainMenuViewController: UIViewController
     ///
     /// - Parameters:
     ///     - notification: Unused.
-    @objc func updateTheme(_: Notification?)
-    {
+    @objc func updateTheme(_: Notification?) {
         let theme = Theme.activeTheme
         
         navigationController?.navigationBar.tintColor = theme.tintColor

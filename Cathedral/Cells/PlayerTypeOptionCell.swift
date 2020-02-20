@@ -9,14 +9,11 @@
 import UIKit
 
 /// A player type option cell.
-class PlayerTypeOptionCell: UITableViewCell
-{
+class PlayerTypeOptionCell: UITableViewCell {
     //MARK: - Properties
     /// The state of the cell.
-    var state: State
-    {
-        didSet
-        {
+    var state: State {
+        didSet {
             updateState()
         }
     }
@@ -29,8 +26,7 @@ class PlayerTypeOptionCell: UITableViewCell
     ///   - title: Title of the setting cell.
     ///   - state: Whether or not the swich is on to start. Defaults to unselected.
     ///   - reuseIdentifier: The cell's reuse identifier.
-    init(title: String, state: State = .unselected, reuseIdentifier: String)
-    {
+    init(title: String, state: State = .unselected, reuseIdentifier: String) {
         self.state = state
         
         super.init(style: .default, reuseIdentifier: reuseIdentifier)
@@ -49,18 +45,15 @@ class PlayerTypeOptionCell: UITableViewCell
     /// Unsupported decoder initilizer.
     ///
     /// - Parameter aDecoder: The decoder.
-    required init?(coder aDecoder: NSCoder)
-    {
+    required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     
     //MARK: - Functions
     /// Update the state of the cell.
-    private func updateState()
-    {
-        switch self.state
-        {
+    private func updateState() {
+        switch self.state {
         case .selected:
             self.accessoryType = .checkmark
         case .unselected:
@@ -74,8 +67,7 @@ class PlayerTypeOptionCell: UITableViewCell
     ///
     /// - Parameters:
     ///     - notification: Unused.
-    @objc func updateTheme(_: Notification?)
-    {
+    @objc func updateTheme(_: Notification?) {
         let theme = Theme.activeTheme
         
         self.textLabel?.textColor = theme.textColor
@@ -86,8 +78,7 @@ class PlayerTypeOptionCell: UITableViewCell
     
     
     //MARK: - State Enum
-    enum State: UInt8
-    {
+    enum State: UInt8 {
         /// The currently selected option.
         case selected
         /// An unselected option.

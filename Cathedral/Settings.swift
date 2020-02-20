@@ -9,11 +9,9 @@
 import Foundation
 
 /// A games settings object
-struct Settings
-{
+struct Settings {
     /// Initilizes a settings object, but there is no need to have an instance.
-    init()
-    {
+    init() {
         self.lightPlayerType = Settings.lightPlayerType
         self.darkPlayerType = Settings.darkPlayerType
         self.delayedCathedral = Settings.delayedCathedral
@@ -24,21 +22,16 @@ struct Settings
     //MARK: - Light Player Type
     /// The light player type.
     /// - Note: System level setting.
-    static var lightPlayerType: Player.Type
-    {
-        get
-        {
-            if let playerType = UserDefaults.standard.string(forKey: "lightPlayerType")
-            {
+    static var lightPlayerType: Player.Type {
+        get {
+            if let playerType = UserDefaults.standard.string(forKey: "lightPlayerType") {
                 return PlayerTypes[playerType]
             }
-            else
-            {
+            else {
                 return RandomComputer.self
             }
         }
-        set
-        {
+        set {
             UserDefaults.standard.set(newValue.id, forKey: "lightPlayerType")
         }
     }
@@ -50,21 +43,16 @@ struct Settings
     //MARK: - Dark Player Type
     /// The dark player type.
     /// - Note: System level setting.
-    static var darkPlayerType: Player.Type
-    {
-        get
-        {
-            if let playerType = UserDefaults.standard.string(forKey: "darkPlayerType")
-            {
+    static var darkPlayerType: Player.Type {
+        get {
+            if let playerType = UserDefaults.standard.string(forKey: "darkPlayerType") {
                 return PlayerTypes[playerType]
             }
-            else
-            {
+            else {
                 return LocalHuman.self
             }
         }
-        set
-        {
+        set {
             UserDefaults.standard.set(newValue.id, forKey: "darkPlayerType")
         }
     }
@@ -76,14 +64,11 @@ struct Settings
     //MARK: - Delayed Cathedral
     /// Whether or not the cathedral placement should be delayed until after the first dark piece has been placed.
     /// - Note: System level setting.
-    static var delayedCathedral: Bool
-    {
-        get
-        {
+    static var delayedCathedral: Bool {
+        get {
             return UserDefaults.standard.bool(forKey: "delayedCathedral")
         }
-        set
-        {
+        set {
             UserDefaults.standard.set(newValue, forKey: "delayedCathedral")
         }
     }
@@ -95,14 +80,11 @@ struct Settings
     //MARK: - Auto Build
     /// Whether or not to auto-build once one player can no longer build, and there are enough tiles to build all remaining pieces.
     /// - Note: System level setting.
-    static var autoBuild: Bool
-    {
-        get
-        {
+    static var autoBuild: Bool {
+        get {
             return UserDefaults.standard.bool(forKey: "autoBuild")
         }
-        set
-        {
+        set {
             UserDefaults.standard.set(newValue, forKey: "autoBuild")
         }
     }

@@ -9,11 +9,9 @@
 import Foundation
 
 /// A computer player object that builds randomly.
-class RandomComputer: Computer
-{
+class RandomComputer: Computer {
     /// The player type's ID.
-    static var id: String
-    {
+    static var id: String {
         return "RandomComputer"
     }
     
@@ -23,8 +21,7 @@ class RandomComputer: Computer
     private let owner: Owner
     
     /// The name of the player.
-    var name: String
-    {
+    var name: String {
         return "Random Computer"
     }
     
@@ -33,8 +30,7 @@ class RandomComputer: Computer
     /// - Parameters:
     ///   - game: The player's game.
     ///   - owner: The owner, must be light or dark.
-    required init (game: Game, owner: Owner)
-    {
+    required init (game: Game, owner: Owner) {
         self.game = game
         self.owner = owner
     }
@@ -42,31 +38,25 @@ class RandomComputer: Computer
     /// Determines the computer's next random move.
     ///
     /// - Returns: The piece to build.
-    func nextMove() -> Piece
-    {
-        guard let nextOwner = game.nextTurn else
-        {
+    func nextMove() -> Piece {
+        guard let nextOwner = game.nextTurn else {
             fatalError()
         }
         
-        if (nextOwner == .church)
-        {
+        if (nextOwner == .church) {
             assert(owner == .light)
             
             return randomLocation(owner: nextOwner, building: .cathedral)
         }
-        else
-        {
+        else {
             assert(nextOwner == owner)
             assert(game.canMakeMove(owner))
             
             let unbuildBuildings = game.unbuiltBuildings(for: owner)
             
-            while true
-            {
+            while true {
                 let (randomBuilding,canBuild) = unbuildBuildings.randomElement()!
-                if canBuild
-                {
+                if canBuild {
                     return randomLocation(owner: nextOwner, building: randomBuilding)
                 }
             }
@@ -79,15 +69,12 @@ class RandomComputer: Computer
     ///   - owner: The owner.
     ///   - building: The building type.
     /// - Returns: The piece to build.
-    private func randomLocation(owner: Owner, building: Building) -> Piece
-    {
-        while true
-        {
+    private func randomLocation(owner: Owner, building: Building) -> Piece {
+        while true {
             let randomDirection =  Direction.cardinalDirections.randomElement()!
             let randomAddress = Address(Int8.random(in: 0 ..< 10), Int8.random(in: 0 ..< 10))
             
-            if game.canBuildBuilding(building, for: owner, facing: randomDirection, at: randomAddress)
-            {
+            if game.canBuildBuilding(building, for: owner, facing: randomDirection, at: randomAddress) {
                 return Piece(owner: owner, building: building, direction: randomDirection, address: randomAddress)
             }
         }

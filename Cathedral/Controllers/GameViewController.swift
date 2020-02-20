@@ -10,8 +10,7 @@ import UIKit
 import AVFoundation
 
 /// A cathedral game controller.
-class GameViewController: UIViewController
-{
+class GameViewController: UIViewController {
     //MARK: - Properties
     /// The game model
     var game: Game!
@@ -56,8 +55,7 @@ class GameViewController: UIViewController
     var completionHandler: ((Game?, Bool) -> Void)?
     
     /// The calculate size of a tile based on controller's safe space.
-    var tileSize: CGFloat
-    {
+    var tileSize: CGFloat {
         let totalSafeHeight = view.frame.height - 180
         let maxHeightSize = (totalSafeHeight - 40) / 18
         
@@ -70,8 +68,7 @@ class GameViewController: UIViewController
     
     //MARK: - ViewController Lifecycle
     /// Initialze the controller's sub views once the controller has loaded.
-    override func viewDidLoad()
-    {
+    override func viewDidLoad() {
         super.viewDidLoad()
         
         navigationItem.title  = "Cathedral"
@@ -102,8 +99,7 @@ class GameViewController: UIViewController
     /// This game controller is disappearing, return the game via the completion handler.
     ///
     /// - Parameter animated: Whether or not the disappearing is animated.
-    override func viewDidDisappear(_ animated: Bool)
-    {
+    override func viewDidDisappear(_ animated: Bool) {
         completionHandler?(game, false)
     }
     
@@ -112,16 +108,12 @@ class GameViewController: UIViewController
     /// Handle a pan gesture accross the game board view.
     ///
     /// - Parameter sender: The pan gesture recognizer.
-    @objc func handleBoardPanGesture(_ sender: UIPanGestureRecognizer)
-    {
-        if let activePiece = self.activePiece
-        {
-            switch sender.state
-            {
+    @objc func handleBoardPanGesture(_ sender: UIPanGestureRecognizer) {
+        if let activePiece = self.activePiece {
+            switch sender.state {
             // Began dragging piece
             case .began:
-                if activePiece.contains(point: sender.location(in: activePiece))
-                {
+                if activePiece.contains(point: sender.location(in: activePiece)) {
                     let touchLocation = sender.location(in: boardView)
                     
                     panStart = activePiece.frame.origin
@@ -132,8 +124,7 @@ class GameViewController: UIViewController
             
             // Dragged piece
             case .changed:
-                if let panOffset = self.panOffset
-                {
+                if let panOffset = self.panOffset {
                     let boardTouchLocation = sender.location(in: boardView)
                     let offsetLocation = CGPoint(x: boardTouchLocation.x - panOffset.x, y: boardTouchLocation.y - panOffset.y)
                     
@@ -142,16 +133,13 @@ class GameViewController: UIViewController
             
             // Stopped dragging piece
             case .ended:
-                if let panOffset = self.panOffset
-                {
+                if let panOffset = self.panOffset {
                     let boardTouchLocation = sender.location(in: boardView)
                     let offsetLocation = CGPoint(x: boardTouchLocation.x - panOffset.x, y: boardTouchLocation.y - panOffset.y)
                     
-                    if let activePool = self.activePool
-                    {
+                    if let activePool = self.activePool {
                         if (activePool == topPoolView) && (boardTouchLocation.y < 0) ||
-                            (activePool == bottomPoolView) && (boardTouchLocation.y > boardView.frame.height)
-                        {
+                            (activePool == bottomPoolView) && (boardTouchLocation.y > boardView.frame.height) {
                             activePool.addPiece(activePiece, at: boardTouchLocation)
                             self.activePiece = nil
                             
@@ -171,8 +159,7 @@ class GameViewController: UIViewController
             
             // Cancel dragging piece
             case .cancelled:
-                if let panStart = self.panStart
-                {
+                if let panStart = self.panStart {
                     activePiece.move(to: panStart)
                     putdownActivePiece()
                     
@@ -190,12 +177,9 @@ class GameViewController: UIViewController
     /// Handle a rotation gesture on the game board view.
     ///
     /// - Parameter sender: The rotation gesture recognizer.
-    @objc func handleBoardRotation(_ sender: UIRotationGestureRecognizer)
-    {
-        if let activePiece = self.activePiece
-        {
-            switch sender.state
-            {
+    @objc func handleBoardRotation(_ sender: UIRotationGestureRecognizer) {
+        if let activePiece = self.activePiece {
+            switch sender.state {
             // Begin Spinning Piece
             case .began:
                 // Record starting angle
@@ -204,16 +188,14 @@ class GameViewController: UIViewController
                 
             // Spin Piece
             case .changed:
-                if let rotateStart = self.rotateStart
-                {
+                if let rotateStart = self.rotateStart {
                     // Spin active piece
                     activePiece.rotate(to: rotateStart + sender.rotation)
                 }
                 
             // End Spinning Piece
             case .ended:
-                if let rotateStart = self.rotateStart
-                {
+                if let rotateStart = self.rotateStart {
                     // Set active piece direction then snap to 90º angle and board grid
                     activePiece.rotate(to: rotateStart + sender.rotation)
                     putdownActivePiece()
@@ -223,8 +205,7 @@ class GameViewController: UIViewController
                 
             // Cancel Spinning Piece
             case .cancelled:
-                if let rotateStart = self.rotateStart
-                {
+                if let rotateStart = self.rotateStart {
                     // Reset active piece rotation
                     activePiece.rotate(to: rotateStart)
                     putdownActivePiece()
@@ -242,12 +223,9 @@ class GameViewController: UIViewController
     /// Handle a double tap gesture on the game board view.
     ///
     /// - Parameter sender: The double tap gesture recognizer.
-    @objc func handleBoardDoubleTap(_ sender: UITapGestureRecognizer)
-    {
-        if let activePiece = self.activePiece
-        {
-            if activePiece.contains(point: sender.location(in: activePiece))
-            {
+    @objc func handleBoardDoubleTap(_ sender: UITapGestureRecognizer) {
+        if let activePiece = self.activePiece {
+            if activePiece.contains(point: sender.location(in: activePiece)) {
                 let start = activePiece.frame.origin
                 activePiece.rotate(to: activePiece.angle + (CGFloat.pi / 2))
                 activePiece.move(to: start)
@@ -259,31 +237,24 @@ class GameViewController: UIViewController
     /// Handle a long press on one of the pool views.
     ///
     /// - Parameter sender: The long press gesture recognizer.
-    @objc func handlePoolLongPress(_ sender: UILongPressGestureRecognizer)
-    {
+    @objc func handlePoolLongPress(_ sender: UILongPressGestureRecognizer) {
         // There's already an active piece
-        if self.activePiece != nil
-        {
+        if self.activePiece != nil {
             return
         }
         
-        if let activePool = self.activePool
-        {
-            switch sender.state
-            {
+        if let activePool = self.activePool {
+            switch sender.state {
             // Began dragging piece
             case .began:
                 let poolTouchLocation = sender.location(in: activePool)
-                if let (index, selectedPiece) = activePool.selectPiece(at: poolTouchLocation)
-                {
+                if let (index, selectedPiece) = activePool.selectPiece(at: poolTouchLocation) {
                     let boardTouchLocation = sender.location(in: boardView)
                     
-                    if (!canBuildPiece(selectedPiece))
-                    {
+                    if (!canBuildPiece(selectedPiece)) {
                         AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
                     }
-                    else
-                    {
+                    else {
                         pressStart = activePool.convert(selectedPiece.frame, to: boardView).origin
                         pressOffset = CGPoint(x: boardTouchLocation.x - pressStart!.x, y: boardTouchLocation.y - pressStart!.y)
                         pressedPiece = selectedPiece
@@ -297,8 +268,7 @@ class GameViewController: UIViewController
             
             // Dragged piece
             case .changed:
-                if let pressedPiece = self.pressedPiece, let pressOffset = self.pressOffset
-                {
+                if let pressedPiece = self.pressedPiece, let pressOffset = self.pressOffset {
                     let boardTouchLocation = sender.location(in: boardView)
                     let offsetLocation = CGPoint(x: boardTouchLocation.x - pressOffset.x, y: boardTouchLocation.y - pressOffset.y)
                     
@@ -307,14 +277,12 @@ class GameViewController: UIViewController
             
             // Stopped dragging piece
             case .ended:
-                if let pressedPiece = self.pressedPiece, let pressOffset = self.pressOffset
-                {
+                if let pressedPiece = self.pressedPiece, let pressOffset = self.pressOffset {
                     let boardTouchLocation = sender.location(in: boardView)
                     let offsetLocation = CGPoint(x: boardTouchLocation.x - pressOffset.x, y: boardTouchLocation.y - pressOffset.y)
                     
                     if (activePool == topPoolView) && (boardTouchLocation.y < 0) ||
-                        (activePool == bottomPoolView) && (boardTouchLocation.y > boardView.frame.height)
-                    {
+                        (activePool == bottomPoolView) && (boardTouchLocation.y > boardView.frame.height) {
                         activePool.addPiece(pressedPiece, at: boardTouchLocation)
                         
                         self.pressStart = nil
@@ -336,8 +304,7 @@ class GameViewController: UIViewController
             
             // Cancel dragging piece
             case .cancelled:
-                if let pressedPiece = self.pressedPiece
-                {
+                if let pressedPiece = self.pressedPiece {
                     activePool.addPiece(pressedPiece)
                     
                     self.pressStart = nil
@@ -355,8 +322,7 @@ class GameViewController: UIViewController
     /// Handle the buildButton being pressed.
     ///
     /// - Parameter sender: The button press sender.
-    @objc func buildButtonPressed(_ sender: UIButton)
-    {
+    @objc func buildButtonPressed(_ sender: UIButton) {
         assert(activePiece != nil, "There isn't an active piece")
         
         // Build Piece in modal
@@ -372,8 +338,7 @@ class GameViewController: UIViewController
     /// Rematch button has been pressed.
     ///
     /// - Parameter sender: The button press sender.
-    @objc func rematchButtonPressed(_ sender: UIButton)
-    {
+    @objc func rematchButtonPressed(_ sender: UIButton) {
         completionHandler?(game, true)
     }
     
@@ -382,8 +347,7 @@ class GameViewController: UIViewController
     /// Builds a new board.
     ///
     /// - Returns: The new board.
-    private func buildBoard() -> BoardView
-    {
+    private func buildBoard() -> BoardView {
         let newBoard = BoardView(tileSize: tileSize)
         
         view.addSubview(newBoard)
@@ -403,21 +367,18 @@ class GameViewController: UIViewController
         
         
         // Build existing pieces
-        for piece in game.builtPieces
-        {
+        for piece in game.builtPieces {
             let pieceView = PieceView(piece, tileSize: tileSize)
             newBoard.buildPiece(pieceView)
         }
         
         // Build claimed tiles
-        for claimedAddress in game.lightClaimedAddresses
-        {
+        for claimedAddress in game.lightClaimedAddresses {
             let claimedTile = ClaimedTileView(owner: .light, address: claimedAddress, tileSize: tileSize)
             newBoard.claimTile(claimedTile)
         }
         
-        for claimedAddress in game.darkClaimedAddresses
-        {
+        for claimedAddress in game.darkClaimedAddresses {
             let claimedTile = ClaimedTileView(owner: .dark, address: claimedAddress, tileSize: tileSize)
             newBoard.claimTile(claimedTile)
         }
@@ -429,8 +390,7 @@ class GameViewController: UIViewController
     ///
     /// - Parameter top: Whether to build a top pool or a bottom pool.
     /// - Returns: The new pool.
-    private func buildPool(top: Bool) -> PoolView
-    {
+    private func buildPool(top: Bool) -> PoolView {
         let owner = top ? topPoolPlayer : topPoolPlayer.opponent
         
         let newPool = PoolView(owner: owner, buildings: game.unbuiltBuildings(for: owner), tileSize: tileSize)
@@ -439,12 +399,10 @@ class GameViewController: UIViewController
         newPool.heightAnchor.constraint(equalToConstant: (tileSize * 3) + 20).isActive = true
         newPool.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0).isActive = true
         newPool.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive = true
-        if top
-        {
+        if top {
             newPool.bottomAnchor.constraint(equalTo: boardView.topAnchor, constant: 0).isActive = true
         }
-        else
-        {
+        else {
             newPool.topAnchor.constraint(equalTo: boardView.bottomAnchor, constant: 0).isActive = true
         }
         
@@ -457,8 +415,7 @@ class GameViewController: UIViewController
     /// Builds a new messageLabel.
     ///
     /// - Returns: The new label.
-    private func buildMessageLabel() -> UILabel
-    {
+    private func buildMessageLabel() -> UILabel {
         let newLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 500, height: 100))
         view.addSubview(newLabel)
         newLabel.text = "Place Holder"
@@ -475,8 +432,7 @@ class GameViewController: UIViewController
     /// Builds a new buildButton.
     ///
     /// - Returns: The new button.
-    private func buildBuildButton() -> UIButton
-    {
+    private func buildBuildButton() -> UIButton {
         let newButton = UIButton(type: .system)
         view.addSubview(newButton)
         newButton.setTitle("Build Building", for: .normal)
@@ -493,10 +449,8 @@ class GameViewController: UIViewController
     
     /// Start moving the active piece.
     /// - Note: There must be an active piece.
-    private func pickupActivePiece()
-    {
-        guard let activePiece = self.activePiece else
-        {
+    private func pickupActivePiece() {
+        guard let activePiece = self.activePiece else {
             fatalError("There is no active piece")
         }
         
@@ -507,23 +461,19 @@ class GameViewController: UIViewController
     
     /// Stop moving the active piece, snapping it to the board, or putting back into the active pool.
     /// - Note: There must be an active piece.
-    private func putdownActivePiece()
-    {
-        guard let activePiece = self.activePiece else
-        {
+    private func putdownActivePiece() {
+        guard let activePiece = self.activePiece else {
             fatalError("There is no active piece")
         }
         
         activePiece.snapToBoard()
         
         // Update state
-        if canBuildPiece(activePiece)
-        {
+        if canBuildPiece(activePiece) {
             buildButton.isEnabled = true
             activePiece.state = .success
         }
-        else
-        {
+        else {
             buildButton.isEnabled = false
             activePiece.state = .failure
         }
@@ -534,14 +484,11 @@ class GameViewController: UIViewController
     ///
     /// - Parameter piece: The piece view.
     /// - Returns: Whether the given piece can be built.
-    private func canBuildPiece(_ piece: PieceView) -> Bool
-    {
-        if (piece.address == nil) || (piece.direction == nil)
-        {
+    private func canBuildPiece(_ piece: PieceView) -> Bool {
+        if (piece.address == nil) || (piece.direction == nil) {
             return game!.canBuildBuilding(piece.building, for: piece.owner)
         }
-        else
-        {
+        else {
             return game!.canBuildBuilding(piece.building, for: piece.owner, facing: piece.direction!, at: piece.address!)
         }
     }
@@ -550,26 +497,22 @@ class GameViewController: UIViewController
     /// - Note: Piece must have address and direction set, and be in a valid position.
     ///
     /// - Parameter piece: The piece view.
-    private func buildPiece(_ piece: PieceView)
-    {
+    private func buildPiece(_ piece: PieceView) {
         assert((piece.address != nil) && (piece.direction != nil), "Must set piece's address and direciton before building it")
         assert(canBuildPiece(piece), "Piece at an invalid position")
         
         let (claimant, destroyed) = game!.buildBuilding(piece.building, for: piece.owner, facing: piece.direction!, at: piece.address!)
         
-        for address in claimant
-        {
+        for address in claimant {
             let claimedTile = ClaimedTileView(owner: piece.owner, address: address, tileSize: tileSize)
             boardView.claimTile(claimedTile)
         }
         
-        for piece in destroyed
-        {
+        for piece in destroyed {
             let pieceView = boardView.destroyPiece(piece)
 
             // If Cathedral piece, remove from superviews, else return to pool
-            switch piece.owner
-            {
+            switch piece.owner {
             case .church:
                 pieceView.removeFromSuperview()
 
@@ -583,35 +526,28 @@ class GameViewController: UIViewController
     ///
     /// - Parameter owner: The player owner, must be light or dark.
     /// - Returns: The pool for the given owner.
-    private func poolForOwner(_ owner: Owner) -> PoolView
-    {
+    private func poolForOwner(_ owner: Owner) -> PoolView {
         assert(!owner.isChurch, "The church does not have pool")
         
-        if (owner == topPoolPlayer)
-        {
+        if (owner == topPoolPlayer) {
             return topPoolView
         }
-        else
-        {
+        else {
             return bottomPoolView
         }
     }
     
     /// Move on to the next turn.
-    private func nextTurn()
-    {
+    private func nextTurn() {
         // Turn off build button
         buildButton.isEnabled = false
         
         // Set message and potential active piece (for Cathedral turn) or pool (for player turn)
-        if let nextOwner = game!.nextTurn
-        {
-            if (nextOwner == .church)
-            {
+        if let nextOwner = game!.nextTurn {
+            if (nextOwner == .church) {
                 let player = lightPlayer
                 
-                if let computerPlayer = player as? Computer
-                {
+                if let computerPlayer = player as? Computer {
                     let piece = computerPlayer.nextMove()
                     
                     let pieceView = PieceView(piece, tileSize: tileSize)
@@ -620,8 +556,7 @@ class GameViewController: UIViewController
                     buildPiece(pieceView)
                     self.nextTurn()
                 }
-                else
-                {
+                else {
                     messageLabel.text = "Build the Cathedral"
                     activePool = nil
                     
@@ -631,13 +566,11 @@ class GameViewController: UIViewController
                     boardView.buildPiece(activePiece!)
                 }
             }
-            else
-            {
+            else {
                 let pool = poolForOwner(nextOwner)
                 let player = (nextOwner == .light) ? lightPlayer! : darkPlayer!
                 
-                if let computerPlayer = player as? Computer
-                {
+                if let computerPlayer = player as? Computer {
                     let piece = computerPlayer.nextMove()
                     pool.removePiece(piece.building)
                     
@@ -647,23 +580,19 @@ class GameViewController: UIViewController
                     buildPiece(pieceView)
                     self.nextTurn()
                 }
-                else
-                {
+                else {
                     messageLabel.text = "It's \(player.name)'s turn to build."
                     activePool = poolForOwner(nextOwner)
                 }
             }
         }
-        else
-        {
+        else {
             let (winner, _) = game!.calculateWinner()!
             
-            if let winner = winner
-            {
+            if let winner = winner {
                 messageLabel.text = "Game is over, \(winner) is the winner!"
             }
-            else
-            {
+            else {
                 messageLabel.text = "Game is over, it was a tie."
             }
             
@@ -676,14 +605,11 @@ class GameViewController: UIViewController
         
         
         // Update which building in pools can be built
-        for targetPool in [topPoolView!, bottomPoolView!]
-        {
-            if (targetPool == activePool)
-            {
+        for targetPool in [topPoolView!, bottomPoolView!] {
+            if (targetPool == activePool) {
                 enablePool(targetPool)
             }
-            else
-            {
+            else {
                 disablePool(targetPool)
             }
         }
@@ -692,16 +618,12 @@ class GameViewController: UIViewController
     /// Enable a given pool, updating highlighting.
     ///
     /// - Parameter poolView: The pool view.
-    private func enablePool(_ poolView: PoolView)
-    {
-        for case let piece as PieceView in poolView.subviews
-        {
-            if (canBuildPiece(piece))
-            {
+    private func enablePool(_ poolView: PoolView) {
+        for case let piece as PieceView in poolView.subviews {
+            if (canBuildPiece(piece)) {
                 piece.state = .standard
             }
-            else
-            {
+            else {
                 piece.state = .failure
             }
         }
@@ -710,10 +632,8 @@ class GameViewController: UIViewController
     /// Disable a given pool, darkening all pieces.
     ///
     /// - Parameter poolView: The pool view.
-    private func disablePool(_ poolView: PoolView)
-    {
-        for case let piece as PieceView in poolView.subviews
-        {
+    private func disablePool(_ poolView: PoolView) {
+        for case let piece as PieceView in poolView.subviews {
             piece.state = .disabled
         }
     }
@@ -722,8 +642,7 @@ class GameViewController: UIViewController
     ///
     /// - Parameters:
     ///     - notification: Unused.
-    @objc private func updateTheme(_: Notification?)
-    {
+    @objc private func updateTheme(_: Notification?) {
         let theme = Theme.activeTheme
         
         messageLabel.textColor = theme.textColor

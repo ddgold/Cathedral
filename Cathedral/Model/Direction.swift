@@ -9,8 +9,7 @@
 import Foundation
 
 /// A cardinal direction on the game board.
-enum Direction: UInt8
-{
+enum Direction: UInt8 {
     //MARK: - Values
     case north
     case east
@@ -20,16 +19,13 @@ enum Direction: UInt8
     
     //MARK: - Properties
     /// The set of all cardinal directions.
-    static var cardinalDirections: Set<Direction>
-    {
+    static var cardinalDirections: Set<Direction> {
         return [self.north, self.east, self.south, self.west]
     }
     
     /// The log entry for this direction.
-    var log: String
-    {
-        switch self
-        {
+    var log: String {
+        switch self {
         case .north:
             return "n"
         case .east:
@@ -46,10 +42,8 @@ enum Direction: UInt8
     /// Initializes a direction from a log entry.
     ///
     /// - Parameter log: The log entry.
-    init?(_ log: String)
-    {
-        switch log
-        {
+    init?(_ log: String) {
+        switch log {
         case "n":
             self = .north
         case "e":
@@ -66,16 +60,13 @@ enum Direction: UInt8
     
     //MARK: - Descriptions
     /// Description of the direction enum.
-    static var description: String
-    {
+    static var description: String {
         return "Direction"
     }
     
     /// Description of a particular direction.
-    var description: String
-    {
-        switch self
-        {
+    var description: String {
+        switch self {
         case .north:
             return "North"
         case .east:

@@ -9,8 +9,7 @@
 import Foundation
 
 /// A game of cathedral.
-class Game: NSObject, NSCoding
-{
+class Game: NSObject, NSCoding {
     //MARK: - Properties
     /// The setting used for this game.
     private let settings: Settings
@@ -33,17 +32,13 @@ class Game: NSObject, NSCoding
     /// The owner who's turn is next. If nil, game is over.
     private(set) var nextTurn: Owner?
     /// The history log for this game.
-    var log: String
-    {
+    var log: String {
         var string = ""
-        for piece in buildHistory
-        {
-            if string.count == 0
-            {
+        for piece in buildHistory {
+            if string.count == 0 {
                 string += piece.log
             }
-            else
-            {
+            else {
                 string += "\n" + piece.log
             }
         }
@@ -52,8 +47,7 @@ class Game: NSObject, NSCoding
     
     //MARK: - Initialization
     /// Initializes a new game.
-    override init()
-    {
+    override init() {
         board = Board()
         settings = Settings()
         
@@ -65,12 +59,10 @@ class Game: NSObject, NSCoding
         lightClaimedAddresses = []
         darkClaimedAddresses = []
         
-        if settings.delayedCathedral
-        {
+        if settings.delayedCathedral {
             nextTurn = .dark
         }
-        else
-        {
+        else {
             nextTurn = .church
         }
     }
@@ -78,13 +70,11 @@ class Game: NSObject, NSCoding
     /// Initializes a game from a histroy log.
     ///
     /// - Parameter log: The log entry.
-    convenience init?(log: String)
-    {
+    convenience init?(log: String) {
         self.init()
         
         let turns = log.components(separatedBy: "\n")
-        for turn in turns
-        {
+        for turn in turns {
             let owner = nextTurn!
             let building = Building(String(turn.prefix(2)))!
             let address = Address(String(turn.suffix(2)))!
@@ -99,26 +89,21 @@ class Game: NSObject, NSCoding
     /// Calculates who won the game.
     ///
     /// - Returns: A tuple, where the first element is the owner, light or dark, if they won, or nil if game is a tie, and the second element is the winner's score.  Or nil, if no winner has been decided yet.
-    func calculateWinner() -> (owner: Owner?, score: UInt8)?
-    {
-        if canMakeMove(.dark) || canMakeMove(.light)
-        {
+    func calculateWinner() -> (owner: Owner?, score: UInt8)? {
+        if canMakeMove(.dark) || canMakeMove(.light) {
             return nil
         }
         
         let lightScore = playerScore(.light)
         let darkScore = playerScore(.dark)
         
-        if (lightScore < darkScore)
-        {
+        if (lightScore < darkScore) {
             return (.light, darkScore)
         }
-        else if (lightScore > darkScore)
-        {
+        else if (lightScore > darkScore) {
             return (.dark, lightScore)
         }
-        else
-        {
+        else {
             return (nil, 0)
         }
     }
@@ -127,16 +112,13 @@ class Game: NSObject, NSCoding
     ///
     /// - Parameter owner: The owner.
     /// - Returns: The player type.
-    func playerType(for owner: Owner) -> Player.Type
-    {
+    func playerType(for owner: Owner) -> Player.Type {
         assert(!owner.isChurch, "The church doesn't have a player type")
         
-        if (owner == .light)
-        {
+        if (owner == .light) {
             return settings.lightPlayerType
         }
-        else
-        {
+        else {
             return settings.darkPlayerType
         }
     }
@@ -145,14 +127,12 @@ class Game: NSObject, NSCoding
     ///
     /// - Parameter owner: The player owner, must be light or dark.
     /// - Returns: The dictionary of unbuilt buildings.
-    func unbuiltBuildings(for owner: Owner) -> Dictionary<Building, Bool>
-    {
+    func unbuiltBuildings(for owner: Owner) -> Dictionary<Building, Bool> {
         assert(!owner.isChurch, "The church doesn't have unbuilt buildings")
         
         var pieces = Dictionary<Building, Bool>()
         
-        for building in ((owner == .light) ? lightUnbuiltBuildings : darkUnbuiltBuildings)
-        {
+        for building in ((owner == .light) ? lightUnbuiltBuildings : darkUnbuiltBuildings) {
             pieces[building] = canBuildBuilding(building, for: owner)
         }
         
@@ -164,14 +144,11 @@ class Game: NSObject, NSCoding
     ///
     /// - Parameter owner: The player owner, must be light or dark.
     /// - Returns: Whether or not the owner can make a move.
-    func canMakeMove(_ owner: Owner) -> Bool
-    {
+    func canMakeMove(_ owner: Owner) -> Bool {
         assert(!owner.isChurch, "The church can't make moves")
         
-        for (building, canBuild) in unbuiltBuildings(for: owner)
-        {
-            if canBuild && canBuildBuilding(building, for: owner)
-            {
+        for (building, canBuild) in unbuiltBuildings(for: owner) {
+            if canBuild && canBuildBuilding(building, for: owner) {
                 return true
             }
         }
@@ -184,17 +161,12 @@ class Game: NSObject, NSCoding
     ///   - building: The building type.
     ///   - owner: The owner.
     /// - Returns: Whether or not the owner can build the building type.
-    func canBuildBuilding(_ building: Building, for owner: Owner) -> Bool
-    {
-        for row in 0..<10
-        {
-            for col in 0..<10
-            {
+    func canBuildBuilding(_ building: Building, for owner: Owner) -> Bool {
+        for row in 0..<10 {
+            for col in 0..<10 {
                 let targetAddress = Address(Int8(col), Int8(row))
-                for direction in Direction.cardinalDirections
-                {
-                    if (canBuildBuilding(building, for: owner, facing: direction, at: targetAddress))
-                    {
+                for direction in Direction.cardinalDirections {
+                    if (canBuildBuilding(building, for: owner, facing: direction, at: targetAddress)) {
                         return true
                     }
                 }
@@ -212,50 +184,39 @@ class Game: NSObject, NSCoding
     ///   - direction: The direction.
     ///   - address: The address.
     /// - Returns: Whether or not the owner can build the building type.
-    func canBuildBuilding(_ building: Building, for owner: Owner, facing direction: Direction, at address : Address) -> Bool
-    {
+    func canBuildBuilding(_ building: Building, for owner: Owner, facing direction: Direction, at address : Address) -> Bool {
         // Check if the Piece has been built
-        switch owner
-        {
+        switch owner {
         case .church:
-            if (cathedralBuilt)
-            {
+            if (cathedralBuilt) {
                 return false
             }
         case .light:
-            if (!lightUnbuiltBuildings.contains(building))
-            {
+            if (!lightUnbuiltBuildings.contains(building)) {
                 return false
             }
         case .dark:
-            if (!darkUnbuiltBuildings.contains(building))
-            {
+            if (!darkUnbuiltBuildings.contains(building)) {
                 return false
             }
         }
         
         // Go through blueprint and confirm tiles can be built on
-        for blueprint in building.blueprint(owner: owner, facing: direction, at: address)
-        {
+        for blueprint in building.blueprint(owner: owner, facing: direction, at: address) {
             // Can't build if not on Board
-            if (!onBoard(blueprint))
-            {
+            if (!onBoard(blueprint)) {
                 return false
             }
             
             let tile = board[blueprint]
-            if let tileOwner = tile.owner
-            {
+            if let tileOwner = tile.owner {
                 // Can't build if Piece and Tile aren't owned by the same Owner
-                if (owner != tileOwner)
-                {
+                if (owner != tileOwner) {
                     return false
                 }
-                else
-                {
+                else {
                     // Even if same Owner, can onlt build on free claimed land
-                    if (tile.isBuilt)
-                    {
+                    if (tile.isBuilt) {
                         return false
                     }
                 }
@@ -273,8 +234,7 @@ class Game: NSObject, NSCoding
     ///   - direction: The direction.
     ///   - address: The address.
     /// - Returns: Tuple where the first element is a set of claimed addresses, and the second element is the set of claimed pieces.
-    func buildBuilding(_ building: Building, for owner: Owner, facing direction: Direction, at address: Address) -> (Set<Address>, Set<Piece>)
-    {
+    func buildBuilding(_ building: Building, for owner: Owner, facing direction: Direction, at address: Address) -> (Set<Address>, Set<Piece>) {
         assert(nextTurn == owner, "Not \(owner)'s turn to build piece")
         assert(canBuildBuilding(building, for: owner, facing: direction, at: address), "Can't build \(owner) \(building) facing \(direction) at \(address)")
         
@@ -286,12 +246,10 @@ class Game: NSObject, NSCoding
         buildHistory.append(builtPiece)
         
         // Remove tiles from claimed sets
-        for address in builtPiece.addresses()
-        {
+        for address in builtPiece.addresses() {
             board[address].piece = builtPiece
             
-            switch owner
-            {
+            switch owner {
             case .church:
                 break
             case .light:
@@ -301,33 +259,26 @@ class Game: NSObject, NSCoding
             }
         }
         
-        if (owner == .church)
-        {
+        if (owner == .church) {
             // Set cathedral built and next turn
             cathedralBuilt = true
             nextTurn = .dark
         }
-        else
-        {
+        else {
             // Remove builing from unbuilt set
             _ = (owner == .light) ? lightUnbuiltBuildings.remove(building) : darkUnbuiltBuildings.remove(building)
             
             // Find claims if after the player's first turns
-            if (buildHistory.count > 3)
-            {
-                for address in builtPiece.addresses()
-                {
-                    for neighbor in address.neighbors()
-                    {
-                        if (!onBoard(neighbor))
-                        {
+            if (buildHistory.count > 3) {
+                for address in builtPiece.addresses() {
+                    for neighbor in address.neighbors() {
+                        if (!onBoard(neighbor)) {
                             continue
                         }
                         
                         let (claimed, destroyed) = claimClaimant(owner: owner, at: neighbor)
                         totalClaimed = totalClaimed.union(claimed)
-                        if let destroyed = destroyed
-                        {
+                        if let destroyed = destroyed {
                             totalDestroyed.insert(destroyed)
                         }
                         
@@ -337,23 +288,19 @@ class Game: NSObject, NSCoding
             
             let opponent = owner.opponent
             // Check if delayed cathedral time
-            if settings.delayedCathedral && (buildHistory.count == 2)
-            {
+            if settings.delayedCathedral && (buildHistory.count == 2) {
                 nextTurn = .church
             }
             // Set next turn to opponent if they can make move
-            else if (canMakeMove(opponent))
-            {
+            else if (canMakeMove(opponent)) {
                 nextTurn = opponent
             }
             // Else this player if they can move
-            else if (canMakeMove(owner))
-            {
+            else if (canMakeMove(owner)) {
                 nextTurn = owner
             }
             // Else game over
-            else
-            {
+            else {
                 nextTurn = nil
             }
         }
@@ -367,25 +314,20 @@ class Game: NSObject, NSCoding
     ///   - owner: The player owner, must be light or dark.
     ///   - address: The address.
     /// - Returns: Tuple where the first element is a set of claimed addresses, and the second element is a claimed pieces, if there is one.
-    private func claimClaimant(owner: Owner, at address: Address) -> (Set<Address>, Piece?)
-    {
+    private func claimClaimant(owner: Owner, at address: Address) -> (Set<Address>, Piece?) {
         var claimed = Set<Address>()
         var destroyed: Piece?
         
-        if !findClaimant(owner: owner, at: address, with: &claimed, and: &destroyed)
-        {
+        if !findClaimant(owner: owner, at: address, with: &claimed, and: &destroyed) {
             return ([], nil)
         }
-        else
-        {
+        else {
             // Destroy first so claiming is valid
-            if let foo = destroyed
-            {
+            if let foo = destroyed {
                 destroyPiece(foo)
             }
             
-            for claimed in claimed
-            {
+            for claimed in claimed {
                 claim(owner: owner, at: claimed)
             }
         }
@@ -401,43 +343,35 @@ class Game: NSObject, NSCoding
     ///   - currentClaim: The set of current addresses inside the claiment.
     ///   - currentDestroy: The current piece inside the claiment.
     /// - Returns: Whether the owner has a valid claimant at the address.
-    private func findClaimant(owner: Owner, at address: Address, with currentClaim: inout Set<Address>, and currentDestroy: inout Piece?) -> Bool
-    {
+    private func findClaimant(owner: Owner, at address: Address, with currentClaim: inout Set<Address>, and currentDestroy: inout Piece?) -> Bool {
         // Can claim target?
-        if canClaim(owner: owner, at: address, with: &currentDestroy)
-        {
+        if canClaim(owner: owner, at: address, with: &currentDestroy) {
             currentClaim.insert(address)
         }
-        else
-        {
+        else {
             return false
         }
         
         // Check each neighbor
-        for neighborAddress in address.neighbors()
-        {
+        for neighborAddress in address.neighbors() {
             // Neighbor is already in currentClaim, check next
-            if currentClaim.contains(neighborAddress)
-            {
+            if currentClaim.contains(neighborAddress) {
                 continue
             }
             
             // Neighbor is off board, check next
-            if !onBoard(neighborAddress)
-            {
+            if !onBoard(neighborAddress) {
                 continue
             }
             
             // Neighbor is this owner's piece, check next
             let neighborTile = board[neighborAddress]
-            if (neighborTile.owner == owner) && (neighborTile.isBuilt)
-            {
+            if (neighborTile.owner == owner) && (neighborTile.isBuilt) {
                 continue
             }
             
             // Else, try to expand claimant
-            if findClaimant(owner: owner, at: neighborAddress, with: &currentClaim, and: &currentDestroy)
-            {
+            if findClaimant(owner: owner, at: neighborAddress, with: &currentClaim, and: &currentDestroy) {
                 continue
             }
             
@@ -454,32 +388,26 @@ class Game: NSObject, NSCoding
     ///   - address: The address.
     ///   - currentDestroy: The current piece inside the claiment.
     /// - Returns: Whether or not the owner can claim the address.
-    private func canClaim(owner: Owner, at address: Address, with currentDestroy: inout Piece?) -> Bool
-    {
+    private func canClaim(owner: Owner, at address: Address, with currentDestroy: inout Piece?) -> Bool {
         assert(!owner.isChurch, "The church can't claim a tile")
         
         let tile = board[address]
         
         // Free tile
-        if (tile.owner == nil) && (!tile.isBuilt)
-        {
+        if (tile.owner == nil) && (!tile.isBuilt) {
             return true
         }
         
         // Check current destroy
-        if let piece = currentDestroy
-        {
+        if let piece = currentDestroy {
             return (tile.piece == piece)
         }
             // No current claim
-        else
-        {
-            if (tile.owner == owner) || (!tile.isBuilt)
-            {
+        else {
+            if (tile.owner == owner) || (!tile.isBuilt) {
                 return false
             }
-            else
-            {
+            else {
                 currentDestroy = tile.piece
                 return true
             }
@@ -491,18 +419,15 @@ class Game: NSObject, NSCoding
     /// - Parameters:
     ///   - owner: The player owner, must be light or dark.
     ///   - address: The address.
-    private func claim(owner: Owner, at address: Address)
-    {
+    private func claim(owner: Owner, at address: Address) {
         assert(!owner.isChurch, "The church can't claim a tile")
         assert(board[address].owner == nil, "Can only claim unclaimed tiles")
         
         board[address] = Tile(owner: owner, piece: nil)
-        if (owner == .light)
-        {
+        if (owner == .light) {
             lightClaimedAddresses.insert(address)
         }
-        else
-        {
+        else {
             darkClaimedAddresses.insert(address)
         }
     }
@@ -510,16 +435,13 @@ class Game: NSObject, NSCoding
     /// Removes a piece from the game board.
     ///
     /// - Parameter piece: The piece.
-    private func destroyPiece(_ piece: Piece)
-    {
-        for address in piece.addresses()
-        {
+    private func destroyPiece(_ piece: Piece) {
+        for address in piece.addresses() {
             board[address].piece = nil
             board[address].owner = nil
         }
         
-        switch piece.owner
-        {
+        switch piece.owner {
         case .church:
             break
         case .light:
@@ -535,8 +457,7 @@ class Game: NSObject, NSCoding
     ///
     /// - Parameter address: The address.
     /// - Returns: Whether or not the address is on this board.
-    private func onBoard(_ address: Address) -> Bool
-    {
+    private func onBoard(_ address: Address) -> Bool {
         return (address.col > -1) && (address.col < 10) && (address.row > -1) && (address.row < 10)
     }
     
@@ -544,13 +465,11 @@ class Game: NSObject, NSCoding
     ///
     /// - Parameter player: The player owner, must be light or dark.
     /// - Returns: The total size of remaining buildings.
-    private func playerScore(_ owner: Owner) -> UInt8
-    {
+    private func playerScore(_ owner: Owner) -> UInt8 {
         assert(!owner.isChurch, "Can't calculate score for the church")
         
         var score: UInt8 = 0
-        for building in (owner == .light ? lightUnbuiltBuildings : darkUnbuiltBuildings)
-        {
+        for building in (owner == .light ? lightUnbuiltBuildings : darkUnbuiltBuildings) {
             score += building.size
         }
         return score
@@ -558,8 +477,7 @@ class Game: NSObject, NSCoding
     
     
     //MARK: - Encoding
-    private struct PropertyKey
-    {
+    private struct PropertyKey {
         static let settings = "settings"
         static let board = "board"
         static let lightUnbuiltBuildings = "lightUnbuiltBuildings"
@@ -572,8 +490,7 @@ class Game: NSObject, NSCoding
         static let nextTurn = "nextTurn"
     }
     
-    func encode(with aCoder: NSCoder)
-    {
+    func encode(with aCoder: NSCoder) {
         aCoder.encode(settings, forKey: PropertyKey.settings)
         aCoder.encode(board, forKey: PropertyKey.board)
         aCoder.encode(lightUnbuiltBuildings, forKey: PropertyKey.lightUnbuiltBuildings)
@@ -586,67 +503,57 @@ class Game: NSObject, NSCoding
         aCoder.encode(nextTurn, forKey: PropertyKey.nextTurn)
     }
     
-    required init?(coder aDecoder: NSCoder)
-    {
+    required init?(coder aDecoder: NSCoder) {
         // Settings
-        guard let settings = aDecoder.decodeObject(forKey: PropertyKey.settings) as? Settings else
-        {
+        guard let settings = aDecoder.decodeObject(forKey: PropertyKey.settings) as? Settings else {
             return nil
         }
         self.settings = settings
         
         // Board
-        guard let board = aDecoder.decodeObject(forKey: PropertyKey.board) as? Board else
-        {
+        guard let board = aDecoder.decodeObject(forKey: PropertyKey.board) as? Board else {
             return nil
         }
         self.board = board
         
         // Light Unbuilt Buildings
-        guard let lightUnbuiltBuildings = aDecoder.decodeObject(forKey: PropertyKey.lightUnbuiltBuildings) as? Set<Building> else
-        {
+        guard let lightUnbuiltBuildings = aDecoder.decodeObject(forKey: PropertyKey.lightUnbuiltBuildings) as? Set<Building> else {
             return nil
         }
         self.lightUnbuiltBuildings = lightUnbuiltBuildings
         
         // Dark Unbuilt Buildings
-        guard let darkUnbuiltBuildings = aDecoder.decodeObject(forKey: PropertyKey.darkUnbuiltBuildings) as? Set<Building> else
-        {
+        guard let darkUnbuiltBuildings = aDecoder.decodeObject(forKey: PropertyKey.darkUnbuiltBuildings) as? Set<Building> else {
             return nil
         }
         self.darkUnbuiltBuildings = darkUnbuiltBuildings
         
         // Built Pieces
-        guard let builtPieces = aDecoder.decodeObject(forKey: PropertyKey.builtPieces) as? Set<Piece> else
-        {
+        guard let builtPieces = aDecoder.decodeObject(forKey: PropertyKey.builtPieces) as? Set<Piece> else {
             return nil
         }
         self.builtPieces = builtPieces
         
         // Build History
-        guard let buildHistory = aDecoder.decodeObject(forKey: PropertyKey.buildHistory) as? [Piece] else
-        {
+        guard let buildHistory = aDecoder.decodeObject(forKey: PropertyKey.buildHistory) as? [Piece] else {
             return nil
         }
         self.buildHistory = buildHistory
         
         // Cathedral Built
-        guard let cathedralBuilt = aDecoder.decodeObject(forKey: PropertyKey.cathedralBuilt) as? Bool else
-        {
+        guard let cathedralBuilt = aDecoder.decodeObject(forKey: PropertyKey.cathedralBuilt) as? Bool else {
             return nil
         }
         self.cathedralBuilt = cathedralBuilt
         
         // Light Claimed Addresses
-        guard let lightClaimedAddresses = aDecoder.decodeObject(forKey: PropertyKey.lightClaimedAddresses) as? Set<Address> else
-        {
+        guard let lightClaimedAddresses = aDecoder.decodeObject(forKey: PropertyKey.lightClaimedAddresses) as? Set<Address> else {
             return nil
         }
         self.lightClaimedAddresses = lightClaimedAddresses
         
         // Dark Claimed Addresses
-        guard let darkClaimedAddresses = aDecoder.decodeObject(forKey: PropertyKey.darkClaimedAddresses) as? Set<Address> else
-        {
+        guard let darkClaimedAddresses = aDecoder.decodeObject(forKey: PropertyKey.darkClaimedAddresses) as? Set<Address> else {
             return nil
         }
         self.darkClaimedAddresses = darkClaimedAddresses

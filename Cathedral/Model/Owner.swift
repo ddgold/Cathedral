@@ -9,8 +9,7 @@
 import Foundation
 
 /// A possible game piece owner, including player owners, i.e. light and dark, as well as, the cathedral owner, i.e. church.
-enum Owner: UInt8
-{
+enum Owner: UInt8 {
     //MARK: - Values
     case light
     case dark
@@ -19,17 +18,14 @@ enum Owner: UInt8
     
     //MARK: - Properties
     /// Whether or not this owner is the church, rather then a player, i.e. light or dark.
-    var isChurch: Bool
-    {
+    var isChurch: Bool {
         return (self == Owner.church)
     }
     
     /// The oppenent of this owner.
     /// - Note: Only player owners have oppenents.
-    var opponent: Owner
-    {
-        switch self
-        {
+    var opponent: Owner {
+        switch self {
         case .light:
             return Owner.dark
         case .dark:
@@ -42,16 +38,13 @@ enum Owner: UInt8
     
     //MARK: - Descriptions
     /// Description of the piece enum.
-    static var description: String
-    {
+    static var description: String {
         return "Owner"
     }
     
     /// Description of a particular owner.
-    var description: String
-    {
-        switch self
-        {
+    var description: String {
+        switch self {
         case .light:
             return "Light"
         case .dark:

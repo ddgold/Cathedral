@@ -11,11 +11,12 @@ import Foundation
 
 //MARK: - PlayerType
 /// Collection of player types.
-struct PlayerTypes
-{
+struct PlayerTypes {
+    /// Private initilizer so no instance can be made.
+    private init() { }
+    
     /// Array of all player type options.
-    static var options: [Player.Type]
-    {
+    static var options: [Player.Type] {
         return [
             LocalHuman.self,
             RandomComputer.self,
@@ -25,25 +26,20 @@ struct PlayerTypes
     
     /// Get player type for a given id.
     static subscript(id: String) -> Player.Type {
-        for type in options
-        {
-            if type.id == id
-            {
+        for type in options {
+            if type.id == id {
                 return type
             }
         }
-        fatalError()
+        fatalError("Unkown player id: \(id)")
     }
-    
-    private init() { }
 }
 
 
 
 //MARK: - Player
 /// The core player protocol.
-protocol Player
-{
+protocol Player {
     /// The player type's ID.
     static var id: String { get }
     
@@ -61,8 +57,7 @@ protocol Player
 
 
 /// The computer player protocol.
-protocol Computer: Player
-{
+protocol Computer: Player {
     /// Determines the computer's next move.
     ///
     /// - Returns: The piece to build.

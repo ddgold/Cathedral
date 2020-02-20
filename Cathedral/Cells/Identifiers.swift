@@ -9,13 +9,9 @@
 import Foundation
 
 /// Table view cell identifiers.
-struct Identifiers
-{
+struct Identifiers {
     /// Private initilizer so no instance can be made.
-    private init()
-    {
-        
-    }
+    private init() { }
     
     /// Switch setting cell
     static let switchSettingCell = "switchSettingCell"

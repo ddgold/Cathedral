@@ -9,74 +9,43 @@
 import Foundation
 
 /// A single tile from a game board.
-struct Tile: Equatable
-{
+struct Tile: Equatable {
     //MARK: - Properties
     /// The owner of the tile, nil if not built upon or claimed.
     var owner: Owner?
     /// The game piece built upon the tile, or nil if not built upon. Will set tile owner to piece owner.
-    var piece: Piece?
-    {
-        didSet
-        {
-            if let piece = self.piece
-            {
+    var piece: Piece? {
+        didSet {
+            if let piece = self.piece {
                 owner = piece.owner
             }
         }
     }
     /// Whether or not a piece has been built on this tile.
-    var isBuilt: Bool
-    {
+    var isBuilt: Bool {
         return piece != nil
     }
     
     
     //MARK: - Descriptions
     /// Description of the tile struct.
-    static var description: String
-    {
+    static var description: String {
         return "Tile"
     }
     
     /// Description of a particular tile.
-    var description: String
-    {
-        if let owner = self.owner
-        {
-            switch owner
-            {
+    var description: String {
+        if let owner = self.owner {
+            switch owner {
             case .church:
-                if isBuilt
-                {
-                    return "C"
-                }
-                else
-                {
-                    return "c"
-                }
+                return isBuilt ? "C" : "c"
             case .light:
-                if isBuilt
-                {
-                    return "L"
-                }
-                else
-                {
-                    return "l"
-                }
+                return isBuilt ? "L" : "l"
             case .dark:
-                if isBuilt
-                {
-                    return "D"
-                }
-                else
-                {
-                    return "d"
-                }
+                return isBuilt ? "D" : "d"
             }
         }
-        else
-        {
+        else {
             return "."
         }
     }

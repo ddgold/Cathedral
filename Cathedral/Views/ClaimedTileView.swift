@@ -10,8 +10,7 @@ import UIKit
 
 
 /// A claimed tile view.
-class ClaimedTileView: UIView
-{
+class ClaimedTileView: UIView {
     //MARK: - Properties
     /// The owner of the tile.
     let owner: Owner
@@ -27,8 +26,7 @@ class ClaimedTileView: UIView
     ///   - owner: The owner.
     ///   - address: The claimed address.
     ///   - tileSize: The initial tile size.
-    init(owner: Owner, address: Address, tileSize: CGFloat)
-    {
+    init(owner: Owner, address: Address, tileSize: CGFloat) {
         assert(!owner.isChurch, "The church can't claim a tile")
         
         self.owner = owner
@@ -36,12 +34,10 @@ class ClaimedTileView: UIView
         
         super.init(frame: CGRect(origin: CGPoint(x: 0, y: 0), size: CGSize(width: tileSize, height: tileSize)))
         
-        if (owner == .light)
-        {
+        if (owner == .light) {
             backgroundColor = UIColor(red: 0.67, green: 0.49, blue: 0.28, alpha: 0.8)
         }
-        else
-        {
+        else {
             backgroundColor = UIColor(red: 0.32, green: 0.20, blue: 0.11, alpha: 0.8)
         }
         

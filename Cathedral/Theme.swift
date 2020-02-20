@@ -10,22 +10,18 @@ import UIKit
 
 
 /// Theme object.
-struct Theme: Equatable
-{
+struct Theme: Equatable {
     //MARK: - Properties
     
     /// Current active theme.
     static private(set) var activeTheme = Theme(Theme.activeName)
     
     /// Name of the active theme's name
-    static var activeName: Theme.Name
-    {
-        get
-        {
+    static var activeName: Theme.Name {
+        get {
             return Theme.Name(rawValue: UserDefaults.standard.string(forKey: "activeTheme") ?? "Black")!
         }
-        set
-        {
+        set {
             activeTheme = Theme(newValue)
             UserDefaults.standard.set(newValue.rawValue, forKey: "activeTheme")
             NotificationCenter.default.post(name: .themeChange, object: nil)
@@ -50,11 +46,9 @@ struct Theme: Equatable
     /// Initializes a new theme object.
     ///
     /// - Parameter name: The theme's name.
-    private init(_ name: Name)
-    {
+    private init(_ name: Name) {
         self.name = name
-        switch name
-        {
+        switch name {
         case .black:
             tintColor = .orange
             barStyle = .black
@@ -78,16 +72,14 @@ struct Theme: Equatable
     /// - Parameters:
     ///     - subscriber: Object subcribing to theme changes.
     ///     - selector: Method to call when themes change. The method specified by selectot must have one and only one argument (an instance of NSNotification).
-    static func subscribe(_ subscriber: Any, selector: Selector)
-    {
+    static func subscribe(_ subscriber: Any, selector: Selector) {
         NotificationCenter.default.addObserver(subscriber, selector: selector, name: .themeChange, object: nil)
     }
     
     
     //MARK: - Name Enum
     /// A theme name.
-    enum Name: String
-    {
+    enum Name: String {
         /// Darkest black theme.
         case black = "Black"
         /// Lightest white theme.
@@ -98,7 +90,6 @@ struct Theme: Equatable
 
 //MARK: - Notification.Name Extention
 /// Extention of Notification.Name to add themeChange.
-extension Notification.Name
-{
+extension Notification.Name {
     static let themeChange = Notification.Name("com.ddgold.Cathedral.notifications.themeChange")
 }

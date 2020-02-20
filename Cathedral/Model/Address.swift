@@ -9,8 +9,7 @@
 import Foundation
 
 /// A 2-dimensional tile address.
-struct Address: Hashable
-{
+struct Address: Hashable {
     //MARK: - Properties
     /// The column position.
     var col: Int8
@@ -18,14 +17,12 @@ struct Address: Hashable
     var row: Int8
     
     /// Whether or not the address is on the game board.
-    var isOnBoard: Bool
-    {
+    var isOnBoard: Bool {
         return (col >= 0) && (col <= 9) && (row >= 0) && (row <= 9)
     }
     
     /// The log entry for this address.
-    var log: String
-    {
+    var log: String {
         return "\(col)\(row)"
     }
     
@@ -36,8 +33,7 @@ struct Address: Hashable
     /// - Parameters:
     ///   - col: The column position.
     ///   - row: The row position.
-    init(_ col: Int8, _ row: Int8)
-    {
+    init(_ col: Int8, _ row: Int8) {
         self.col = col
         self.row = row
     }
@@ -45,15 +41,12 @@ struct Address: Hashable
     /// Initializes an address from a log entry.
     ///
     /// - Parameter log: The log entry.
-    init?(_ log: String)
-    {
-        if let col = Int8(log.prefix(1)), let row = Int8(log.suffix(1))
-        {
+    init?(_ log: String) {
+        if let col = Int8(log.prefix(1)), let row = Int8(log.suffix(1)) {
             self.col = col
             self.row = row
         }
-        else
-        {
+        else {
             return nil
         }
     }
@@ -63,8 +56,7 @@ struct Address: Hashable
     /// Get the set of addresses neighboring this address.
     ///
     /// - Returns: Set of the neighboring addresses.
-    func neighbors() -> Set<Address>
-    {
+    func neighbors() -> Set<Address> {
         return [Address(col    , row - 1), // North
             Address(col + 1, row - 1), // Northeast
             Address(col + 1, row    ), // East
@@ -79,10 +71,8 @@ struct Address: Hashable
     ///
     /// - Parameter direction: Desired direction.
     /// - Returns: Address rotated to direction.
-    func rotated(_ direction: Direction) -> Address
-    {
-        switch direction
-        {
+    func rotated(_ direction: Direction) -> Address {
+        switch direction {
         case .north:
             return Address(col,row)
         case .east:
@@ -97,30 +87,24 @@ struct Address: Hashable
     
     //MARK: - Descriptions
     /// Description of the address struct.
-    static var description: String
-    {
+    static var description: String {
         return "Address"
     }
     
     /// Description of a particular address.
-    var description: String
-    {
+    var description: String {
         var description: String
-        if (col < 0) || (col > 9)
-        {
+        if (col < 0) || (col > 9) {
             description = col.description
         }
-        else
-        {
+        else {
             description = " " + col.description
         }
         description += ","
-        if (row < 0) || (row > 9)
-        {
+        if (row < 0) || (row > 9) {
             description += row.description
         }
-        else
-        {
+        else {
             description += " " + row.description
         }
         return description

@@ -10,14 +10,11 @@ import UIKit
 
 
 /// A game board view.
-class BoardView: UIImageView
-{
+class BoardView: UIImageView {
     //MARK: - Properties
     /// The size of a tile set by controller.
-    private var tileSize: CGFloat
-    {
-        didSet(newValue)
-        {
+    private var tileSize: CGFloat {
+        didSet(newValue) {
             resetTileSize(newValue)
         }
     }
@@ -27,13 +24,11 @@ class BoardView: UIImageView
     /// Initilize a new board view with a given tile size.
     ///
     /// - Parameter tileSize: The tile size.
-    init(tileSize: CGFloat)
-    {
+    init(tileSize: CGFloat) {
         self.tileSize = tileSize
         
         let imageName = "Board"
-        guard let imageObject = UIImage(named: imageName) else
-        {
+        guard let imageObject = UIImage(named: imageName) else {
             fatalError("Failed to find image: '\(imageName)'")
         }
         
@@ -46,8 +41,7 @@ class BoardView: UIImageView
     /// Unsupported decoder initilizer.
     ///
     /// - Parameter aDecoder: The decoder.
-    required init?(coder aDecoder: NSCoder)
-    {
+    required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
@@ -57,8 +51,7 @@ class BoardView: UIImageView
     ///
     /// - Parameters:
     ///   - piece: The piece view.
-    func buildPiece(_ piece: PieceView)
-    {
+    func buildPiece(_ piece: PieceView) {
         addSubview(piece)
     }
     
@@ -66,8 +59,7 @@ class BoardView: UIImageView
     ///
     /// - Parameters:
     ///   - piece: The piece view.
-    func claimTile(_ claimedTile: ClaimedTileView)
-    {
+    func claimTile(_ claimedTile: ClaimedTileView) {
         addSubview(claimedTile)
     }
     
@@ -75,12 +67,9 @@ class BoardView: UIImageView
     ///
     /// - Parameter target: The target piece.
     /// - Returns: The removed piece view.
-    func destroyPiece(_ target: Piece) -> PieceView
-    {
-        for case let piece as PieceView in subviews
-        {
-            if piece.address == target.address
-            {
+    func destroyPiece(_ target: Piece) -> PieceView {
+        for case let piece as PieceView in subviews {
+            if piece.address == target.address {
                 return piece
             }
         }
@@ -91,8 +80,7 @@ class BoardView: UIImageView
     /// Reset the tile size to a new value
     ///
     /// - Parameter tileSize: The new tile size
-    private func resetTileSize(_ tileSize: CGFloat)
-    {
+    private func resetTileSize(_ tileSize: CGFloat) {
         let size = CGSize(width: tileSize * 12.0, height: tileSize * 12.0)
         self.frame = CGRect(origin: self.frame.origin, size: size)
     }

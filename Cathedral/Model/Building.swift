@@ -9,8 +9,7 @@
 import Foundation
 
 /// A building type.
-enum Building: UInt8
-{
+enum Building: UInt8 {
     //MARK: - Values
     case tavern
     case stable
@@ -28,16 +27,13 @@ enum Building: UInt8
     
     //MARK: - Properties
     /// Set of all player buildings.
-    static var playerBuildings: Set<Building>
-    {
+    static var playerBuildings: Set<Building> {
         return [self.tavern, self.stable, self.inn, self.bridge, self.square, self.abbey, self.manor, self.tower, self.infirmary, self.castle, self.academy]
     }
     
     /// The number if tiles wide this building type covers.
-    private var width: UInt8
-    {
-        switch self
-        {
+    private var width: UInt8 {
+        switch self {
         case .tavern:
             return 1
         case .stable:
@@ -66,10 +62,8 @@ enum Building: UInt8
     }
     
     /// The number of tiles tall this building type covers.
-    private var height: UInt8
-    {
-        switch self
-        {
+    private var height: UInt8 {
+        switch self {
         case .tavern:
             return 1
         case .stable:
@@ -98,10 +92,8 @@ enum Building: UInt8
     }
     
     /// The number of tiles this building type covers.
-    var size: UInt8
-    {
-        switch self
-        {
+    var size: UInt8 {
+        switch self {
         case .tavern:
             return 1
         case .stable:
@@ -130,10 +122,8 @@ enum Building: UInt8
     }
     
     /// The log entry for this building.
-    var log: String
-    {
-        switch self
-        {
+    var log: String {
+        switch self {
         case .tavern:
             return "TA"
         case .stable:
@@ -166,10 +156,8 @@ enum Building: UInt8
     /// Initializes a building from a log entry.
     ///
     /// - Parameter log: The log entry.
-    init?(_ log: String)
-    {
-        switch log
-        {
+    init?(_ log: String) {
+        switch log {
         case "TA":
             self = .tavern
         case "ST":
@@ -208,14 +196,12 @@ enum Building: UInt8
     ///   - direction: The direction of the building. Defaults to north.
     ///   - address: The origin of the building. Defaults to (0, 0).
     /// - Returns: A set of addresses that make up the blueprint.
-    func blueprint(owner: Owner, facing direction: Direction = .north, at address: Address = Address(0, 0)) -> Set<Address>
-    {
+    func blueprint(owner: Owner, facing direction: Direction = .north, at address: Address = Address(0, 0)) -> Set<Address> {
         assert(owner.isChurch == (self == .cathedral), "Can't get blueprint for \(owner) \(self)")
         
         // Get the base blueprint base on owner and building type
         let base: Set<Address>
-        switch self
-        {
+        switch self {
         case .tavern:
             base = [Address(0, 0)]
         case .stable:
@@ -235,15 +221,13 @@ enum Building: UInt8
                     Address(1, 0),
                     Address(1, 1)]
         case .abbey:
-            if (owner == .light)
-            {
+            if (owner == .light) {
                 base = [Address(0, 0),
                         Address(0, 1),
                         Address(1, 1),
                         Address(1, 2)]
             }
-            else
-            {
+            else {
                 base = [Address(0, 1),
                         Address(0, 2),
                         Address(1, 0),
@@ -273,16 +257,14 @@ enum Building: UInt8
                     Address(1, 0),
                     Address(1, 2)]
         case .academy:
-            if (owner == .light)
-            {
+            if (owner == .light) {
                 base = [Address(0, 1),
                         Address(1, 0),
                         Address(1, 1),
                         Address(1, 2),
                         Address(2, 2)]
             }
-            else
-            {
+            else {
                 base = [Address(0, 2),
                         Address(1, 0),
                         Address(1, 1),
@@ -312,18 +294,15 @@ enum Building: UInt8
     ///
     /// - Parameter direction: The direction.
     /// - Returns: A tuple, where the fist element is the width, and the second element is the height.
-    func dimensions(direction: Direction) -> (width: Int8, height: Int8)
-    {
+    func dimensions(direction: Direction) -> (width: Int8, height: Int8) {
         let width: Int8
         let height: Int8
         
-        if (direction == .north) || (direction == .south)
-        {
+        if (direction == .north) || (direction == .south) {
             width = Int8(self.width)
             height = Int8(self.height)
         }
-        else
-        {
+        else {
             width = Int8(self.height)
             height = Int8(self.width)
         }
@@ -334,16 +313,13 @@ enum Building: UInt8
     
     //MARK: - Descriptions
     /// Description of the building enum.
-    static var description: String
-    {
+    static var description: String {
         return "Building"
     }
     
     /// Description of a particular building.
-    var description: String
-    {
-        switch self
-        {
+    var description: String {
+        switch self {
         case .tavern:
             return "Tavern"
         case .stable:

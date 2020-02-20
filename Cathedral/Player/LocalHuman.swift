@@ -9,11 +9,9 @@
 import Foundation
 
 /// A local human player object.
-class LocalHuman: Player
-{
+class LocalHuman: Player {
     /// The player type's ID.
-    static var id: String
-    {
+    static var id: String {
         return "LocalHuman"
     }
     
@@ -21,8 +19,7 @@ class LocalHuman: Player
     private let owner: Owner
     
     /// The name of the player.
-    var name: String
-    {
+    var name: String {
         return "\(owner.description) Player"
     }
     
@@ -31,8 +28,7 @@ class LocalHuman: Player
     /// - Parameters:
     ///   - game: The player's game.
     ///   - owner: The owner, must be light or dark.
-    required init(game: Game, owner: Owner)
-    {
+    required init(game: Game, owner: Owner) {
         self.owner = owner
     }
 }
