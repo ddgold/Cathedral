@@ -1,102 +1,12 @@
 //
-//  Player.swift
+//  RandomComputer.swift
 //  Cathedral
 //
-//  Created by Doug Goldstein on 3/8/19.
-//  Copyright © 2019 Doug Goldstein. All rights reserved.
+//  Created by Doug Goldstein on 2/18/20.
+//  Copyright © 2020 Doug Goldstein. All rights reserved.
 //
 
 import Foundation
-
-//MARK: - Player
-/// The core player protocol.
-protocol Player
-{
-    /// The player type's ID.
-    static var id: String { get }
-    
-    /// The name of the player
-    var name: String { get }
-    
-    /// Initializes a new player.
-    ///
-    /// - Parameters:
-    ///   - game: The player's game.
-    ///   - owner: The owner, must be light or dark.
-    init (game: Game, owner: Owner)
-}
-
-
-/// Gets a player type from an ID
-///
-/// - Parameter id: The player type ID.
-/// - Returns: The player type.
-func PlayerType(_ id: String) -> Player.Type
-{
-    switch id
-    {
-    case LocalHuman.id:
-        return LocalHuman.self
-        
-    case RandomComputer.id:
-        return RandomComputer.self
-        
-    default:
-        fatalError("Unknown player type id: \(id)")
-    }
-}
-
-
-
-//MARK: - Human
-/// The human player protocol.
-protocol Human: Player
-{
-    
-}
-
-
-/// A local human player object.
-class LocalHuman: Human
-{
-    /// The player type's ID.
-    static var id: String
-    {
-        return "LocalHuman"
-    }
-    
-    /// The owner.
-    private let owner: Owner
-    
-    /// The name of the player.
-    var name: String
-    {
-        return owner.description
-    }
-    
-    /// Initializes a new local human player.
-    ///
-    /// - Parameters:
-    ///   - game: The player's game.
-    ///   - owner: The owner, must be light or dark.
-    required init(game: Game, owner: Owner)
-    {
-        self.owner = owner
-    }
-}
-
-
-
-//MARK: - Computer
-/// The computer player protocol.
-protocol Computer: Player
-{
-    /// Determines the computer's next move.
-    ///
-    /// - Returns: The piece to build.
-    func nextMove() -> Piece
-}
-
 
 /// A computer player object that builds randomly.
 class RandomComputer: Computer
@@ -141,6 +51,8 @@ class RandomComputer: Computer
         
         if (nextOwner == .church)
         {
+            assert(owner == .light)
+            
             return randomLocation(owner: nextOwner, building: .cathedral)
         }
         else

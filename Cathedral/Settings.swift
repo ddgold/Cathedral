@@ -30,7 +30,7 @@ struct Settings
         {
             if let playerType = UserDefaults.standard.string(forKey: "lightPlayerType")
             {
-                return PlayerType(playerType)
+                return PlayerTypes[playerType]
             }
             else
             {
@@ -56,7 +56,7 @@ struct Settings
         {
             if let playerType = UserDefaults.standard.string(forKey: "darkPlayerType")
             {
-                return PlayerType(playerType)
+                return PlayerTypes[playerType]
             }
             else
             {

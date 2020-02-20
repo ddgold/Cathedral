@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CA171FEA23FCEEA8005D0D04 /* LocalHuman.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA171FE923FCEEA8005D0D04 /* LocalHuman.swift */; };
+		CA171FEC23FCEEDF005D0D04 /* RandomComputer.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA171FEB23FCEEDF005D0D04 /* RandomComputer.swift */; };
+		CA171FEE23FCEF29005D0D04 /* LargestFirstComputer.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA171FED23FCEF29005D0D04 /* LargestFirstComputer.swift */; };
 		CA225920220D2CAD00656CC9 /* CGExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA22591F220D2CAD00656CC9 /* CGExtensions.swift */; };
 		CA225922221A57DB00656CC9 /* PoolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA225921221A57DB00656CC9 /* PoolView.swift */; };
 		CA225924221E4D9300656CC9 /* ClaimedTileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA225923221E4D9300656CC9 /* ClaimedTileView.swift */; };
@@ -47,6 +50,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		CA171FE923FCEEA8005D0D04 /* LocalHuman.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalHuman.swift; sourceTree = "<group>"; };
+		CA171FEB23FCEEDF005D0D04 /* RandomComputer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RandomComputer.swift; sourceTree = "<group>"; };
+		CA171FED23FCEF29005D0D04 /* LargestFirstComputer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LargestFirstComputer.swift; sourceTree = "<group>"; };
 		CA22591F220D2CAD00656CC9 /* CGExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGExtensions.swift; sourceTree = "<group>"; };
 		CA225921221A57DB00656CC9 /* PoolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PoolView.swift; sourceTree = "<group>"; };
 		CA225923221E4D9300656CC9 /* ClaimedTileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaimedTileView.swift; sourceTree = "<group>"; };
@@ -98,6 +104,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CA171FE823FCEE0D005D0D04 /* Player */ = {
+			isa = PBXGroup;
+			children = (
+				CA561B5522338D1D004C3F5D /* Player.swift */,
+				CA171FE923FCEEA8005D0D04 /* LocalHuman.swift */,
+				CA171FEB23FCEEDF005D0D04 /* RandomComputer.swift */,
+				CA171FED23FCEF29005D0D04 /* LargestFirstComputer.swift */,
+			);
+			path = Player;
+			sourceTree = "<group>";
+		};
 		CA561B592235CBF1004C3F5D /* Cells */ = {
 			isa = PBXGroup;
 			children = (
@@ -145,6 +162,7 @@
 				CA328D822221FCDB0029CE9A /* Theme.swift */,
 				CA328D8422227BE10029CE9A /* Settings.swift */,
 				CAF56E3822014A77002DF690 /* Model */,
+				CA171FE823FCEE0D005D0D04 /* Player */,
 				CAF56E3722014A35002DF690 /* Controllers */,
 				CA8C1AB722029431005EA5FD /* Views */,
 				CA561B592235CBF1004C3F5D /* Cells */,
@@ -185,7 +203,6 @@
 				CAF56E4D22015265002DF690 /* Game.swift */,
 				CAF56E452201500A002DF690 /* Owner.swift */,
 				CAF56E4F22015802002DF690 /* Piece.swift */,
-				CA561B5522338D1D004C3F5D /* Player.swift */,
 				CAF56E47220150DB002DF690 /* Tile.swift */,
 			);
 			path = Model;
@@ -293,6 +310,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CA171FEA23FCEEA8005D0D04 /* LocalHuman.swift in Sources */,
 				CA2259262221113100656CC9 /* MainMenuViewController.swift in Sources */,
 				CA8C1AB62202942C005EA5FD /* BoardView.swift in Sources */,
 				CAF56E4022014C72002DF690 /* Address.swift in Sources */,
@@ -300,6 +318,7 @@
 				CA225920220D2CAD00656CC9 /* CGExtensions.swift in Sources */,
 				CAF56E4E22015266002DF690 /* Game.swift in Sources */,
 				CAF56E5022015802002DF690 /* Piece.swift in Sources */,
+				CA171FEE23FCEF29005D0D04 /* LargestFirstComputer.swift in Sources */,
 				CAF56E462201500A002DF690 /* Owner.swift in Sources */,
 				CAF56E4422014FC9002DF690 /* Building.swift in Sources */,
 				CA328D812221C25F0029CE9A /* SwitchSettingCell.swift in Sources */,
@@ -309,6 +328,7 @@
 				CAF56E1A22014877002DF690 /* GameViewController.swift in Sources */,
 				CA328D832221FCDB0029CE9A /* Theme.swift in Sources */,
 				CA328D8522227BE10029CE9A /* Settings.swift in Sources */,
+				CA171FEC23FCEEDF005D0D04 /* RandomComputer.swift in Sources */,
 				CA328D7F222134760029CE9A /* SettingsViewController.swift in Sources */,
 				CA561B5622338D1D004C3F5D /* Player.swift in Sources */,
 				CAF56E1822014877002DF690 /* AppDelegate.swift in Sources */,

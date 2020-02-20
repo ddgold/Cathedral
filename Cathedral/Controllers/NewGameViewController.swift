@@ -171,7 +171,7 @@ class NewGameViewController: UITableViewController
         var options: [PlayerTypeOptionCell] = []
         let defaultType = (owner == .light) ? Settings.lightPlayerType  : Settings.darkPlayerType
         
-        for type in [LocalHuman.self, RandomComputer.self] as [Player.Type]
+        for type in PlayerTypes.options
         {
             let state: PlayerTypeOptionCell.State
             if type == defaultType
@@ -213,7 +213,7 @@ class NewGameViewController: UITableViewController
             {
                 if let id = option.textLabel?.text
                 {
-                    return PlayerType(id)
+                    return PlayerTypes[id]
                 }
             }
         }
